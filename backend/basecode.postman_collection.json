@@ -1,0 +1,195 @@
+{
+	"id": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+	"name": "basecode",
+	"description": "",
+	"order": [],
+	"folders": [
+		{
+			"name": "role",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"order": [
+				"f7c522a3-918e-2fdd-7f6e-e3166600b6d7"
+			],
+			"owner": "13846786",
+			"folders_order": [],
+			"id": "84b6a33d-f48c-b42b-317a-6af997d29e1c"
+		},
+		{
+			"name": "systemuser",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"order": [
+				"0cc8101c-b12d-38e2-31ac-4761223f25ba",
+				"21ca0aba-3b95-f89b-8bc2-9eb50e6a5ff8",
+				"051715c0-90b6-f117-400d-4d9c35ccde64",
+				"97bb5e89-f1e0-2534-4237-b7876f862b7c"
+			],
+			"owner": "13846786",
+			"folders_order": [],
+			"id": "9540111b-93c1-c03f-9c6b-d004b179672a"
+		}
+	],
+	"folders_order": [
+		"84b6a33d-f48c-b42b-317a-6af997d29e1c",
+		"9540111b-93c1-c03f-9c6b-d004b179672a"
+	],
+	"timestamp": 1661700883533,
+	"owner": "13846786",
+	"public": false,
+	"requests": [
+		{
+			"id": "051715c0-90b6-f117-400d-4d9c35ccde64",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:8081/api/rest",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1661989634941,
+			"name": "delete user",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"responses": []
+		},
+		{
+			"id": "0cc8101c-b12d-38e2-31ac-4761223f25ba",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8081/api/rest",
+			"folder": "9540111b-93c1-c03f-9c6b-d004b179672a",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1661981993622,
+			"name": "add user",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"responses": [],
+			"rawModeData": "{\n\t\"username\": \"fog\",\n\t\"password\": \"fog\",\n\t\"firstname\": \"init\",\n\t\"lastname\": \"user\",\n\t\"email\": \"emailtest@mail.com\",\n\t\"api_name\": \"api.v1.systemuser.create\"\n}"
+		},
+		{
+			"id": "21ca0aba-3b95-f89b-8bc2-9eb50e6a5ff8",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8081/api/rest",
+			"folder": "9540111b-93c1-c03f-9c6b-d004b179672a",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1661981992958,
+			"name": "login",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"responses": [],
+			"rawModeData": "{\n\t\"username\": \"fog\",\n\t\"password\": \"fog\",\n\t\"api_name\": \"api.v1.systemuser.login\"\n}"
+		},
+		{
+			"id": "97bb5e89-f1e0-2534-4237-b7876f862b7c",
+			"headers": "Authorization: Bearer VCPw5b8I8tQBVKFvo7KeiHIZexpZggVoCr1phPxyBLDm2v4AAo630fd32c8c5793bec5aee602\nContent-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer VCPw5b8I8tQBVKFvo7KeiHIZexpZggVoCr1phPxyBLDm2v4AAo630fd32c8c5793bec5aee602",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8081/api/rest",
+			"folder": "9540111b-93c1-c03f-9c6b-d004b179672a",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1661981974853,
+			"name": "update user",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"responses": [],
+			"rawModeData": "{\n\t\"username\": \"fog\",\n\t\"firstname\": \"init\",\n\t\"lastname\": \"user\",\n\t\"email\": \"emailtest@mail.com\",\n\t\"api_name\": \"api.v1.systemuser.create\"\n}"
+		},
+		{
+			"id": "f7c522a3-918e-2fdd-7f6e-e3166600b6d7",
+			"headers": "Content-Type: application/json\nAuthorization: Bearer VCPw5b8I8tQBVKFvo7KeiHIZexpZggVoCr1phPxyBLDm2v4AAo630fd32c8c5793bec5aee602\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "Bearer VCPw5b8I8tQBVKFvo7KeiHIZexpZggVoCr1phPxyBLDm2v4AAo630fd32c8c5793bec5aee602",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8081/api/rest",
+			"folder": "84b6a33d-f48c-b42b-317a-6af997d29e1c",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1661981994266,
+			"name": "add role",
+			"description": "",
+			"collectionId": "1dcb2d2d-c044-3bf2-5eb3-1244d822abf8",
+			"responses": [],
+			"rawModeData": "{\n\t\"api_name\": \"api.v1.systemuser.role.add\",\n\t\"title\": \"ADMIN\",\n\t\"description\": \"Admin hệ thống\"\n}"
+		}
+	]
+}

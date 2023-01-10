@@ -1,0 +1,9 @@
+{
+    "_id" : ObjectId("630fd428c5bf7cbe35702370"),
+    "title" : "ADMIN",
+    "description" : "Admin hệ thống",
+    "is_delete" : false,
+    "dateUpdated" : ISODate("2022-08-31T21:35:36.991+0000"),
+    "dateCreated" : ISODate("2022-08-31T21:35:36.989+0000"),
+    "__v" : NumberInt(0)
+}

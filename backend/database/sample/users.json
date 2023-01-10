@@ -1,0 +1,19 @@
+{
+    "_id" : ObjectId("630fd32c8c5793bec5aee601"),
+    "level" : "SYSTEM",
+    "hashed_password" : "740e3b75e549a333bd504ea5381b854ea2719153927f0f6ad2f3165aa7512380",
+    "username" : "fog",
+    "is_delete" : false,
+    "dateUpdated" : ISODate("2022-08-31T21:36:36.347+0000"),
+    "dateCreated" : ISODate("2022-08-31T21:31:24.614+0000"),
+    "token" : "VCPw5b8I8tQBVKFvo7KeiHIZexpZggVoCr1phPxyBLDm2v4AAo630fd32c8c5793bec5aee602",
+    "salt" : "fgImUn546gmNT7Xs8f7v",
+    "status" : NumberInt(1),
+    "mobile" : null,
+    "email" : "emailtest@mail.com",
+    "address" : null,
+    "lastname" : "user",
+    "firstname" : "init",
+    "avatar" : null,
+    "__v" : NumberInt(0)
+}
