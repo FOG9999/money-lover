@@ -1,0 +1,15 @@
+1. Chức năng phần mềm
+1.1. User
+- Đăng nhập, đăng ký, quản lý thông tin cá nhân
+- Quản lý chủng loại
+- Quản lý ví
+- Thống kê theo thời gian
+- Xuất báo cáo
+- CRUD giao dịch
+- CRUD ngân sách
+1.2. Admin
+- Quản lý người dùng
+- Quản lý chủng loại default
+- Quản lý ví default
+- Quản lý đa ngôn ngữ
+- Quản lý thông báo hệ thống
