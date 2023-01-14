@@ -65,5 +65,7 @@ module.exports = {
         SYSTEM_USER: 'SYSTEM'
     },
 
+    icon_prefix: "data:image/png;base64,",
+
     enableCORS: true
 }

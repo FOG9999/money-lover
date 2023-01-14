@@ -18,7 +18,7 @@ const getImageBase64 = (req, returnData, callback) => {
         let path = req.params.path;
         let iconFile = fs.readFileSync(__icons_path + '/' + path);
 
-        returnData.set(iconFile.toString('base64'));
+        returnData.set(consts.icon_prefix + iconFile.toString('base64'));
         callback();
     } catch (error) {
         callback(error);

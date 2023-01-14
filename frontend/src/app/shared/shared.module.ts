@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { ErrorCodeComponent } from './components/error-code/error-code.component';
+import { MLIconComponent } from './components/money-lover/icon/icon.component';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -32,7 +33,7 @@ const THIRD_MODULES = [
   ToastrModule,
   TranslateModule,
 ];
-const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent];
+const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent];
 const COMPONENTS_DYNAMIC = [];
 const DIRECTIVES = [];
 const PIPES = [];

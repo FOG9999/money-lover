@@ -11,6 +11,19 @@
       }
     },
     {
+      "route": "money-lover",
+      "name": "money-lover",
+      "type": "sub",
+      "icon": "question_answer",
+      "children": [
+        {
+          "route": "common",
+          "name": "common",
+          "type": "link"
+        }
+      ]
+    },
+    {
       "route": "design",
       "name": "design",
       "type": "sub",

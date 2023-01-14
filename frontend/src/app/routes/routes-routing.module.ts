@@ -4,7 +4,7 @@ import { environment } from '@env/environment';
 
 import { AdminLayoutComponent } from '../theme/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component';
-import { MoneyCommonComponent } from './common/common.component';
+import { MoneyCommonComponent } from './money-lover/common/common.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
@@ -60,9 +60,9 @@ const routes: Routes = [
         loadChildren: () => import('./helpers/helpers.module').then(m => m.HelpersModule),
       },
       {
-        path: "money",
-        component: MoneyCommonComponent,
-        data: { title: 'Money Common', titleI18n: 'money-common' },
+        path: "money-lover",
+        loadChildren: () => import('./money-lover/money-lover.module').then(m => m.MoneyLoverModule),
+        data: { title: 'Money Lover', titleI18n: 'money-lover' },
       }
     ],
   },

@@ -7,4 +7,5 @@ export interface Icon {
     dateUpdated: Date,
     isDefault: number,
     creator: User,
+    path: string
 }

@@ -65,7 +65,9 @@
     "sessions.404": "404",
     "sessions.500": "500",
     "helpers": "helpers",
-    "helpers.css-class": "CSS Class"
+    "helpers.css-class": "CSS Class",
+    "money-lover": "Money Lover",
+    "money-lover.common": "Money Lover Common"
   },
   "user": {
     "profile": "profile",

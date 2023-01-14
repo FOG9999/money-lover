@@ -1,0 +1,25 @@
+<breadcrumb></breadcrumb>
+
+<mat-card>
+    <mat-card-title></mat-card-title>
+    <mat-card-content>
+        <mat-tab-group class="m--16 ml">
+            <mat-tab label="Icons">
+                <mat-card class="card-inside-tab">
+                    <mat-card-title>Icons hệ thống</mat-card-title>
+                    <mat-card-subtitle>
+                        Các icons này đang được clone từ app money-lover. Sử dụng với mục đích thương mại vớ vẩn đi tù!
+                    </mat-card-subtitle>
+                    <div class="matero-row" fxLayout="row wrap">
+                        <div class="matero-col"
+                            *ngFor="let icon of icons">
+                            <ml-icon [path]="icon.path"></ml-icon>
+                        </div>
+                    </div>
+                </mat-card>
+            </mat-tab>
+            <mat-tab label="Chủng loại"> </mat-tab>
+            <mat-tab label="Loại ví"> </mat-tab>
+        </mat-tab-group>
+    </mat-card-content>
+</mat-card>
