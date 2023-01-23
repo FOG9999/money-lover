@@ -1,7 +1,8 @@
+import { Base } from "./base.model";
 import { User } from "./user.model";
 import { WalletType } from "./wallet-type.model";
 
-export interface Wallet {
+export interface Wallet extends Base {
     amount: number,
     dateCreated: Date,
     isDelete: boolean,

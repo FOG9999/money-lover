@@ -40,6 +40,19 @@ const getIcon = (req, returnData, callback) => {
         })
 }
 
+const getIconByPath = (req, returnData, callback) => {
+    let path = req.params.path;
+
+    Icon
+        .findOne({ path: path })
+        .exec((err, data) => {
+            if (err) return callback(err);
+            if (!data) return callback('ERROR_ICON_NOT_FOUND');
+            returnData.set(data);
+            callback();
+        })
+}
+
 const addIcon = (req, returnData, callback) => {
     const { code, path } = req.params;
     const creator = req.user;
@@ -167,3 +180,4 @@ exports.addIcon = addIcon;
 exports.getIcon = getIcon;
 exports.updateIcon = updateIcon;
 exports.insertAllIcons = insertAllIcons;
+exports.getIconByPath = getIconByPath;

@@ -16,10 +16,35 @@ const { v4: uuid } = require('uuid');
 const getImageBase64 = (req, returnData, callback) => {
     try {
         let path = req.params.path;
-        let iconFile = fs.readFileSync(__icons_path + '/' + path);
-
-        returnData.set(consts.icon_prefix + iconFile.toString('base64'));
-        callback();
+        redis.HEXISTS(consts.redis_key.icon, path, (err, exists) => {
+            if(err){
+                callback(err);
+            }
+            if(exists == 1){
+                redis.HGET(consts.redis_key.icon, path, (err, iconData) => {
+                    if(err){
+                        callback(err);
+                    }
+                    else {
+                        returnData.set(iconData);
+                        callback();
+                    }
+                })
+            }
+            else {
+                let iconFile = fs.readFileSync(__icons_path + '/' + path);
+                let base64String = consts.icon_prefix + iconFile.toString('base64');
+                redis.HSET(consts.redis_key.icon, path, base64String, (err) => {
+                    if(err){
+                        callback(err);
+                    }
+                    else {
+                        returnData.set(base64String);
+                        callback();
+                    }
+                })                
+            }
+        })        
     } catch (error) {
         callback(error);
     }

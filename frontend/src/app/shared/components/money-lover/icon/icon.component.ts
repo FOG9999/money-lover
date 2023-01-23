@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { IconService } from '../../../services/money-lover/icon.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { IconService } from '../../../services/money-lover/icon.service';
     providers: [IconService]
 })
 
-export class MLIconComponent implements OnInit {
+export class MLIconComponent implements OnInit, OnChanges {
     constructor(private iconService: IconService) { }
 
     @Input()
@@ -15,9 +15,21 @@ export class MLIconComponent implements OnInit {
 
     data: string = "";
 
-    ngOnInit() { 
-        this.iconService.getBase64Icon(this.path).subscribe(res => {
+    ngOnInit() {
+        this.getIcon(this.path);
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        this.getIcon(changes.path.currentValue);
+    }
+
+    getIcon(path: string) {
+        if(sessionStorage.getItem(path)){
+            this.data = sessionStorage.getItem(path);
+        }
+        else this.iconService.getBase64Icon(path).subscribe(res => {
             this.data = res;
-        })
+            sessionStorage.setItem(path, res);
+        });
     }
 }

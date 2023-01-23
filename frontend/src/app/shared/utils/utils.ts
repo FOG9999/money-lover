@@ -1,3 +1,5 @@
+import { Category, NewCategory } from "app/model/category.model";
+
 /**
  * 序列化 JSON，同时转义，删除两边空格
  */

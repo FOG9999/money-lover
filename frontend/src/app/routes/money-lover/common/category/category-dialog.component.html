@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Thêm mới chủng loại</h2>
+<div mat-dialog-content>
+    <div class="matero-row list-icon-new-category" fxLayout="row wrap">
+        <div class="matero-col cursor-pointer icon-new-category" fxFlex="20" fxFlex.gt-sm="10"
+            *ngFor="let icon of data.icons; let i = index" (click)="selectIcon(i)">
+            <div class="icon-new-category" *ngIf="selectedIndexIcon != i; else selected">
+                <ml-icon [path]="icon.path"></ml-icon>
+            </div>
+            <ng-template #selected>
+                <div class="icon-new-category selected-icon">
+                    <ml-icon [path]="icon.path"></ml-icon>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+        <div fxFlex="50" fxFlex.gt-sm="20" fxFlex.gt-lg="10">
+            <ml-icon [path]="category.selectedIcon"></ml-icon>
+        </div>
+    </div>
+    <div class="text-center">
+        <input matInput type="text" id="category-name" class="w-full" [(ngModel)]="category.categoryName" #categoryName="ngModel" (ngModelChange)="checkValid()"
+            required />
+    </div>
+    <mat-error *ngIf="categoryName.hasError('required')"></mat-error>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button [mat-dialog-close]="category" color="primary" [disabled]="!isValid">Lưu</button>
+</div>

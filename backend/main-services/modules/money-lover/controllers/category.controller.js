@@ -20,6 +20,7 @@ const listCategorys = (req, returnData, callback) => {
     Category
         .find()
         .where(query)
+        .populate('icon')
         .exec((err, results) => {
             if (err) return callback(err);
             returnData.set(results);

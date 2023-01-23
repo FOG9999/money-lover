@@ -1,0 +1,23 @@
+:host {
+    .category-container {
+        &:hover {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+    }
+
+    .edit-category {
+        top: 0%;
+        right: 0;
+    }
+
+    .cancel-category {
+        top: 0%;
+        right: 0;
+    }
+
+    .accept-category {
+        top: 0%;
+        right: 40px;
+    }
+}

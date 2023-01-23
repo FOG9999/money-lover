@@ -57,7 +57,8 @@ module.exports = {
 
     // redis consts
     redis_key: {
-        user: "redis_user_key"
+        user: "redis_user_key",
+        icon: "redis_icon_key"
     },
 
     user_roles: {
