@@ -13,8 +13,8 @@
                     <mat-card-content>
                         <div class="p-y-4">
                             <mat-form-field class="w-full">
-                                <input matInput type="text" [(ngModel)]="searchCategoryKey" placeholder="Tìm kiếm" />
-                                <button mat-icon-button matSuffix>
+                                <input matInput type="text" [(ngModel)]="searchCategoryKey" (keyup.enter)="searchCategories()" placeholder="Tìm kiếm" />
+                                <button mat-icon-button matSuffix (click)="searchCategories()">
                                     <mat-icon>search</mat-icon>
                                 </button>
                             </mat-form-field>
@@ -29,7 +29,7 @@
                                 </button>
                             </mat-card-actions>
                         </div>
-                        <ml-category></ml-category>
+                        <ml-category [icons]="icons" [search]="search"></ml-category>
                     </mat-card-content>
                 </mat-card>
             </mat-tab>

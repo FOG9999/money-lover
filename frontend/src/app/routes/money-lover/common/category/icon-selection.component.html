@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Chọn lựa icon</h2>
+<div mat-dialog-content>
+    <div class="matero-row" fxLayout="row wrap">
+        <div class="matero-col cursor-pointer icon-new-category" fxFlex="20" fxFlex.gt-sm="10"
+            *ngFor="let icon of data.icons; let i = index" (click)="selectIcon(i)">
+            <div class="icon-new-category" *ngIf="selectedIconPath != icon.path; else selected">
+                <ml-icon [path]="icon.path"></ml-icon>
+            </div>
+            <ng-template #selected>
+                <div class="icon-new-category selected-icon">
+                    <ml-icon [path]="icon.path"></ml-icon>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button [mat-dialog-close]="selectedIconPath" color="primary">Lưu</button>
+</div>

@@ -17,6 +17,7 @@ export class MoneyCommonComponent implements OnInit {
 
     icons: Icon[] = [];
     searchCategoryKey: string = "";
+    search: string = "";
     newCategoryDialog: MatDialogRef<CategoryDialogComponent>;
 
     ngOnInit() { 
@@ -50,5 +51,9 @@ export class MoneyCommonComponent implements OnInit {
                 })
             })
         })
+    }
+
+    searchCategories(){
+        this.search = this.searchCategoryKey;
     }
 }

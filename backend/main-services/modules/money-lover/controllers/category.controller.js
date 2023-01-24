@@ -2,6 +2,7 @@ const Category = require('../models/category');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
+const utils = require(__libs_path + '/utils');
 
 const listCategorys = (req, returnData, callback) => {
     const { search, isDelete } = req.params;
@@ -9,8 +10,6 @@ const listCategorys = (req, returnData, callback) => {
     const query = {
         $or: [{
             name: new RegExp(search, 'i')
-        }, {
-            code: new RegExp(search, 'i')
         }]
     };
     if (!validator.isNull(isDelete)) {
