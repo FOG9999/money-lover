@@ -23,13 +23,13 @@
                                     <mat-icon>add</mat-icon>
                                     Thêm mới
                                 </button>
-                                <button mat-button color="accent">
+                                <button mat-button color="accent" (click)="deleteCategories()">
                                     <mat-icon>delete</mat-icon>
                                     Xóa
                                 </button>
                             </mat-card-actions>
                         </div>
-                        <ml-category [icons]="icons" [search]="search"></ml-category>
+                        <ml-category #categories [icons]="icons" [search]="search"></ml-category>
                     </mat-card-content>
                 </mat-card>
             </mat-tab>

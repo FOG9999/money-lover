@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CONSTS } from 'app/consts';
 import { Category } from 'app/model/category.model';
 import { Icon } from 'app/model/icon.model';
+import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common.service';
 import { IconSelectionComponent } from './icon-selection.component';
 
@@ -13,7 +14,7 @@ import { IconSelectionComponent } from './icon-selection.component';
 })
 
 export class CategoryComponent implements OnInit, OnChanges {
-    constructor(private iconSelectDialog: MatDialog, private commonService: CommonService) { }
+    constructor(private iconSelectDialog: MatDialog, private commonService: CommonService, private toastService: ToastrService) { }
 
     listCategories: Category[] = [];
     listCategoriesSaved: Category[] = [];
@@ -34,13 +35,11 @@ export class CategoryComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         this.getDataCategories();
-        this.updatePreviousState();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.search) {
             this.getDataCategories();
-            this.updatePreviousState();
         }
     }
 
@@ -81,9 +80,11 @@ export class CategoryComponent implements OnInit, OnChanges {
             id: this.listCategories[index]._id
         }).subscribe(res => {
             this.getDataCategories();
-            this.updatePreviousState();
+            this.toastService.success(CONSTS.messages.update_category_success);
+        }, error => {
+            this.toastService.error(CONSTS.messages.update_category_fail);
+            console.error(error);
         })
-        this.updatePreviousState();
     }
 
     generateFakeData() {
@@ -107,7 +108,7 @@ export class CategoryComponent implements OnInit, OnChanges {
 
     renewListChecked() {
         let tempChecked: boolean[] = [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < this.listCategories.length; i++) {
             tempChecked.push(false);
         }
         this.listChecked = [...tempChecked];
@@ -116,7 +117,10 @@ export class CategoryComponent implements OnInit, OnChanges {
     getDataCategories() {
         this.commonService.getListCategories({ search: this.search }).subscribe(res => {
             this.listCategories = [...res];
-            this.renewListChecked();
+            setTimeout(() => {
+                this.renewListChecked();
+                this.updatePreviousState();
+            });            
         })
     }
 

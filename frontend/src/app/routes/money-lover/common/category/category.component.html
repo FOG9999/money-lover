@@ -1,7 +1,7 @@
 <div class="matero-row" fxLayout="row wrap">
     <div class="matero-col cursor-pointer m-y-8" fxFlex="50" fxFlex.gt-xs="25" fxFlex.gt-md="20" fxFlex.gt-xl="10"
         fxLayout="row" *ngFor="let category of listCategories; let i = index">
-        <mat-checkbox fxFlex="20" [checked]="listChecked[i]"></mat-checkbox>
+        <mat-checkbox fxFlex="20" [(ngModel)]="listChecked[i]"></mat-checkbox>
         <div class="category-container p-b-4 p-t-32 position-relative" fxFlex="80" (mouseenter)="onMouseEnterEdit(i)"
             (mouseleave)="onMouseLeaveEdit()">
             <div (click)="editCategoryIcon(i)">

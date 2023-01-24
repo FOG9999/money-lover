@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { IconService } from '@shared';
+import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
+import { CONSTS } from 'app/consts';
 import { Category, NewCategory } from 'app/model/category.model';
 import { Icon } from 'app/model/icon.model';
+import { ToastrService } from 'ngx-toastr';
 import { CategoryDialogComponent } from './category/category-dialog.component';
+import { CategoryComponent } from './category/category.component';
 import { CommonService } from './common.service';
 
 @Component({
@@ -13,24 +17,27 @@ import { CommonService } from './common.service';
 })
 
 export class MoneyCommonComponent implements OnInit {
-    constructor(private commonService: CommonService, private iconService: IconService, private dialog: MatDialog) { }
+    constructor(private commonService: CommonService, private iconService: IconService, private dialog: MatDialog, private toast: ToastrService) { }
 
     icons: Icon[] = [];
     searchCategoryKey: string = "";
     search: string = "";
     newCategoryDialog: MatDialogRef<CategoryDialogComponent>;
+    confirmDeletionDialog: MatDialogRef<ConfirmDeletionComponent>;
 
-    ngOnInit() { 
+    @ViewChild('categories') categories: ElementRef;
+
+    ngOnInit() {
         this.commonService.getListData("icon", {})
-        .subscribe((res: Icon[]) => {
-            this.icons = [...res];            
-        });
+            .subscribe((res: Icon[]) => {
+                this.icons = [...res];
+            });
         this.commonService.getListCategories({}).subscribe((res: Category[]) => {
             console.log(res);
         })
     }
 
-    openAddCategoryDialog(){
+    openAddCategoryDialog() {
         this.newCategoryDialog = this.dialog.open(CategoryDialogComponent, {
             data: {
                 icons: [...this.icons]
@@ -47,13 +54,47 @@ export class MoneyCommonComponent implements OnInit {
                     name: data.categoryName,
                     icon: icon._id
                 }).subscribe(res => {
-                    console.log(res);                    
+                    this.toast.success(CONSTS.messages.insert_category_success);
+                    // trigger reload list categories
+                    this.searchCategoryKey = "";
+                    this.searchCategories();
+                }, error => {
+                    this.toast.error(CONSTS.messages.insert_category_fail);
                 })
+            }, error => {
+                this.toast.error(CONSTS.messages.icon_not_found)
             })
         })
     }
 
-    searchCategories(){
+    searchCategories() {
         this.search = this.searchCategoryKey;
+    }
+
+    deleteCategories() {
+        let comp: any = this.categories;
+        let catesToDelete = comp.listCategoriesSaved.filter((cate, ind) => {
+            return comp.listChecked[ind];
+        });
+        this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
+            data: {
+                title: "Xác nhận xóa chủng loại?",
+                message: `Xóa ${catesToDelete.length} chủng loại?`
+            }
+        })
+        this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.commonService.deleteCategories({ ids: catesToDelete.map((c: Category) => c._id) }).subscribe(res => {
+                    this.toast.success(CONSTS.messages.delete_category_success);
+                    // trigger reload list categories
+                    this.searchCategoryKey = "";
+                    this.searchCategories();
+                }, err => {
+                    console.error(err);
+                    this.toast.error(CONSTS.messages.delete_category_fail);
+                })
+            }
+
+        })
     }
 }

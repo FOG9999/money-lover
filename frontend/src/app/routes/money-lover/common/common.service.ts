@@ -21,11 +21,16 @@ export class CommonService {
 
     insertCategory(data: {name: string, icon: string}){
         const api_name: string = "api.v1.category.add";
-        return this.http.post<Category[]>(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
+        return this.http.post(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
     }
 
     updateCategory(data: {name: string, icon: string, id: string}){
         const api_name: string = "api.v1.category.update";
         return this.http.post<Category[]>(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
+    }
+
+    deleteCategories(data: {ids: string[]}){
+        const api_name: string = "api.v1.category.delete";  
+        return this.http.post(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
     }
 }

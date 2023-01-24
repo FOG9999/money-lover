@@ -19,6 +19,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { ErrorCodeComponent } from './components/error-code/error-code.component';
 import { MLIconComponent } from './components/money-lover/icon/icon.component';
+import { ConfirmDeletionComponent } from './components/money-lover/confirm-deletion/confirm-deletion.component';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -33,7 +34,7 @@ const THIRD_MODULES = [
   ToastrModule,
   TranslateModule,
 ];
-const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent];
+const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent];
 const COMPONENTS_DYNAMIC = [];
 const DIRECTIVES = [];
 const PIPES = [];

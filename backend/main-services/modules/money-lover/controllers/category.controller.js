@@ -2,7 +2,9 @@ const Category = require('../models/category');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
-const utils = require(__libs_path + '/utils');
+const utils = require(__libs_path + '/utils'),
+mongoose = require('mongoose'),
+ObjectId = mongoose.Types.ObjectId;
 
 const listCategorys = (req, returnData, callback) => {
     const { search, isDelete } = req.params;
@@ -15,6 +17,7 @@ const listCategorys = (req, returnData, callback) => {
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
+    else query['isDelete'] = false;
 
     Category
         .find()
@@ -123,15 +126,15 @@ const updateCategory = (req, returnData, callback) => {
 }
 
 const deleteCategory = (req, returnData, callback) => {
-    let { id } = req.params;
+    let { ids } = req.params;
 
-    if (validator.isNull(id)) {
+    if (validator.isNull(ids)) {
         return callback('ERROR_ID_MISSING');
     }
 
     Category
         .update({
-            _id: id
+            _id: {$in: ids.map(id => ObjectId(id))}
         }, {
             $set: {
                 isDelete: true
