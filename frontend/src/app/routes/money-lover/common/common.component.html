@@ -4,6 +4,36 @@
     <mat-card-title></mat-card-title>
     <mat-card-content>
         <mat-tab-group class="m--16 ml">
+            <mat-tab label="Loại ví"> 
+                <mat-card class="card-inside-tab">
+                    <mat-card-title>Loại ví các chi tiêu mặc định</mat-card-title>
+                    <mat-card-subtitle>
+                        Các loại ví này sẽ hiển thị mặc định cho tất cả các người dùng.
+                    </mat-card-subtitle>
+                    <mat-card-content>
+                        <div class="p-y-4">
+                            <mat-form-field class="w-full">
+                                <input matInput type="text" [(ngModel)]="searchWalletTypeKey"
+                                    (keyup.enter)="searchWalletTypes()" placeholder="Tìm kiếm" />
+                                <button mat-icon-button matSuffix (click)="searchWalletTypes()">
+                                    <mat-icon>search</mat-icon>
+                                </button>
+                            </mat-form-field>
+                            <mat-card-actions>
+                                <button mat-button color="primary" (click)="openAddWalletTypeDialog()">
+                                    <mat-icon>add</mat-icon>
+                                    Thêm mới
+                                </button>
+                                <button mat-button color="accent" (click)="deleteWalletTypes()">
+                                    <mat-icon>delete</mat-icon>
+                                    Xóa
+                                </button>
+                            </mat-card-actions>
+                        </div>
+                        <ml-wallet-type #walletTypes [icons]="icons" [search]="searchType"></ml-wallet-type>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
             <mat-tab label="Icons">
                 <mat-card class="card-inside-tab">
                     <mat-card-title>Icons hệ thống</mat-card-title>
@@ -24,7 +54,7 @@
                             </mat-card-actions>
                         </div>
                         <icon-mng #iconsMng [icons]="icons"></icon-mng>
-                    </mat-card-content>                    
+                    </mat-card-content>
                 </mat-card>
             </mat-tab>
             <mat-tab label="Chủng loại">
@@ -57,7 +87,6 @@
                     </mat-card-content>
                 </mat-card>
             </mat-tab>
-            <mat-tab label="Loại ví"> </mat-tab>
         </mat-tab-group>
     </mat-card-content>
 </mat-card>

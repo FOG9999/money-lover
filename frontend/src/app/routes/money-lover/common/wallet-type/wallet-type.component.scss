@@ -1,0 +1,23 @@
+:host {
+    .wallet-type-container {
+        &:hover {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+    }
+
+    .edit-wallet-type {
+        top: 0%;
+        right: 0;
+    }
+
+    .cancel-wallet-type {
+        top: 0%;
+        right: 0;
+    }
+
+    .accept-wallet-type {
+        top: 0%;
+        right: 40px;
+    }
+}

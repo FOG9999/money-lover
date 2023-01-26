@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Thêm mới chủng loại</h2>
+<div mat-dialog-content>
+    <div class="matero-row list-icon-new-wallet-type" fxLayout="row wrap">
+        <div class="matero-col cursor-pointer icon-new-wallet-type" fxFlex="20" fxFlex.gt-sm="10"
+            *ngFor="let icon of data.icons; let i = index" (click)="selectIcon(i)">
+            <div class="icon-new-wallet-type" *ngIf="selectedIndexIcon != i; else selected">
+                <ml-icon [path]="icon.path"></ml-icon>
+            </div>
+            <ng-template #selected>
+                <div class="icon-new-wallet-type selected-icon">
+                    <ml-icon [path]="icon.path"></ml-icon>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+        <div fxFlex="50" fxFlex.gt-sm="20" fxFlex.gt-lg="10">
+            <ml-icon [path]="walletType.selectedIcon"></ml-icon>
+        </div>
+    </div>
+    <div class="text-center">
+        <input matInput type="text" id="wallet-type-name" class="w-full" [(ngModel)]="walletType.walletTypeName" #walletTypeName="ngModel" (ngModelChange)="checkValid()"
+            required />
+    </div>
+    <mat-error *ngIf="walletTypeName.hasError('required')"></mat-error>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button [mat-dialog-close]="walletType" color="primary" [disabled]="!isValid">Lưu</button>
+</div>

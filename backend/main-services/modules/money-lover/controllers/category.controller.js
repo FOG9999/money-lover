@@ -23,6 +23,7 @@ const listCategorys = (req, returnData, callback) => {
         .find()
         .where(query)
         .populate('icon')
+        .sort({dateCreated: -1})
         .exec((err, results) => {
             if (err) return callback(err);
             returnData.set(results);
@@ -44,7 +45,7 @@ const getCategory = (req, returnData, callback) => {
 }
 
 const addCategory = (req, returnData, callback) => {
-    const { name, icon, isDefault } = req.params;
+    let { name, icon, isDefault } = req.params;
     const creator = req.user;
 
     if (validator.isNull(name)) {
@@ -62,7 +63,7 @@ const addCategory = (req, returnData, callback) => {
         function (cb) {
             Category
                 .findOne()
-                .where({ name: name, icon: icon })
+                .where({ name: name, icon: icon, isDelete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);

@@ -55,7 +55,7 @@ const addBudget = (req, returnData, callback) => {
         function (cb) {
             Budget
                 .findOne()
-                .where({ name: name, icon: icon })
+                .where({ name: name, icon: icon, isDelete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);

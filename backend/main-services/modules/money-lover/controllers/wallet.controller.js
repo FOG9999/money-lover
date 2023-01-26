@@ -54,7 +54,7 @@ const addWallet = (req, returnData, callback) => {
         function (cb) {
             Wallet
                 .findOne()
-                .where({ walletType: walletType })
+                .where({ walletType: walletType, isDelete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);

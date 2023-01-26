@@ -5,11 +5,13 @@ import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm
 import { CONSTS } from 'app/consts';
 import { Category, NewCategory } from 'app/model/category.model';
 import { Icon } from 'app/model/icon.model';
+import { NewWalletType } from 'app/model/wallet-type.model';
 import { ToastrService } from 'ngx-toastr';
 import { CategoryDialogComponent } from './category/category-dialog.component';
 import { CategoryComponent } from './category/category.component';
 import { CommonService } from './common.service';
 import { IconAddComponent } from './icon-mng/icon-add-dialog.component';
+import { WalletTypeDialogComponent } from './wallet-type/wallet-type-dialog.component';
 
 @Component({
     selector: 'common',
@@ -22,12 +24,22 @@ export class MoneyCommonComponent implements OnInit {
 
     icons: Icon[] = [];
     searchCategoryKey: string = "";
+    searchWalletTypeKey: string = "";
+    /**
+     * used to fire search evt to category comp
+     */
     search: string = "";
+    /**
+     * used to fire search evt to wallet-type comp
+     */
+    searchType: string = "";
     newCategoryDialog: MatDialogRef<CategoryDialogComponent>;
+    newWalletTypeDialog: MatDialogRef<WalletTypeDialogComponent>;
     confirmDeletionDialog: MatDialogRef<ConfirmDeletionComponent>;
     dialogAdd: MatDialogRef<IconAddComponent>;
 
     @ViewChild('categories') categories: ElementRef;
+    @ViewChild('walletTypes') walletTypes: ElementRef;
     @ViewChild('iconsMng') iconsMng: ElementRef;
 
     ngOnInit() {
@@ -46,7 +58,7 @@ export class MoneyCommonComponent implements OnInit {
             data: {
                 icons: [...this.icons]
             },
-            maxWidth: 600
+            maxWidth: 1000
         });
         this.newCategoryDialog.afterClosed().subscribe((data: NewCategory) => {
             this.iconService.getIconByPath(data.selectedIcon).subscribe((icon: Icon) => {
@@ -60,10 +72,52 @@ export class MoneyCommonComponent implements OnInit {
                 }).subscribe(res => {
                     this.toast.success(CONSTS.messages.insert_category_success);
                     // trigger reload list categories
-                    this.searchCategoryKey = "";
-                    this.searchCategories();
+                    if (this.searchCategoryKey.trim()) {
+                        this.searchCategoryKey = "";
+                        this.searchCategories();
+                    }
+                    else {
+                        let comp: any = this.categories;
+                        comp.getDataCategories();
+                    }
                 }, error => {
                     this.toast.error(CONSTS.messages.insert_category_fail);
+                })
+            }, error => {
+                this.toast.error(CONSTS.messages.icon_not_found)
+            })
+        })
+    }
+
+    openAddWalletTypeDialog() {
+        this.newWalletTypeDialog = this.dialog.open(WalletTypeDialogComponent, {
+            data: {
+                icons: [...this.icons]
+            },
+            maxWidth: 1000
+        });
+        this.newWalletTypeDialog.afterClosed().subscribe((data: NewWalletType) => {
+            this.iconService.getIconByPath(data.selectedIcon).subscribe((icon: Icon) => {
+                console.log({
+                    name: data.walletTypeName,
+                    icon: icon._id
+                });
+                this.commonService.insertWalletType({
+                    name: data.walletTypeName,
+                    icon: icon._id
+                }).subscribe(res => {
+                    this.toast.success(CONSTS.messages.insert_walettype_success);
+                    // trigger reload list categories
+                    if (this.searchWalletTypeKey.trim()) {
+                        this.searchWalletTypeKey = "";
+                        this.searchWalletTypes();
+                    }
+                    else {
+                        let comp: any = this.walletTypes;
+                        comp.getDataWalletTypes();
+                    }
+                }, error => {
+                    this.toast.error(CONSTS.messages.insert_walettype_fail);
                 })
             }, error => {
                 this.toast.error(CONSTS.messages.icon_not_found)
@@ -102,8 +156,14 @@ export class MoneyCommonComponent implements OnInit {
                 this.commonService.deleteCategories({ ids: catesToDelete.map((c: Category) => c._id) }).subscribe(res => {
                     this.toast.success(CONSTS.messages.delete_category_success);
                     // trigger reload list categories
-                    this.searchCategoryKey = "";
-                    this.searchCategories();
+                    if (this.searchCategoryKey.trim()) {
+                        this.searchCategoryKey = "";
+                        this.searchCategories();
+                    }
+                    else {
+                        let comp: any = this.categories;
+                        comp.getDataCategories();
+                    }
                 }, err => {
                     console.error(err);
                     this.toast.error(CONSTS.messages.delete_category_fail);
@@ -113,7 +173,44 @@ export class MoneyCommonComponent implements OnInit {
         })
     }
 
-    deleteIcon(){
+    searchWalletTypes() {
+        this.searchType = this.searchWalletTypeKey;
+    }
+
+    deleteWalletTypes() {
+        let comp: any = this.walletTypes;
+        let typesToDelete = comp.listWalletTypesSaved.filter((cate, ind) => {
+            return comp.listChecked[ind];
+        });
+        this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
+            data: {
+                title: "Xác nhận xóa loại ví?",
+                message: `Xóa ${typesToDelete.length} loại ví?`
+            }
+        })
+        this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.commonService.deleteWalletTypes({ ids: typesToDelete.map((c: Category) => c._id) }).subscribe(res => {
+                    this.toast.success(CONSTS.messages.delete_walettype_success);
+                    // trigger reload list walletTypes
+                    if (this.searchWalletTypeKey.trim()) {
+                        this.searchWalletTypeKey = "";
+                        this.searchWalletTypes();
+                    }
+                    else {
+                        let comp: any = this.walletTypes;
+                        comp.getDataWalletTypes();
+                    }
+                }, err => {
+                    console.error(err);
+                    this.toast.error(CONSTS.messages.delete_walettype_fail);
+                })
+            }
+
+        })
+    }
+
+    deleteIcon() {
         let comp: any = this.iconsMng;
         let iconsToDelete = this.icons.filter((i, ind) => {
             return comp.listChecked[ind];
@@ -126,7 +223,7 @@ export class MoneyCommonComponent implements OnInit {
         })
         this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
-                this.commonService.deleteIcon({ids: iconsToDelete.map(i => i._id), paths: iconsToDelete.map(i => i.path)}).subscribe(res => {
+                this.commonService.deleteIcon({ ids: iconsToDelete.map(i => i._id), paths: iconsToDelete.map(i => i.path) }).subscribe(res => {
                     this.toast.success(CONSTS.messages.delete_icon_success);
                     this.getListIcons();
                     iconsToDelete.forEach(ic => {

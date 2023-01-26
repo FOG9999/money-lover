@@ -2,6 +2,9 @@ const WalletType = require('../models/wallet-type');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
+const utils = require(__libs_path + '/utils'),
+mongoose = require('mongoose'),
+ObjectId = mongoose.Types.ObjectId;
 
 const listWalletTypes = (req, returnData, callback) => {
     const { search, isDelete } = req.params;
@@ -14,10 +17,13 @@ const listWalletTypes = (req, returnData, callback) => {
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
+    else query['isDelete'] = false;
 
     WalletType
         .find()
         .where(query)
+        .populate('icon')
+        .sort({dateCreated: -1})
         .exec((err, results) => {
             if (err) return callback(err);
             returnData.set(results);
@@ -39,7 +45,7 @@ const getWalletType = (req, returnData, callback) => {
 }
 
 const addWalletType = (req, returnData, callback) => {
-    const { name, icon } = req.params;
+    let { name, icon, isDefault } = req.params;
     const creator = req.user;
 
     if (validator.isNull(name)) {
@@ -48,12 +54,16 @@ const addWalletType = (req, returnData, callback) => {
     if (validator.isNull(icon)) {
         return callback('ERROR_PATH_MISSING');
     }
+    if (validator.isNull(isDefault)) {
+        isDefault = 1;
+    }
+    else isDefault = 0;
 
     async.series([
         function (cb) {
             WalletType
                 .findOne()
-                .where({ name: name, icon: icon })
+                .where({ name: name, icon: icon, isDelete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);
@@ -121,15 +131,15 @@ const updateWalletType = (req, returnData, callback) => {
 }
 
 const deleteWalletType = (req, returnData, callback) => {
-    let { id } = req.params;
+    let { ids} = req.params;
 
-    if (validator.isNull(id)) {
+    if (validator.isNull(ids)) {
         return callback('ERROR_ID_MISSING');
     }
 
     WalletType
         .update({
-            _id: id
+            _id: {$in: ids.map(id => ObjectId(id))}
         }, {
             $set: {
                 isDelete: true

@@ -7,9 +7,20 @@ import { IconSelectionComponent } from './common/category/icon-selection.compone
 import { MoneyCommonComponent } from './common/common.component';
 import { IconAddComponent } from './common/icon-mng/icon-add-dialog.component';
 import { IconManagementComponent } from './common/icon-mng/icon-mng.component';
+import { WalletTypeDialogComponent } from './common/wallet-type/wallet-type-dialog.component';
+import { WalletTypeComponent } from './common/wallet-type/wallet-type.component';
 import { MoneyLoverRoutingModule } from './money-lover-routing.module';
 
-const COMPONENTS = [MoneyCommonComponent, CategoryComponent, CategoryDialogComponent, IconSelectionComponent, IconManagementComponent, IconAddComponent];
+const COMPONENTS = [
+    MoneyCommonComponent,
+    CategoryComponent,
+    CategoryDialogComponent,
+    IconSelectionComponent,
+    IconManagementComponent,
+    IconAddComponent,
+    WalletTypeComponent,
+    WalletTypeDialogComponent
+];
 
 @NgModule({
     imports: [SharedModule, MoneyLoverRoutingModule],

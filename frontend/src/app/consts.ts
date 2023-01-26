@@ -17,5 +17,11 @@ export const CONSTS = {
         upload_icon_fail: 'Tải lên icon thất bại',
         delete_icon_success: 'Xóa icon thành công',
         delete_icon_fail: 'Xóa icon thất bại',
+        update_walettype_success: 'Cập nhật loại ví thành công',
+        update_walettype_fail: 'Cập nhật loại ví thất bại',
+        insert_walettype_success: 'Thêm mới loại ví thành công',
+        insert_walettype_fail: 'Thêm mới loại ví thất bại',
+        delete_walettype_success: 'Xóa loại ví thành công',
+        delete_walettype_fail: 'Xóa loại ví thất bại',
     }
 }
