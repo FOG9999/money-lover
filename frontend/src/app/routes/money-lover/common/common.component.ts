@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CategoryDialogComponent } from './category/category-dialog.component';
 import { CategoryComponent } from './category/category.component';
 import { CommonService } from './common.service';
+import { IconAddComponent } from './icon-mng/icon-add-dialog.component';
 
 @Component({
     selector: 'common',
@@ -24,17 +25,20 @@ export class MoneyCommonComponent implements OnInit {
     search: string = "";
     newCategoryDialog: MatDialogRef<CategoryDialogComponent>;
     confirmDeletionDialog: MatDialogRef<ConfirmDeletionComponent>;
+    dialogAdd: MatDialogRef<IconAddComponent>;
 
     @ViewChild('categories') categories: ElementRef;
+    @ViewChild('iconsMng') iconsMng: ElementRef;
 
     ngOnInit() {
+        this.getListIcons();
+    }
+
+    getListIcons() {
         this.commonService.getListData("icon", {})
             .subscribe((res: Icon[]) => {
                 this.icons = [...res];
             });
-        this.commonService.getListCategories({}).subscribe((res: Category[]) => {
-            console.log(res);
-        })
     }
 
     openAddCategoryDialog() {
@@ -67,6 +71,17 @@ export class MoneyCommonComponent implements OnInit {
         })
     }
 
+    openAddIconDialog() {
+        this.dialogAdd = this.dialog.open(IconAddComponent, {
+            width: '300px'
+        });
+        this.dialogAdd.afterClosed().subscribe((data: boolean | undefined) => {
+            if (data) {
+                this.getListIcons();
+            }
+        })
+    }
+
     searchCategories() {
         this.search = this.searchCategoryKey;
     }
@@ -92,6 +107,34 @@ export class MoneyCommonComponent implements OnInit {
                 }, err => {
                     console.error(err);
                     this.toast.error(CONSTS.messages.delete_category_fail);
+                })
+            }
+
+        })
+    }
+
+    deleteIcon(){
+        let comp: any = this.iconsMng;
+        let iconsToDelete = this.icons.filter((i, ind) => {
+            return comp.listChecked[ind];
+        })
+        this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
+            data: {
+                title: "Xác nhận xóa icons?",
+                message: `Xóa ${iconsToDelete.length} ${iconsToDelete.length > 1 ? 'icons' : 'icon'}?`
+            }
+        })
+        this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.commonService.deleteIcon({ids: iconsToDelete.map(i => i._id), paths: iconsToDelete.map(i => i.path)}).subscribe(res => {
+                    this.toast.success(CONSTS.messages.delete_icon_success);
+                    this.getListIcons();
+                    iconsToDelete.forEach(ic => {
+                        sessionStorage.removeItem(ic.path);
+                    })
+                }, err => {
+                    console.error(err);
+                    this.toast.error(CONSTS.messages.delete_icon_fail);
                 })
             }
 

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Thêm icon mới</h2>
+<div mat-dialog-content>
+    <div class="img-preview p-y-16">
+        <ml-icon [path]="imgSrc" *ngIf="!file; else selected"></ml-icon>
+        <ng-template #selected>
+            <img [src]="imgSrc" class="w-full img-src" />
+        </ng-template>
+    </div>
+    <div class="img-uploader">
+        <input #fileSelected type="file" accept="png" (click)="clear()" (change)="onChangeFile($event)" hidden />
+        <button mat-flat-button color="primary" (click)="fileSelected.click()">Choose File</button>
+    </div>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button (click)="saveIcon()" color="primary" [disabled]="!file">Lưu</button>
+</div>

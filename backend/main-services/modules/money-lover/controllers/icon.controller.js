@@ -2,6 +2,11 @@ const Icon = require('../models/icon');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
+const { v4: uuid } = require('uuid');
+const redis = require('../../../../libs/redis');
+const consts = require('../../../../config/consts'),
+mongoose = require('mongoose'),
+ObjectId = mongoose.Types.ObjectId;
 
 const listIcons = (req, returnData, callback) => {
     const { search, isDelete } = req.params;
@@ -16,10 +21,14 @@ const listIcons = (req, returnData, callback) => {
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
+    else {
+        query['isDelete'] = false;
+    }
 
     Icon
         .find()
         .where(query)
+        .sort({dateCreated: -1})
         .exec((err, results) => {
             if (err) return callback(err);
             returnData.set(results);
@@ -136,22 +145,38 @@ const updateIcon = (req, returnData, callback) => {
 }
 
 const deleteIcon = (req, returnData, callback) => {
-    let { id } = req.params;
+    let { ids, paths } = req.params;
 
-    if (validator.isNull(id)) {
+    if (validator.isNull(ids)) {
         return callback('ERROR_ID_MISSING');
+    }
+    if (validator.isNull(paths)) {
+        return callback('ERROR_PATH_MISSING');
     }
 
     Icon
         .update({
-            _id: id
+            _id: {$in: ids.map(i => ObjectId(i))}
         }, {
             $set: {
                 isDelete: true
             }
         }, (err, data) => {
             if (err) return callback(err);
-            callback();
+            // remove icons in cache storage
+            paths.forEach(path => {
+                redis.HEXISTS(consts.redis_key.icon, path, (err, exists) => {
+                    if(err){
+                        console.error(err);
+                    }
+                    else {
+                        if(exists == 1){
+                            redis.DEL(consts.redis_key.icon, path);
+                        }
+                    }
+                })
+            })
+            callback();            
         })
 }
 
@@ -174,6 +199,53 @@ const insertAllIcons = (req, returnData, callback) => {
     }
 }
 
+const uploadIcon = (req, returnData, callback) => {
+    try {
+        let { file } = req.body;
+        file = file.replace(/^data:image\/png;base64,/, "");
+        let code = uuid().toString(), path = code + consts.icon_type;
+        let filePath = __icons_path + '/' + code + consts.icon_type;
+        fs.writeFileSync(filePath, file, 'base64');
+        const creator = req.user;
+        async.series([
+            function (cb) {
+                Icon
+                    .findOne()
+                    .where({ code: code, path: path })
+                    .exec((err, data) => {
+                        if (err) {
+                            cb(err);
+                        }
+                        if (data) {
+                            cb('ERROR_ICON_EXIST');
+                        }
+                        else cb();
+                    })
+            },
+            function (cb) {
+                let newIcon = new Icon({
+                    code,
+                    path,
+                    creator: creator._id,
+                    dateCreated: new Date()
+                })
+                newIcon.save((err, result) => {
+                    if (err) cb(err);
+                    else {
+                        cb(null, result);
+                    }
+                })
+            }
+        ], (err, data) => {
+            if (err) return callback(err);
+            returnData.set(data);
+            callback();
+        })
+    } catch (error) {
+        callback(error);
+    }
+}
+
 exports.deleteIcon = deleteIcon;
 exports.listIcons = listIcons;
 exports.addIcon = addIcon;
@@ -181,3 +253,4 @@ exports.getIcon = getIcon;
 exports.updateIcon = updateIcon;
 exports.insertAllIcons = insertAllIcons;
 exports.getIconByPath = getIconByPath;
+exports.uploadIcon = uploadIcon;

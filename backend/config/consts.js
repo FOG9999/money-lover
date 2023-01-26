@@ -69,5 +69,6 @@ module.exports = {
     icon_prefix: "data:image/png;base64,",
 
     enableCORS: true,
-    page_size: 10
+    page_size: 10,
+    icon_type: '.png'
 }

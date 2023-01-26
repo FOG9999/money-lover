@@ -33,4 +33,14 @@ export class CommonService {
         const api_name: string = "api.v1.category.delete";  
         return this.http.post(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
     }
+
+    saveIconData(data: {file: string}){
+        const api_name: string = "api.v1.icon.upload";  
+        return this.http.post(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
+    }
+
+    deleteIcon(data: {ids: string[], paths: string[]}){
+        const api_name: string = "api.v1.icon.delete";  
+        return this.http.post(environment.SERVER_URL, {api_name, ...data}, {observe: "body"});
+    }
 }

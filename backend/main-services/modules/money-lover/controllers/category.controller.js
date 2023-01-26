@@ -44,7 +44,7 @@ const getCategory = (req, returnData, callback) => {
 }
 
 const addCategory = (req, returnData, callback) => {
-    const { name, icon } = req.params;
+    const { name, icon, isDefault } = req.params;
     const creator = req.user;
 
     if (validator.isNull(name)) {
@@ -53,6 +53,10 @@ const addCategory = (req, returnData, callback) => {
     if (validator.isNull(icon)) {
         return callback('ERROR_PATH_MISSING');
     }
+    if (validator.isNull(isDefault)) {
+        isDefault = 1;
+    }
+    else isDefault = 0;
 
     async.series([
         function (cb) {
