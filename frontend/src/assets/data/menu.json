@@ -15,10 +15,18 @@
       "name": "money-lover",
       "type": "sub",
       "icon": "question_answer",
+      "level": ["ADMIN", "SYSTEM"],
       "children": [
         {
           "route": "common",
           "name": "common",
+          "level": ["ADMIN", "SYSTEM"],
+          "type": "link"
+        },
+        {
+          "route": "system",
+          "name": "system",
+          "level": ["SYSTEM"],
           "type": "link"
         }
       ]

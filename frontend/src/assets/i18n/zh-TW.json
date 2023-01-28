@@ -64,7 +64,10 @@
     "sessions.404": "404",
     "sessions.500": "500",
     "helpers": "輔助工具",
-    "helpers.css-class": "CSS 類"
+    "helpers.css-class": "CSS 類",
+    "money-lover": "Money Lover",
+    "money-lover.common": "Common",
+    "money-lover.system": "System"
   },
   "user": {
     "profile": "個人信息",

@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { User } from 'app/model/user.model';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AuthService {
 
     constructor(private http: HttpClient) {}
@@ -11,6 +13,18 @@ export class AuthService {
     login(username: string, password: string) {
         let api_name = "api.v1.systemuser.login";
         return this.http.post<User>(environment.SERVER_URL, {username, password, api_name})
+    }
+
+    createUser(data: {
+        username: string,
+        password: string,
+        firstname: string,
+        lastname: string,
+        email: string,
+        level: 'ADMIN' | 'SYSTEM' | 'USER'
+    }){
+        const api_name: string = "api.v1.systemuser.create";
+        return this.http.post(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
 
 }

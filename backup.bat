@@ -1,0 +1,1 @@
+mongodump -o database-backup -d my-money-lover -u fog9999 -p fog9999

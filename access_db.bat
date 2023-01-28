@@ -1,0 +1,1 @@
+mongo --username fog9999 --password fog9999 --authenticationDatabase my-money-lover

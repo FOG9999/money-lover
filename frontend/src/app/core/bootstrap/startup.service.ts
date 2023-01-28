@@ -2,13 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 
-import { MenuService } from './menu.service';
+import { Menu, MenuChildrenItem, MenuService } from './menu.service';
+import { CONSTS } from 'app/consts';
+import { LocalStorageService } from '@shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StartupService {
-  constructor(private menuService: MenuService, private http: HttpClient) {}
+  constructor(private menuService: MenuService, private http: HttpClient, private localStorage: LocalStorageService) { }
+
+  level: string = this.localStorage.get("user").level;
 
   load(): Promise<any> {
     return new Promise<void>((resolve, reject) => {
@@ -22,14 +26,66 @@ export class StartupService {
         )
         .subscribe(
           (res: any) => {
-            this.menuService.recursMenuForTranslation(res.menu, 'menu');
-            this.menuService.set(res.menu);
+            let menu = this.getMenu(res.menu);
+            this.menuService.recursMenuForTranslation(menu, 'menu'); // the input 'menu' is modified after this function for a correct input for .set()
+            this.menuService.set(menu);
           },
-          () => {},
+          () => { },
           () => {
             resolve();
           }
         );
     });
+  }
+
+  getMenu(menu: Menu[]) {
+    let showMenus: Menu[] = [];
+    menu.forEach(m => {
+      if (m.level) {
+        if (m.level.includes(CONSTS.auth.NONE)) {
+          showMenus.push(m);
+        }
+        else {
+          if (m.level.includes(this.level)) {
+            if (m.children && m.children.length > 0) {
+              showMenus.push({
+                ...m,
+                children: [
+                  ...this.getMenuChildren(m)
+                ]
+              });
+            }
+            else {
+              showMenus.push({
+                ...m
+              })
+            }
+          }
+        }
+      }
+    })
+    return showMenus;
+  }
+
+  getMenuChildren(menu: Menu | MenuChildrenItem) {
+    let children: MenuChildrenItem[] = [];
+    menu.children.forEach(m => {
+      if (m.level.includes(this.level)) {
+        if (m.children && m.children.length > 0) {
+          children.push({
+            ...m,
+            children: [
+              ...this.getMenuChildren(m)
+            ]
+          });
+        }
+        else {
+          children.push({
+            ...m
+          })
+        }
+      }
+    });
+    return children;
   }
 }

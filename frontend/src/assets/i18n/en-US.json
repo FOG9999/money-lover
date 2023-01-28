@@ -67,7 +67,8 @@
     "helpers": "helpers",
     "helpers.css-class": "CSS Class",
     "money-lover": "Money Lover",
-    "money-lover.common": "Money Lover Common"
+    "money-lover.common": "Common",
+    "money-lover.system": "System"
   },
   "user": {
     "profile": "profile",

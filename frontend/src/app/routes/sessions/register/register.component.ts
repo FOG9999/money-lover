@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '@core/authentication/authentication.service';
+import { validators } from '@shared/utils/validators';
+import { CONSTS } from 'app/consts';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -7,11 +12,16 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 })
 export class RegisterComponent implements OnInit {
   reactiveForm: FormGroup;
+  errors = CONSTS.messages.register;
+  isSubmitted: boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router, private authenService: AuthService, private toast: ToastrService) {
     this.reactiveForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
+      username: ['', [Validators.required, validators.validateUsername]],
+      password: ['', [Validators.required, validators.validatePassword]],
+      firstname: ['', [Validators.required, validators.validateName]],
+      lastname: ['', [Validators.required, validators.validateName]],
+      email: ['', [Validators.required, validators.validateEmail]],
       confirmPassword: ['', [this.confirmValidator]],
     });
   }
@@ -26,4 +36,23 @@ export class RegisterComponent implements OnInit {
     }
     return {};
   };
+
+  register(){
+    this.isSubmitted = true;
+    this.authenService.createUser({
+      ...this.reactiveForm.value,
+      level: 'USER'
+    }).subscribe((res: any) => {
+      if(res.code){
+        this.toast.error(res.message);
+        this.isSubmitted = false;
+      }
+      else {
+        this.toast.success(CONSTS.messages.create_account_success);
+        setTimeout(() => {
+          this.router.navigateByUrl('/auth/login')
+        }, 2000);                
+      }
+    }) 
+  }
 }

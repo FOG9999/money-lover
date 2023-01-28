@@ -12,6 +12,7 @@ export interface MenuChildrenItem {
   name: string;
   type: 'link' | 'sub' | 'extLink' | 'extTabLink';
   children?: MenuChildrenItem[];
+  level: string[];
 }
 
 export interface Menu {
@@ -22,6 +23,7 @@ export interface Menu {
   label?: MenuTag;
   badge?: MenuTag;
   children?: MenuChildrenItem[];
+  level: string[];
 }
 
 @Injectable({

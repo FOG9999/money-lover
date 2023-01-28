@@ -23,5 +23,27 @@ export const CONSTS = {
         insert_walettype_fail: 'Thêm mới loại ví thất bại',
         delete_walettype_success: 'Xóa loại ví thành công',
         delete_walettype_fail: 'Xóa loại ví thất bại',
+        request_fail: "Đã có lỗi xảy ra! Vui lòng đăng nhập lại.",
+        register: {
+            username_required: "Vui lòng nhập tên đăng nhập",
+            password_required: "Vui lòng nhập mật khẩu",
+            firstname_required: "Vui lòng nhập họ của bạn",
+            lastname_required: "Vui lòng nhập tên của bạn",
+            email_required: "Vui lòng nhập email",
+            username_invalid: "Tên đăng nhập không đúng định dạng",
+            password_invalid: "Mật khẩu không đúng định dạng",
+            firstname_invalid: "Họ không đúng định dạng",
+            lastname_invalid: "Tên không đúng định dạng",
+            email_invalid: "Email không đúng định dạng",
+            confirm_password_inconsistent: "Mật khẩu xác nhận không trùng khớp",
+            confirm_password_required: "Mật khẩu xác nhận không được để trống"
+        },
+        create_account_success: "Đăng ký tài khoản thành công"
+    },
+    auth: {
+        NONE: "NONE",
+        USER: "USER",
+        ADMIN: "ADMIN",
+        SYSTEM: "SYSTEM"
     }
 }

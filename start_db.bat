@@ -1,0 +1,1 @@
+mongod --dbpath D:\Coding\my-money-lover\database

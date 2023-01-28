@@ -241,7 +241,8 @@ const createUser = (req, returnData, callback) => {
         firstname,
         lastname,
         email,
-        password
+        password,
+        level
     } = req.params;
 
     if(validator.isNull(username)){
@@ -258,6 +259,9 @@ const createUser = (req, returnData, callback) => {
     }
     if(validator.isNull(lastname)){
         return callback('ERROR_LASTNAME_MISSING');
+    }
+    if(validator.isNull(level)){
+        return callback('ERROR_LEVEL_MISSING');
     }
 
     let query = {
@@ -283,9 +287,8 @@ const createUser = (req, returnData, callback) => {
         }
 
         let newUser = new User();
-        utils.merge(newUser, {username, firstname, lastname, email, password});
+        utils.merge(newUser, {username, firstname, lastname, email, password, level});
         newUser.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
-        newUser.level = consts.user_roles.SYSTEM_USER;
         newUser.save((err1, result) => {
             if(err1){
                 return callback(err1);

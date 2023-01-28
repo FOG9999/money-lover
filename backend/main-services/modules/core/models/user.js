@@ -82,7 +82,8 @@ var UserSchema = new Schema({
     },
     role: {
         type: ObjectId,
-        ref: 'Role'
+        ref: 'Role',
+        default: null
     },
     is_delete: {
         type: Boolean,
