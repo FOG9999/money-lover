@@ -36,6 +36,10 @@ let CategorySchema = new Schema({
         type: ObjectId,
         ref: "Icon",
         required: 'ERROR_CATEGORY_ICON_MISSING'
+    },
+    transactionType: {
+        type: Number, // 0 - outcome, 1 - income
+        required: 'ERROR_TYPE_MISSING'
     }
 });
 

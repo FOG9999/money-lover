@@ -1,0 +1,76 @@
+<div class="p-16">
+    <mat-card class="p-x-32">
+        <mat-card-title>Danh mục chủng loại của tôi</mat-card-title>
+        <mat-card-subtitle>
+            Bao gồm các danh mục mặc định và các danh mục của riêng bạn.
+        </mat-card-subtitle>
+        <mat-card-content>
+            <div class="p-y-8">
+                <mat-form-field class="w-full">
+                    <input matInput type="text" [(ngModel)]="search" (keyup.enter)="getDataCategories()"
+                        placeholder="Tìm kiếm" />
+                    <button mat-icon-button matSuffix (click)="getDataCategories()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </mat-form-field>
+                <div>
+                    <button mat-raised-button color="primary" class="m-r-16" (click)="openAddCategoryDialog()">
+                        <mat-icon>add</mat-icon>
+                        Thêm mới
+                    </button>
+                    <button mat-raised-button color="accent" (click)="deleteCategories()">
+                        <mat-icon>delete</mat-icon>
+                        Xóa
+                    </button>
+                </div>
+            </div>
+            <div class="matero-row" fxLayout="row wrap">
+                <div class="matero-col cursor-pointer m-y-8" fxFlex="50" fxFlex.gt-xs="25" fxFlex.gt-md="20"
+                    fxFlex.gt-xl="10" fxLayout="row" *ngFor="let category of listCategories; let i = index">
+                    <mat-checkbox fxFlex="20" [(ngModel)]="listChecked[i]"
+                        *ngIf="category.isDefault == 0"></mat-checkbox>
+                    <div class="category-container p-b-4 p-t-32 position-relative" fxFlex="80"
+                        (mouseenter)="onMouseEnterEdit(i)" (mouseleave)="onMouseLeaveEdit()"
+                        *ngIf="category.isDefault == 0; else default">
+                        <div (click)="editCategoryIcon(i)">
+                            <ml-icon [path]="category.icon.path" matLine></ml-icon>
+                        </div>
+                        <div class="text-center" matLine *ngIf="indexEditting != i; else editting">
+                            {{category.name}}
+                        </div>
+                        <ng-template #editting>
+                            <div class="text-center">
+                                <input #editInput matInput type="text" [(ngModel)]="nameEditting" />
+                            </div>
+                        </ng-template>
+                        <button mat-icon-button *ngIf="indexHovering == i && indexEditting != i"
+                            class="position-absolute edit-category" (click)="editName(i)">
+                            <mat-icon color="accent">edit</mat-icon>
+                        </button>
+                        <button mat-icon-button *ngIf="indexEditting == i" class="position-absolute accept-category"
+                            (click)="finishEditName(i)">
+                            <mat-icon color="primary">check</mat-icon>
+                        </button>
+                        <button mat-icon-button *ngIf="indexEditting == i" class="position-absolute cancel-category"
+                            (click)="cancelExitEditName()">
+                            <mat-icon color="accent">cancel</mat-icon>
+                        </button>
+                    </div>
+                    <ng-template #default>
+                        <div fxFlex="20"></div>
+                        <div class="category-container p-b-4 p-t-32 position-relative" fxFlex="80">
+                            <div>
+                                <ml-icon [path]="category.icon.path" matLine></ml-icon>
+                            </div>
+                            <div class="text-center" matLine>
+                                {{category.name}}
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+            <mat-paginator [length]="listCategories.length" [pageSize]="pageSize">
+            </mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>

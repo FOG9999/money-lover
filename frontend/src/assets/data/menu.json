@@ -15,7 +15,7 @@
       "name": "money-lover",
       "type": "sub",
       "icon": "question_answer",
-      "level": ["ADMIN", "SYSTEM"],
+      "level": ["ADMIN", "SYSTEM", "USER"],
       "children": [
         {
           "route": "common",
@@ -27,6 +27,12 @@
           "route": "system",
           "name": "system",
           "level": ["SYSTEM"],
+          "type": "link"
+        },
+        {
+          "route": "user-category",
+          "name": "user-category",
+          "level": ["USER"],
           "type": "link"
         }
       ]

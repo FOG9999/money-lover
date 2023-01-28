@@ -18,9 +18,18 @@
             <ml-icon [path]="category.selectedIcon"></ml-icon>
         </div>
     </div>
+    <div class="p-y-16" fxLayout="row" fxLayoutAlign="center">
+        <div>
+            <mat-radio-group name="transactionType" [(ngModel)]="category.transactionType">
+                <mat-radio-button *ngFor="let type of listTransactionTypes" [value]="type.value" class="m-x-8">
+                    {{type.label}}
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+    </div>
     <div class="text-center">
-        <input matInput type="text" id="category-name" class="w-full" [(ngModel)]="category.categoryName" #categoryName="ngModel" (ngModelChange)="checkValid()"
-            required />
+        <input matInput type="text" id="category-name" class="w-full" [(ngModel)]="category.categoryName"
+            #categoryName="ngModel" (ngModelChange)="checkValid()" required />
     </div>
     <mat-error *ngIf="categoryName.hasError('required')"></mat-error>
 </div>

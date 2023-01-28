@@ -20,12 +20,12 @@ export class CommonService {
         return this.http.post<Category[]>(environment.SERVER_URL, { api_name, ...search }, { observe: "body" });
     }
 
-    insertCategory(data: { name: string, icon: string }) {
+    insertCategory(data: { name: string, icon: string, transactionType: number, isDefault?: number }) {
         const api_name: string = "api.v1.category.add";
         return this.http.post(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
 
-    updateCategory(data: { name: string, icon: string, id: string }) {
+    updateCategory(data: { name: string, icon: string, id: string, transactionType: number }) {
         const api_name: string = "api.v1.category.update";
         return this.http.post<Category[]>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }

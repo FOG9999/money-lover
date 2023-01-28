@@ -15,8 +15,7 @@ import { WalletTypeDialogComponent } from './wallet-type/wallet-type-dialog.comp
 
 @Component({
     selector: 'common',
-    templateUrl: 'common.component.html',
-    providers: [CommonService]
+    templateUrl: 'common.component.html'
 })
 
 export class MoneyCommonComponent implements OnInit {
@@ -68,7 +67,8 @@ export class MoneyCommonComponent implements OnInit {
                 });
                 this.commonService.insertCategory({
                     name: data.categoryName,
-                    icon: icon._id
+                    icon: icon._id,
+                    transactionType: data.transactionType
                 }).subscribe(res => {
                     this.toast.success(CONSTS.messages.insert_category_success);
                     // trigger reload list categories
@@ -145,32 +145,37 @@ export class MoneyCommonComponent implements OnInit {
         let catesToDelete = comp.listCategoriesSaved.filter((cate, ind) => {
             return comp.listChecked[ind];
         });
-        this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
-            data: {
-                title: "Xác nhận xóa chủng loại?",
-                message: `Xóa ${catesToDelete.length} chủng loại?`
-            }
-        })
-        this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
-            if (isConfirmed) {
-                this.commonService.deleteCategories({ ids: catesToDelete.map((c: Category) => c._id) }).subscribe(res => {
-                    this.toast.success(CONSTS.messages.delete_category_success);
-                    // trigger reload list categories
-                    if (this.searchCategoryKey.trim()) {
-                        this.searchCategoryKey = "";
-                        this.searchCategories();
-                    }
-                    else {
-                        let comp: any = this.categories;
-                        comp.getDataCategories();
-                    }
-                }, err => {
-                    console.error(err);
-                    this.toast.error(CONSTS.messages.delete_category_fail);
-                })
-            }
+        if (catesToDelete.length > 0) {
+            this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
+                data: {
+                    title: "Xác nhận xóa chủng loại?",
+                    message: `Xóa ${catesToDelete.length} chủng loại?`
+                }
+            })
+            this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+                if (isConfirmed) {
+                    this.commonService.deleteCategories({ ids: catesToDelete.map((c: Category) => c._id) }).subscribe(res => {
+                        this.toast.success(CONSTS.messages.delete_category_success);
+                        // trigger reload list categories
+                        if (this.searchCategoryKey.trim()) {
+                            this.searchCategoryKey = "";
+                            this.searchCategories();
+                        }
+                        else {
+                            let comp: any = this.categories;
+                            comp.getDataCategories();
+                        }
+                    }, err => {
+                        console.error(err);
+                        this.toast.error(CONSTS.messages.delete_category_fail);
+                    })
+                }
 
-        })
+            })
+        }
+        else {
+            this.toast.warning(CONSTS.select_to_delete_category);
+        }
     }
 
     searchWalletTypes() {
@@ -182,32 +187,37 @@ export class MoneyCommonComponent implements OnInit {
         let typesToDelete = comp.listWalletTypesSaved.filter((cate, ind) => {
             return comp.listChecked[ind];
         });
-        this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
-            data: {
-                title: "Xác nhận xóa loại ví?",
-                message: `Xóa ${typesToDelete.length} loại ví?`
-            }
-        })
-        this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
-            if (isConfirmed) {
-                this.commonService.deleteWalletTypes({ ids: typesToDelete.map((c: Category) => c._id) }).subscribe(res => {
-                    this.toast.success(CONSTS.messages.delete_walettype_success);
-                    // trigger reload list walletTypes
-                    if (this.searchWalletTypeKey.trim()) {
-                        this.searchWalletTypeKey = "";
-                        this.searchWalletTypes();
-                    }
-                    else {
-                        let comp: any = this.walletTypes;
-                        comp.getDataWalletTypes();
-                    }
-                }, err => {
-                    console.error(err);
-                    this.toast.error(CONSTS.messages.delete_walettype_fail);
-                })
-            }
+        if (typesToDelete.length > 0) {
+            this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
+                data: {
+                    title: "Xác nhận xóa loại ví?",
+                    message: `Xóa ${typesToDelete.length} loại ví?`
+                }
+            })
+            this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+                if (isConfirmed) {
+                    this.commonService.deleteWalletTypes({ ids: typesToDelete.map((c: Category) => c._id) }).subscribe(res => {
+                        this.toast.success(CONSTS.messages.delete_walettype_success);
+                        // trigger reload list walletTypes
+                        if (this.searchWalletTypeKey.trim()) {
+                            this.searchWalletTypeKey = "";
+                            this.searchWalletTypes();
+                        }
+                        else {
+                            let comp: any = this.walletTypes;
+                            comp.getDataWalletTypes();
+                        }
+                    }, err => {
+                        console.error(err);
+                        this.toast.error(CONSTS.messages.delete_walettype_fail);
+                    })
+                }
 
-        })
+            })
+        }
+        else {
+            this.toast.warning(CONSTS.select_to_delete_wallet_type);
+        }
     }
 
     deleteIcon() {
@@ -215,26 +225,30 @@ export class MoneyCommonComponent implements OnInit {
         let iconsToDelete = this.icons.filter((i, ind) => {
             return comp.listChecked[ind];
         })
-        this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
-            data: {
-                title: "Xác nhận xóa icons?",
-                message: `Xóa ${iconsToDelete.length} ${iconsToDelete.length > 1 ? 'icons' : 'icon'}?`
-            }
-        })
-        this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
-            if (isConfirmed) {
-                this.commonService.deleteIcon({ ids: iconsToDelete.map(i => i._id), paths: iconsToDelete.map(i => i.path) }).subscribe(res => {
-                    this.toast.success(CONSTS.messages.delete_icon_success);
-                    this.getListIcons();
-                    iconsToDelete.forEach(ic => {
-                        sessionStorage.removeItem(ic.path);
+        if (iconsToDelete.length > 0) {
+            this.confirmDeletionDialog = this.dialog.open(ConfirmDeletionComponent, {
+                data: {
+                    title: "Xác nhận xóa icons?",
+                    message: `Xóa ${iconsToDelete.length} ${iconsToDelete.length > 1 ? 'icons' : 'icon'}?`
+                }
+            })
+            this.confirmDeletionDialog.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+                if (isConfirmed) {
+                    this.commonService.deleteIcon({ ids: iconsToDelete.map(i => i._id), paths: iconsToDelete.map(i => i.path) }).subscribe(res => {
+                        this.toast.success(CONSTS.messages.delete_icon_success);
+                        this.getListIcons();
+                        iconsToDelete.forEach(ic => {
+                            sessionStorage.removeItem(ic.path);
+                        })
+                    }, err => {
+                        console.error(err);
+                        this.toast.error(CONSTS.messages.delete_icon_fail);
                     })
-                }, err => {
-                    console.error(err);
-                    this.toast.error(CONSTS.messages.delete_icon_fail);
-                })
-            }
+                }
 
-        })
+            })
+        } else {
+            this.toast.warning(CONSTS.select_to_delete_icon);
+        }
     }
 }

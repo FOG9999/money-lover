@@ -77,7 +77,8 @@ export class CategoryComponent implements OnInit, OnChanges {
         this.commonService.updateCategory({
             name: this.nameEditting,
             icon: this.listCategories[index].icon._id,
-            id: this.listCategories[index]._id
+            id: this.listCategories[index]._id,
+            transactionType: this.listCategories[index].transactionType
         }).subscribe(res => {
             this.getDataCategories();
             this.toastService.success(CONSTS.messages.update_category_success);
@@ -85,25 +86,6 @@ export class CategoryComponent implements OnInit, OnChanges {
             this.toastService.error(CONSTS.messages.update_category_fail);
             console.error(error);
         })
-    }
-
-    generateFakeData() {
-        let temp: Category[] = [];
-        let icon: Icon = {
-            code: '0ef3cdd7-d90a-4fa3-86f6-5139bad3691b',
-            path: '0ef3cdd7-d90a-4fa3-86f6-5139bad3691b.png'
-        };
-        let tempChecked: boolean[] = [];
-        for (let i = 0; i < 30; i++) {
-            let name = `Chủng loại ${i}`;
-            temp.push({
-                name,
-                icon
-            });
-            tempChecked.push(false);
-        }
-        this.listCategories = [...temp];
-        this.listChecked = [...tempChecked];
     }
 
     renewListChecked() {

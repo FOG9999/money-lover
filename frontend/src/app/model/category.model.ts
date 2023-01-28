@@ -9,10 +9,13 @@ export interface Category extends Base {
     dateUpdated?: Date,
     isDefault?: number,
     creator?: User,
-    icon: Icon
+    icon: Icon,
+    transactionType: number
 }
 
 export interface NewCategory {
     categoryName?: string,
-    selectedIcon?: string
+    selectedIcon?: string,
+    transactionType: number,
+    isDefault?: number
 }

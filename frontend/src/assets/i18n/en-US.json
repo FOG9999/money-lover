@@ -67,8 +67,9 @@
     "helpers": "helpers",
     "helpers.css-class": "CSS Class",
     "money-lover": "Money Lover",
-    "money-lover.common": "Common",
-    "money-lover.system": "System"
+    "money-lover.common": "Danh mục",
+    "money-lover.system": "Hệ thống",
+    "money-lover.user-category": "Chủng loại"
   },
   "user": {
     "profile": "profile",

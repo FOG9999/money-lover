@@ -3,27 +3,53 @@ const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
 const utils = require(__libs_path + '/utils'),
-mongoose = require('mongoose'),
-ObjectId = mongoose.Types.ObjectId;
+    mongoose = require('mongoose'),
+    ObjectId = mongoose.Types.ObjectId,
+    consts = require(__config_path + '/consts');
 
 const listCategorys = (req, returnData, callback) => {
-    const { search, isDelete } = req.params;
+    let { search, isDelete, isDefault } = req.params;
+    const user = req.user;
 
-    const query = {
-        $or: [{
-            name: new RegExp(search, 'i')
-        }]
-    };
+    let query = {};
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
     else query['isDelete'] = false;
+    // query only default categories for ADMIN role
+    if (validator.isNull(isDefault) && (user.level == consts.user_roles.ADMIN || user.level == consts.user_roles.SYSTEM_USER)) {
+        isDefault = 1;
+        query['isDefault'] = isDefault;
+        query = {
+            ...query,
+            $or: [{
+                name: new RegExp(search, 'i')
+            }]
+        }
+    }
+    else {
+        query = {
+            ...query,
+            $and: [{
+                name: new RegExp(search, 'i')
+            }, {
+                $or: [
+                    {
+                        creator: user._id
+                    },
+                    {
+                        isDefault: 1
+                    }
+                ]
+            }]
+        }
+    }
 
     Category
         .find()
         .where(query)
         .populate('icon')
-        .sort({dateCreated: -1})
+        .sort({ dateCreated: -1 })
         .exec((err, results) => {
             if (err) return callback(err);
             returnData.set(results);
@@ -45,7 +71,7 @@ const getCategory = (req, returnData, callback) => {
 }
 
 const addCategory = (req, returnData, callback) => {
-    let { name, icon, isDefault } = req.params;
+    let { name, icon, isDefault, transactionType } = req.params;
     const creator = req.user;
 
     if (validator.isNull(name)) {
@@ -58,6 +84,9 @@ const addCategory = (req, returnData, callback) => {
         isDefault = 1;
     }
     else isDefault = 0;
+    if (validator.isNull(transactionType)) {
+        return callback('ERROR_TYPE_MISSING');
+    }
 
     async.series([
         function (cb) {
@@ -78,6 +107,8 @@ const addCategory = (req, returnData, callback) => {
             let newCategory = new Category({
                 name,
                 icon,
+                transactionType,
+                isDefault,
                 creator: creator._id,
                 dateCreated: new Date()
             })
@@ -97,7 +128,7 @@ const addCategory = (req, returnData, callback) => {
 }
 
 const updateCategory = (req, returnData, callback) => {
-    let { name, icon, id } = req.params;
+    let { name, icon, id, transactionType } = req.params;
 
     if (validator.isNull(name)) {
         return callback('ERROR_CODE_MISSING');
@@ -107,6 +138,9 @@ const updateCategory = (req, returnData, callback) => {
     }
     if (!validator.isMongoId(id)) {
         return callback('ERROR_ID_MISSING');
+    }
+    if (validator.isNull(transactionType)) {
+        return callback('ERROR_TYPE_MISSING');
     }
 
     Category
@@ -120,7 +154,7 @@ const updateCategory = (req, returnData, callback) => {
                 return callback('ERROR_CATEGORY_NOT_FOUND');
             }
             else {
-                utils.merge(result, { name, icon });
+                utils.merge(result, { name, icon, transactionType });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
@@ -139,7 +173,7 @@ const deleteCategory = (req, returnData, callback) => {
 
     Category
         .update({
-            _id: {$in: ids.map(id => ObjectId(id))}
+            _id: { $in: ids.map(id => ObjectId(id)) }
         }, {
             $set: {
                 isDelete: true

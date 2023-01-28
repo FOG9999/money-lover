@@ -5,11 +5,13 @@ import { CategoryDialogComponent } from './common/category/category-dialog.compo
 import { CategoryComponent } from './common/category/category.component';
 import { IconSelectionComponent } from './common/category/icon-selection.component';
 import { MoneyCommonComponent } from './common/common.component';
+import { CommonService } from './common/common.service';
 import { IconAddComponent } from './common/icon-mng/icon-add-dialog.component';
 import { IconManagementComponent } from './common/icon-mng/icon-mng.component';
 import { WalletTypeDialogComponent } from './common/wallet-type/wallet-type-dialog.component';
 import { WalletTypeComponent } from './common/wallet-type/wallet-type.component';
 import { MoneyLoverRoutingModule } from './money-lover-routing.module';
+import { UserCategoryComponent } from './user-category/user-category.component';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -19,12 +21,13 @@ const COMPONENTS = [
     IconManagementComponent,
     IconAddComponent,
     WalletTypeComponent,
-    WalletTypeDialogComponent
+    WalletTypeDialogComponent,
+    UserCategoryComponent
 ];
 
 @NgModule({
     imports: [SharedModule, MoneyLoverRoutingModule],
     declarations: [...COMPONENTS],
-    providers: [IconService]
+    providers: [IconService, CommonService]
 })
 export class MoneyLoverModule { }

@@ -63,7 +63,8 @@ module.exports = {
 
     user_roles: {
         ADMIN: 'ADMIN',
-        SYSTEM_USER: 'SYSTEM'
+        SYSTEM_USER: 'SYSTEM',
+        USER: 'USER'
     },
 
     icon_prefix: "data:image/png;base64,",

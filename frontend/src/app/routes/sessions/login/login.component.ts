@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
           this.router.navigateByUrl('/money-lover/common');
         }
         else {
-          this.router.navigateByUrl('/money-lover/common');
+          this.router.navigateByUrl('/money-lover/user-category');
         }
       }
     })

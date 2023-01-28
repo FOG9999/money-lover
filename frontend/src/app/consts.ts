@@ -5,6 +5,9 @@ export const CONSTS = {
     icon_allow_types: ['png'],
     image_invalid: 'Ảnh không hợp lệ',
     icon_type: '.png',
+    select_to_delete_category: "Vui lòng chọn chủng loại muốn xóa",
+    select_to_delete_wallet_type: "Vui lòng chọn loại ví muốn xóa",
+    select_to_delete_icon: "Vui lòng chọn icon muốn xóa",
     messages: {
         update_category_success: 'Cập nhật chủng loại thành công',
         update_category_fail: 'Cập nhật chủng loại thất bại',
@@ -45,5 +48,9 @@ export const CONSTS = {
         USER: "USER",
         ADMIN: "ADMIN",
         SYSTEM: "SYSTEM"
+    },
+    transactionType: {
+        INCOME: 'Khoản thu',
+        OUTCOME: 'Khoản chi'
     }
 }
