@@ -33,6 +33,14 @@ let validators = {
         }
         return {};
     },
+    validateCurrency: (control: FormControl) => {
+        if (!control.value) {
+            return { error: true, required: true };
+        } else if (!/^\$?(([1-9]\d{0,2}(.\d{3})*)|0)?$/.test(control.value)) {
+            return { error: true, invalid: true };
+        }
+        return {};
+    }
 }
 
 export { validators }

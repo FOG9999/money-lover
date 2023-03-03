@@ -92,3 +92,12 @@ export function getScrollbarWidth() {
 
   return scrollbarWidth;
 }
+
+export function numberToCurrency(txt: number){
+  let formatWithSuffix = new Intl.NumberFormat('en-US',{style: 'currency', currency:'USD'}).format(txt);
+  return formatWithSuffix.substring(0, formatWithSuffix.length-2);
+}
+
+export function currencyToNumber(txt: string){
+  return parseInt(txt.split('.').join(''));
+}

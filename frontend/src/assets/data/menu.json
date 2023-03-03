@@ -34,6 +34,12 @@
           "name": "user-category",
           "level": ["USER"],
           "type": "link"
+        },
+        {
+          "route": "user-wallet",
+          "name": "user-wallet",
+          "level": ["USER"],
+          "type": "link"
         }
       ]
     },

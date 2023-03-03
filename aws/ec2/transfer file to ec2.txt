@@ -1,0 +1,1 @@
+scp -i my-keypair-1.pem D:\Coding\my-money-lover\frontend\dist\application-core\application-core.zip ec2-user@ec2-100-25-47-67.compute-1.amazonaws.com:/home/ec2-user/money-lover/frontend

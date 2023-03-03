@@ -12,8 +12,6 @@ import { LocalStorageService } from '@shared';
 export class StartupService {
   constructor(private menuService: MenuService, private http: HttpClient, private localStorage: LocalStorageService) { }
 
-  level: string = this.localStorage.get("user").level;
-
   load(): Promise<any> {
     return new Promise<void>((resolve, reject) => {
       this.http
@@ -40,13 +38,14 @@ export class StartupService {
 
   getMenu(menu: Menu[]) {
     let showMenus: Menu[] = [];
+    let level: string = this.localStorage.get("user").level;
     menu.forEach(m => {
       if (m.level) {
         if (m.level.includes(CONSTS.auth.NONE)) {
           showMenus.push(m);
         }
         else {
-          if (m.level.includes(this.level)) {
+          if (m.level.includes(level)) {
             if (m.children && m.children.length > 0) {
               showMenus.push({
                 ...m,
@@ -69,8 +68,9 @@ export class StartupService {
 
   getMenuChildren(menu: Menu | MenuChildrenItem) {
     let children: MenuChildrenItem[] = [];
+    let level: string = this.localStorage.get("user").level;
     menu.children.forEach(m => {
-      if (m.level.includes(this.level)) {
+      if (m.level.includes(level)) {
         if (m.children && m.children.length > 0) {
           children.push({
             ...m,

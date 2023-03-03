@@ -30,7 +30,7 @@ export interface Menu {
   providedIn: 'root',
 })
 export class MenuService {
-  private menu: BehaviorSubject<Menu[]> = new BehaviorSubject<Menu[]>([]);
+  menu: BehaviorSubject<Menu[]> = new BehaviorSubject<Menu[]>([]);
 
   getAll(): Observable<Menu[]> {
     return this.menu.asObservable();

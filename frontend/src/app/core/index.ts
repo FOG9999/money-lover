@@ -1,4 +1,4 @@
-export * from './interceptors/default.interceptor';
+export * from './interceptors/auth.interceptor';
 
 export * from './bootstrap/menu.service';
 export * from './bootstrap/settings.service';

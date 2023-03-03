@@ -1,0 +1,45 @@
+<h2 mat-dialog-title *ngIf="wallet._id; else create">Chỉnh sửa ví</h2>
+<ng-template #create>
+    <h2 mat-dialog-title>Thêm mới ví</h2>
+</ng-template>
+<div mat-dialog-content>
+    <form class="form-field-full" [formGroup]="walletForm">
+        <mat-form-field appearance="fill" class="m-y-8">
+            <mat-label>Loại ví</mat-label>
+            <mat-select [(ngModel)]="wallet.walletType" [ngModelOptions]="{standalone: true}">
+                <mat-option *ngFor="let type of listWalletTypes" [value]="type._id">
+                    <div class="matero-row" fxLayout="row">
+                        <div class="matero-col" fxFlex="20" fxLayout="row" fxLayoutAlign="center center">
+                            <span class="icon-select-wallettype">
+                                <ml-icon [path]="type.icon.path"></ml-icon>
+                            </span>
+                        </div>
+                        <div class="matero-col" fxFlex="80">
+                            {{type.name}}
+                        </div>
+                    </div>
+                    <!-- <span class="icon-select-wallettype">
+                        <ml-icon [path]="type.icon.path"></ml-icon>
+                    </span>
+                    <span>
+                        {{type.name}}
+                    </span> -->
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="m-y-8">
+            <mat-checkbox formControlName="includeInTotal">Bao gồm tiền của ví này trong tổng cộng</mat-checkbox>
+        </div>
+        <div class="m-y-8">
+            <mat-form-field appearance="outline">
+                <mat-label>Số tiền ban đầu</mat-label>
+                <input matInput placeholder="Nhập số tiền" type="text" formControlName="amount" numberFormat required>
+                <mat-error *ngIf="walletForm.get('amount').invalid">Số tiền nhập không hợp lệ</mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button (click)="saveWallet()" color="primary" [disabled]="walletForm.invalid">Lưu</button>
+</div>

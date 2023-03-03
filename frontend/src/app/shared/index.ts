@@ -10,3 +10,6 @@ export * from './services/money-lover/icon.service';
 export * from './utils/colors';
 export * from './utils/icons';
 export * from './utils/utils';
+
+// Directives
+export * from './directives/number-foramat.directive';

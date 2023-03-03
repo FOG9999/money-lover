@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { StartupService } from '@core';
 import { IconService } from '@shared';
 import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
 import { CONSTS } from 'app/consts';
@@ -19,7 +20,7 @@ import { WalletTypeDialogComponent } from './wallet-type/wallet-type-dialog.comp
 })
 
 export class MoneyCommonComponent implements OnInit {
-    constructor(private commonService: CommonService, private iconService: IconService, private dialog: MatDialog, private toast: ToastrService) { }
+    constructor(private commonService: CommonService, private iconService: IconService, private dialog: MatDialog, private toast: ToastrService, private startUpService: StartupService) { }
 
     icons: Icon[] = [];
     searchCategoryKey: string = "";
@@ -43,6 +44,7 @@ export class MoneyCommonComponent implements OnInit {
 
     ngOnInit() {
         this.getListIcons();
+        this.startUpService.load();
     }
 
     getListIcons() {

@@ -12,6 +12,9 @@ import { WalletTypeDialogComponent } from './common/wallet-type/wallet-type-dial
 import { WalletTypeComponent } from './common/wallet-type/wallet-type.component';
 import { MoneyLoverRoutingModule } from './money-lover-routing.module';
 import { UserCategoryComponent } from './user-category/user-category.component';
+import { WalletDialogComponent } from './user-wallet/user-wallet-dialog.component';
+import { UserWalletComponent } from './user-wallet/user-wallet.component';
+import { WalletService } from './user-wallet/user-wallet.service';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -22,12 +25,14 @@ const COMPONENTS = [
     IconAddComponent,
     WalletTypeComponent,
     WalletTypeDialogComponent,
-    UserCategoryComponent
+    UserCategoryComponent,
+    UserWalletComponent,
+    WalletDialogComponent
 ];
 
 @NgModule({
     imports: [SharedModule, MoneyLoverRoutingModule],
     declarations: [...COMPONENTS],
-    providers: [IconService, CommonService]
+    providers: [IconService, CommonService, WalletService]
 })
 export class MoneyLoverModule { }

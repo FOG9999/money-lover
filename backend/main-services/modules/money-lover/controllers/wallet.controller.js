@@ -4,23 +4,33 @@ const async = require('async');
 const fs = require('fs');
 
 const listWallets = (req, returnData, callback) => {
-    const { search, isDelete } = req.params;
+    let { search, isDelete } = req.params;
+    let user = req.user;
 
     const query = {
-        $or: [{
-            name: new RegExp(search, 'i')
-        }, {
-            code: new RegExp(search, 'i')
-        }]
+        $or: [
+            {
+                user: user._id
+            },
+            {
+                isDefault: 1
+            }
+        ]
     };
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
+    else query['isDelete'] = false;
 
     Wallet
         .find()
         .where(query)
-        .populate("walletType")
+        .populate({
+            path: "walletType",
+            populate: {
+                path: "icon"
+            }
+        })
         .exec((err, results) => {
             if (err) return callback(err);
             returnData.set(results);
@@ -43,18 +53,22 @@ const getWallet = (req, returnData, callback) => {
 }
 
 const addWallet = (req, returnData, callback) => {
-    const { amount, walletType, includedInTotal, isDefault } = req.params;
+    let { amount, walletType, includedInTotal, isDefault } = req.params;
     const user = req.user;
 
     if (validator.isNull(walletType)) {
         return callback('ERROR_WALLETTYPE_MISSING');
     }
+    if (validator.isNull(isDefault)) {
+        isDefault = 1;
+    }
+    else isDefault = 0;
 
     async.series([
         function (cb) {
             Wallet
                 .findOne()
-                .where({ walletType: walletType, isDelete: false })
+                .where({ walletType: walletType, isDelete: false, user: user._id })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);
@@ -69,7 +83,7 @@ const addWallet = (req, returnData, callback) => {
             let newWallet = new Wallet({
                 amount,
                 walletType,
-                user,
+                user: user._id,
                 includedInTotal,
                 isDefault,
                 dateCreated: new Date()
