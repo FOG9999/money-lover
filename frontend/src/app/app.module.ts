@@ -19,6 +19,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AuthInterceptor } from '@core';
+import { StoreModule } from '@ngrx/store';
 // Required for AOT compilation
 export function TranslateHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -27,6 +28,7 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    StoreModule.forRoot({}),
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -42,7 +44,7 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
         useFactory: TranslateHttpLoaderFactory,
         deps: [HttpClient],
       },
-    }),
+    })
   ],
   providers: [
     {

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { IconService } from '@ui-vts/icons-angular';
 import { Category } from 'app/model/category.model';
 import { Wallet } from 'app/model/wallet.model';
 import { Transaction } from 'app/model/transaction.model';
@@ -8,7 +7,6 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common/common.service';
 import { WalletDialogComponent } from './user-wallet-dialog.component';
 import { WalletService } from './user-wallet.service';
-
 @Component({
     selector: 'ml-user-wallet',
     templateUrl: 'user-wallet.component.html',
@@ -27,6 +25,7 @@ export class UserWalletComponent implements OnInit {
     listChecked: boolean[] = [];
     search: string = "";
     listCategories: Category[] = [];
+    loading: boolean;
 
     walletDialogRef: MatDialogRef<WalletDialogComponent>;
 

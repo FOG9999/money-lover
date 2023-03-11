@@ -4,7 +4,6 @@ import { environment } from '@env/environment';
 
 import { AdminLayoutComponent } from '../theme/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component';
-import { MoneyCommonComponent } from './money-lover/common/common.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
@@ -24,11 +23,6 @@ const routes: Routes = [
         path: 'material',
         loadChildren: () => import('./material/material.module').then(m => m.MaterialModule),
         data: { title: 'Material', titleI18n: 'material' },
-      },
-      {
-        path: 'vts',
-        loadChildren: () => import('./ng-vts/ng-vts.module').then(m => m.NgVTSModule),
-        data: { title: 'VTSKIT', titleI18n: 'vts-kit' },
       },
       {
         path: 'media',

@@ -1,11 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CoreActions } from '@core/store/core.actions';
+import { Store } from '@ngrx/store';
 import { currencyToNumber, numberToCurrency } from '@shared';
 import { validators } from '@shared/utils/validators';
+import { AppState } from 'app/app.state';
 import { WalletType } from 'app/model/wallet-type.model';
 import { Wallet } from 'app/model/wallet.model';
 import { CommonService } from '../common/common.service';
+import { WalletService } from './user-wallet.service';
 
 @Component({
     selector: 'ml-wallet-dialog',
@@ -21,10 +25,12 @@ export class WalletDialogComponent implements OnInit {
         private fb: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public data: { wallet: Wallet },
         public dialogRef: MatDialogRef<WalletDialogComponent>,
-        private commonService: CommonService
+        private commonService: CommonService,
+        private walletService: WalletService,
+        private store: Store<AppState>
     ) { 
         this.walletForm = this.fb.group({
-            includeInTotal: [false],
+            includeInTotal: [true],
             amount: [0, validators.validateCurrency]
         })
     }
@@ -49,10 +55,12 @@ export class WalletDialogComponent implements OnInit {
 
     saveWallet(){
         this.wallet = {
+            ...this.wallet,
             ...this.walletForm.value,
             isDefault: 0,
             amount: currencyToNumber(this.walletForm.get('amount').value)
         }
-        console.log(this.wallet);        
+        
+        this.store.dispatch(new CoreActions({loading: true}))
     }
 }

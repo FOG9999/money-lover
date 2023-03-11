@@ -11,4 +11,9 @@ export class WalletService {
         const api_name: string = "api.v1.wallet.list";
         return this.http.post<Wallet[]>(environment.SERVER_URL, { api_name, ...search }, { observe: "body" });
     }
+
+    saveWallet(wallet: Wallet){
+        const api_name: string = "api.v1.wallet.add";
+        return this.http.post<Wallet[]>(environment.SERVER_URL, { api_name, ...wallet }, { observe: "body" });
+    }
 }

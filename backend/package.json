@@ -4,7 +4,7 @@
   "description": "base backend for jobs",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --ignore node_modules/ --inspect server.js dev"
+    "start": "nodemon --ignore node_modules/ server.js dev"
   },
   "author": "FOG9999",
   "license": "ISC",
