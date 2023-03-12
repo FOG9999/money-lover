@@ -29,10 +29,10 @@ export class LoginComponent implements OnInit {
       if (res._id) {
         this.localStorage.set('user', res);
         if (res.level === CONSTS.auth.ADMIN || res.level === CONSTS.auth.SYSTEM) {
-          this.router.navigateByUrl('/money-lover/common');
+          this.router.navigateByUrl('/money-lover/admin');
         }
         else {
-          this.router.navigateByUrl('/money-lover/user-category');
+          this.router.navigateByUrl('/money-lover/');
         }
       }
     })

@@ -51,13 +51,7 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: StartupServiceFactory,
-      deps: [StartupService],
-      multi: true,
-    },
+    }
   ],
   bootstrap: [AppComponent],
 })

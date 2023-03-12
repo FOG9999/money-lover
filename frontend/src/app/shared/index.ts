@@ -5,6 +5,8 @@ export * from './shared.module';
 export * from './services/storage.service';
 export * from './services/directionality.service';
 export * from './services/money-lover/icon.service';
+export * from './services/money-lover/admin-guard.service';
+export * from './services/money-lover/auth-guard.service';
 
 // Utils
 export * from './utils/colors';
