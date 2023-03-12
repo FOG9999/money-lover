@@ -7,7 +7,7 @@ import { currencyToNumber, numberToCurrency } from '@shared';
 import { validators } from '@shared/utils/validators';
 import { AppState } from 'app/app.state';
 import { WalletType } from 'app/model/wallet-type.model';
-import { Wallet } from 'app/model/wallet.model';
+import { Wallet, WalletForm } from 'app/model/wallet.model';
 import { CommonService } from '../common/common.service';
 import { WalletService } from './user-wallet.service';
 
@@ -28,19 +28,17 @@ export class WalletDialogComponent implements OnInit {
         private commonService: CommonService,
         private walletService: WalletService,
         private store: Store<AppState>
-    ) { 
-        this.walletForm = this.fb.group({
-            includeInTotal: [true],
-            amount: [0, validators.validateCurrency]
-        })
-    }
+    ) { }
 
-    wallet: Wallet;
+    wallet: WalletForm;
     listWalletTypes: WalletType[] = [];
+    selectedWalletType: string;
 
     ngOnInit() { 
         this.getDataWalletTypes();
         this.wallet = JSON.parse(JSON.stringify(this.data.wallet));
+        this.wallet.walletType = this.data.wallet.walletType._id;
+        this.formInit();
     }
 
     getDataWalletTypes() {
@@ -62,10 +60,16 @@ export class WalletDialogComponent implements OnInit {
         }        
         this.store.dispatch(new CoreActions({loading: true}))
         this.walletService.saveWallet(this.wallet).subscribe((res: Wallet) => {
-            console.log(res);
             this.store.dispatch(new CoreActions({loading: false}));
         }, (err) => {
             this.store.dispatch(new CoreActions({loading: false}));
+        })
+    }
+
+    formInit(){
+        this.walletForm = this.fb.group({
+            includeInTotal: [this.wallet.includeInTotal == 1],
+            amount: [this.wallet.amount, validators.validateCurrency]
         })
     }
 }

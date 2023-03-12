@@ -15,9 +15,10 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Directionality } from '@angular/cdk/bidi';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { StartupService } from '@core';
 
 import { SettingsService, AppSettings } from '@core';
-import { AppDirectionality } from '@shared';
+import { AppDirectionality, LocalStorageService } from '@shared';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
@@ -65,7 +66,9 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     private element: ElementRef,
     private settings: SettingsService,
     @Optional() @Inject(DOCUMENT) private _document: Document,
-    @Inject(Directionality) public dir: AppDirectionality
+    @Inject(Directionality) public dir: AppDirectionality, 
+    private startUpService: StartupService,
+    private localStorage: LocalStorageService
   ) {
     this.dir.value = this.options.dir;
     this._document.body.dir = this.dir.value;
@@ -90,6 +93,9 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if(this.localStorage.get("user") && this.localStorage.get("user").token){
+      this.startUpService.load();
+    }    
     setTimeout(() => (this.contentWidthFix = this.collapsedWidthFix = false));
   }
 

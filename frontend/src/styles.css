@@ -1,1 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+
+.hover-focus:hover {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}  

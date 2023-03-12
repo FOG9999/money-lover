@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { Wallet } from 'app/model/wallet.model';
+import { Wallet, WalletForm } from 'app/model/wallet.model';
 
 @Injectable()
 export class WalletService {
@@ -12,8 +12,23 @@ export class WalletService {
         return this.http.post<Wallet[]>(environment.SERVER_URL, { api_name, ...search }, { observe: "body" });
     }
 
-    saveWallet(wallet: Wallet){
+    saveWallet(wallet: WalletForm){
         const api_name: string = "api.v1.wallet.add";
         return this.http.post<Wallet>(environment.SERVER_URL, { api_name, ...wallet }, { observe: "body" });
+    }
+
+    deleteWallet(id: string){
+        const api_name = "api.v1.wallet.delete";
+        return this.http.post(environment.SERVER_URL, { api_name, id }, { observe: "body" });
+    }
+
+    updateWallet(wallet: Wallet){
+        const api_name = "api.v1.wallet.update";
+        return this.http.post(environment.SERVER_URL, { api_name, ...wallet}, { observe: "body" });
+    }
+
+    getWallet(id: string){
+        const api_name = "api.v1.wallet.get";
+        return this.http.post<Wallet>(environment.SERVER_URL, { api_name, id }, { observe: "body" });
     }
 }

@@ -9,6 +9,17 @@ export interface Wallet extends Base {
     dateUpdated: Date,
     isDefault: number,
     user: User,
-    includedInTotal: boolean,
+    includeInTotal: 0 | 1,
     walletType: WalletType
+}
+
+export interface WalletForm extends Base {
+    amount: number,
+    dateCreated: Date,
+    isDelete: boolean,
+    dateUpdated: Date,
+    isDefault: number,
+    user: string,
+    includeInTotal: 0 | 1,
+    walletType: string
 }

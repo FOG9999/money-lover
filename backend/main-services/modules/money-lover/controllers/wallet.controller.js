@@ -53,7 +53,7 @@ const getWallet = (req, returnData, callback) => {
 }
 
 const addWallet = (req, returnData, callback) => {
-    let { amount, walletType, includedInTotal, isDefault } = req.params;
+    let { amount, walletType, includeInTotal, isDefault } = req.params;
     const user = req.user;
 
     if (validator.isNull(walletType)) {
@@ -84,7 +84,7 @@ const addWallet = (req, returnData, callback) => {
                 amount,
                 walletType,
                 user: user._id,
-                includedInTotal,
+                includeInTotal,
                 isDefault,
                 dateCreated: new Date()
             })
@@ -104,7 +104,7 @@ const addWallet = (req, returnData, callback) => {
 }
 
 const updateWallet = (req, returnData, callback) => {
-    let { walletType, includedInTotal, isDefault } = req.params;
+    let { walletType, includeInTotal, isDefault } = req.params;
 
     if (validator.isNull(walletType)) {
         return callback('ERROR_WALLETTYPE_MISSING');
@@ -121,7 +121,7 @@ const updateWallet = (req, returnData, callback) => {
                 return callback('ERROR_WALLET_NOT_FOUND');
             }
             else {
-                utils.merge(result, { walletType, includedInTotal, isDefault });
+                utils.merge(result, { walletType, includeInTotal, isDefault });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);

@@ -10,7 +10,6 @@ import { UserCategoryService } from './user-category.service';
 import { IconService } from '@shared';
 import { CategoryDialogComponent } from '../common/category/category-dialog.component';
 import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
-import { StartupService } from '@core';
 
 @Component({
     selector: 'ml-user-category',
@@ -25,8 +24,7 @@ export class UserCategoryComponent implements OnInit {
         private commonService: CommonService,
         private iconService: IconService,
         private toastService: ToastrService,
-        private dialog: MatDialog, 
-        private startUpService: StartupService
+        private dialog: MatDialog
     ) { }
 
     listCategories: Category[] = [];
@@ -48,7 +46,6 @@ export class UserCategoryComponent implements OnInit {
     ngOnInit() {
         this.getListIcons();
         this.getDataCategories();
-        this.startUpService.load();
     }
 
     /* #region UI handler */

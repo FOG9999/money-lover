@@ -7,6 +7,9 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common/common.service';
 import { WalletDialogComponent } from './user-wallet-dialog.component';
 import { WalletService } from './user-wallet.service';
+import { AppState } from 'app/app.state';
+import { Store } from '@ngrx/store';
+import { CoreActions } from '@core/store/core.actions';
 @Component({
     selector: 'ml-user-wallet',
     templateUrl: 'user-wallet.component.html',
@@ -18,7 +21,8 @@ export class UserWalletComponent implements OnInit {
         private commonService: CommonService,
         private walletService: WalletService,
         private toastService: ToastrService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private store: Store<AppState>
     ) { }
 
     listWallets: Wallet[] = [];
@@ -67,30 +71,18 @@ export class UserWalletComponent implements OnInit {
     getDataCategories() {
         this.commonService.getListCategories({ search: this.search }).subscribe(res => {
             this.listCategories = [...res];
-            setTimeout(() => {
-                this.generateFakeData();
-            })
         })
     }
 
-    generateFakeData() {
-        let listTransactions: Transaction[] = [];
-        for (let i = 0; i < 100; i++) {
-            let categoryIndex = Math.floor(Math.random() * this.listCategories.length);
-            let amount = Math.round(Math.random() * 1000) * 1000;
-            let firstDayLastMonth = Date.now() - 2 * 30 * 24 * 60 * 60 * 1000;
-            let dateCreated = this.generateFakeDate(firstDayLastMonth, Date.now());
-            listTransactions.push({
-                amount,
-                dateCreated,
-                category: this.listCategories[categoryIndex]
+    editWallet(id: string){
+        this.store.dispatch(new CoreActions({loading: true}));
+        this.walletService.getWallet(id).subscribe((wallet: Wallet) => {
+            this.store.dispatch(new CoreActions({loading: false}));
+            this.walletDialogRef = this.dialog.open(WalletDialogComponent, {
+                data: {
+                    wallet
+                }
             })
-        }
-        console.log(listTransactions);        
-    }
-
-    generateFakeDate(fromDateTime: number, toDateTime: number): Date {
-        let toDateTimeRandom = Math.round(Math.random() * (toDateTime - fromDateTime)) + fromDateTime;
-        return new Date(toDateTimeRandom);
+        });
     }
 }
