@@ -59,8 +59,13 @@ export class WalletDialogComponent implements OnInit {
             ...this.walletForm.value,
             isDefault: 0,
             amount: currencyToNumber(this.walletForm.get('amount').value)
-        }
-        
+        }        
         this.store.dispatch(new CoreActions({loading: true}))
+        this.walletService.saveWallet(this.wallet).subscribe((res: Wallet) => {
+            console.log(res);
+            this.store.dispatch(new CoreActions({loading: false}));
+        }, (err) => {
+            this.store.dispatch(new CoreActions({loading: false}));
+        })
     }
 }

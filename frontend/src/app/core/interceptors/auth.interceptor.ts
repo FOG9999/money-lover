@@ -26,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.localStorage.clear();
             this.toastService.error(CONSTS.messages.request_fail);
             setTimeout(() => {
-                this.router.navigateByUrl("/auth/login")
+                window.location.href = "/"
             });
         }
         return of(event);
