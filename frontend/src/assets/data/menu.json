@@ -23,6 +23,12 @@
           ]
         },
         {
+          "route": "user-transaction",
+          "name": "user-transaction",
+          "level": ["USER"],
+          "type": "link"
+        },
+        {
           "route": "user-category",
           "name": "user-category",
           "level": ["USER"],

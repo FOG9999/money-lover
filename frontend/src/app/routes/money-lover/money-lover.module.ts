@@ -15,6 +15,7 @@ import { UserCategoryComponent } from './user-category/user-category.component';
 import { WalletDialogComponent } from './user-wallet/user-wallet-dialog.component';
 import { UserWalletComponent } from './user-wallet/user-wallet.component';
 import { WalletService } from './user-wallet/user-wallet.service';
+import { TransactionListComponent } from './transaction/transaction.component';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -27,7 +28,8 @@ const COMPONENTS = [
     WalletTypeDialogComponent,
     UserCategoryComponent,
     UserWalletComponent,
-    WalletDialogComponent
+    WalletDialogComponent,
+    TransactionListComponent
 ];
 
 @NgModule({

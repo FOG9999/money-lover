@@ -11,8 +11,8 @@ export function serialize(obj = {}) {
         typeof obj[k] === 'string'
           ? String.prototype.trim.call(obj[k])
           : obj[k] === null
-          ? ''
-          : obj[k]
+            ? ''
+            : obj[k]
       )}`
     );
   }
@@ -93,11 +93,65 @@ export function getScrollbarWidth() {
   return scrollbarWidth;
 }
 
-export function numberToCurrency(txt: number){
-  let formatWithSuffix = new Intl.NumberFormat('en-US',{style: 'currency', currency:'USD'}).format(txt);
-  return formatWithSuffix.substring(0, formatWithSuffix.length-2);
+/**
+ * number to dollar format
+ */
+export function numberToCurrency(txt: number) {
+  let formatWithSuffix = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(txt);
+  return formatWithSuffix.substring(0, formatWithSuffix.length - 2);
 }
 
-export function currencyToNumber(txt: string){
+/**
+ * string number to VNese format
+ */
+export function formatNumber(s:string):string {
+  let n = parseInt(s.toString().replace(/\D/g, '')); // in case s is not a string
+  return isNaN(n) ? '' : n.toLocaleString('vi-VN');
+}
+
+export function currencyToNumber(txt: string) {
   return parseInt(txt.split('.').join(''));
+}
+
+/**
+ * return the string of a number in a specific type and format
+ * @param num value of the number to format
+ * @param format type of format, date or time
+ * @returns 
+ */
+export function numberDisplay(
+  num: number,
+  format: "date" | "time" = "date"
+): string {
+  switch (format) {
+    case "time": {
+      if (num < 10) {
+        return `0${num}`;
+      }
+      else {
+        return num.toString();
+      }
+    }
+    default: {
+      if(num < 10){
+        return `0${num}`;
+      }
+      else {
+        return num.toString();
+      }
+    }
+  }
+}
+
+export function randomString() {
+  const length = Math.round(Math.random()*20);
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
 }

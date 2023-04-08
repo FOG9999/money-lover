@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CoreActions } from '@core/store/core.actions';
 import { Store } from '@ngrx/store';
-import { currencyToNumber, numberToCurrency } from '@shared';
+import { currencyToNumber } from '@shared';
 import { validators } from '@shared/utils/validators';
 import { AppState } from 'app/app.state';
 import { WalletType } from 'app/model/wallet-type.model';

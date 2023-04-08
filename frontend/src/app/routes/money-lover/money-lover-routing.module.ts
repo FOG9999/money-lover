@@ -4,6 +4,7 @@ import { AdminAuthGuardService, AuthGuardService } from '@shared';
 import { MoneyCommonComponent } from './common/common.component';
 import { UserCategoryComponent } from './user-category/user-category.component';
 import { UserWalletComponent } from './user-wallet/user-wallet.component';
+import { TransactionListComponent } from './transaction/transaction.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,11 @@ const routes: Routes = [
         path: 'user-wallet',
         component: UserWalletComponent,
         data: { title: 'Ví tiền', titleI18n: 'user-wallet' },
+      },
+      {
+        path: 'user-transaction',
+        component: TransactionListComponent,
+        data: {title: "Giao dịch", titleI18n: 'transaction'}
       },
       {
         path: '**', redirectTo: 'user-category'

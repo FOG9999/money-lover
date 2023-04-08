@@ -1,0 +1,15 @@
+
+Basic Examples
+1. find . -name thisfile.txt
+
+If you need to know how to find a file in Linux called thisfile.txt, it will look for it in current and sub-directories.
+
+2. find /home -name *.jpg
+
+Look for all .jpg files in the /home and directories below it.
+
+3. find . -type f -empty
+
+Look for an empty file inside the current directory.
+
+4. find /home -user randomperson-mtime 6 -iname ".db"

@@ -10,7 +10,10 @@ export interface Category extends Base {
     isDefault?: number,
     creator?: User,
     icon: Icon,
-    transactionType: number
+    /**
+     * 0 - outcome; 1 - income
+     */
+    transactionType: 0 | 1 
 }
 
 export interface NewCategory {

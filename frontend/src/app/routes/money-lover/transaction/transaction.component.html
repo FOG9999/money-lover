@@ -1,0 +1,52 @@
+<mat-card>
+    <div class="matero-row" fxLayout="row wrap">
+        <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxLayout="row"
+            fxLayoutAlign="center center">
+            <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
+                <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
+                    <ng-template matTabContent>
+                        <ng-container *ngTemplateOutlet="displayList"></ng-container>
+                    </ng-template>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex="100">
+            content report
+        </div>
+    </div>
+</mat-card>
+
+<!-- display list of transaction, grouped by category -->
+<ng-template #displayList>
+    <ng-container *ngFor="let category of listCategories">
+        <ng-container *ngIf="checkIfCategoryHasData(category)">
+            <div class="w-full m-t-8" fxLayout="row">
+                <!-- category name and total value -->
+                <div fxFlex="80" fxLayout="row" fxLayoutAlign="start center">
+                    <span class="icon">
+                        <ml-icon [path]="category.icon.path"></ml-icon>
+                    </span>
+                    <span class="category-name">{{ category.name }}</span>
+                </div>
+                <div class="total-cate" fxFlex="20">
+                    {{ getTotalValueInOneCategory(category) }}
+                </div>
+                <!-- transaction details on current category -->
+            </div>
+            <mat-list role="list">
+                <mat-list-item class="m-y-8" role="listitem" *ngFor="let tran of getListTransactionOfOneCategory(category)">
+                    <div fxLayout="row" fxFill>
+                        <div fxFlex="grow" class="transaction-date-note">
+                            <div class="date">{{ tran.dateCreated.toLocaleDateString('vi-VN') }}</div>
+                            <div class="note">{{ tran.note }}</div>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign="end center" [ngClass]="{'transaction-amount': true, 'income': category.transactionType == 1, 'outcome': category.transactionType == 0}">
+                            {{ formatNumber(tran.amount) }}
+                        </div>
+                    </div>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-list>
+        </ng-container>
+    </ng-container>
+</ng-template>

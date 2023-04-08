@@ -15,3 +15,11 @@ export interface Transaction extends Base {
     user?: User,
     note?: string
 }
+
+export interface NewTransaction {
+    amount: number;
+    budget: string;
+    category: string;
+    wallet: string;
+    note: string;
+}

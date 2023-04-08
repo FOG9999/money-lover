@@ -1,0 +1,36 @@
+.icon {
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.transaction-date-note {
+    .date {
+        font-size: large;
+    }
+    .note {
+        color: rgba(0,0,0,.26);
+    }
+}
+
+.category-name {
+    font-size: large;
+    font-weight: bold;
+}
+
+.total-cate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: end;
+    padding-right: 16px;
+    font-size: large;
+}
+
+.income {
+    color: #039be5;
+}
+
+.outcome {
+    color: #e51c23;
+}
