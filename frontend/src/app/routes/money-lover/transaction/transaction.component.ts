@@ -55,16 +55,37 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         chart: {
             type: "pie"
         },
-        colors: ["#039be5", "#e51c23"]
+        colors: ["#039be5", "#e51c23"],
+        tooltip: {
+            y: {
+                formatter: (val) => {
+                    return formatNumber(val.toString())
+                }
+            }
+        }
     };
     outcomeChartOptions: Partial<ChartOptions> = {
         chart: {
             type: "pie"
+        },
+        tooltip: {
+            y: {
+                formatter: (val) => {
+                    return val + '%'
+                }
+            }
         }
     }
     incomeChartOptions: Partial<ChartOptions> = {
         chart: {
             type: "pie"
+        },
+        tooltip: {
+            y: {
+                formatter: (val) => {
+                    return val + '%'
+                }
+            }
         }
     }
 
@@ -171,7 +192,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         return formatNumber(
             this.getListTransactionOfOneCategory(category)
                 .map(tran => ({ val: tran.amount, cateId: tran.category._id }))
-                .reduce((preTran, tran) => ({ val: tran.val + preTran.val, cateId: tran.cateId }))
+                .reduce((preTran, tran) => ({ val: tran.val + preTran.val, cateId: tran.cateId }), {val: 0})
                 .val.toString()
         )
     }
@@ -196,12 +217,12 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             this.listTransactions
                 .filter(tran =>
                     tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 1
-                ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount })).amount;
+                ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
         let outcome =
             this.listTransactions
                 .filter(tran =>
                     tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 0
-                ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount })).amount;
+                ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
         this.inOutcomeChartOptions = {
             ...this.inOutcomeChartOptions,
             series: [income, outcome]
@@ -216,7 +237,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 );
         let totalOutcome = outcomeArr.reduce((pre, curr) => ({
             amount: curr.amount + pre.amount
-        })).amount;
+        }), {amount: 0}).amount;
         let labels = [];
         outcomeArr.forEach((tran) => {
             if(labels.indexOf(tran.category.name) < 0){
@@ -225,7 +246,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         })
         let series = [];
         labels.forEach((label, ind) => {
-            let amount = outcomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount})).amount;
+            let amount = outcomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount}), {amount: 0}).amount;
             series.push(parseFloat((amount/totalOutcome*100).toFixed(2)));
         });
         this.outcomeChartOptions = {
@@ -243,7 +264,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 );
         let totalIncome = incomeArr.reduce((pre, curr) => ({
             amount: curr.amount + pre.amount
-        })).amount;
+        }), {amount: 0}).amount;
         let labels = [];
         incomeArr.forEach((tran) => {
             if(labels.indexOf(tran.category.name) < 0){
@@ -252,7 +273,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         })
         let series = [];
         labels.forEach((label, ind) => {
-            let amount = incomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount})).amount;
+            let amount = incomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount}), {amount: 0}).amount;
             series.push(parseFloat((amount/totalIncome*100).toFixed(2)));
         });
         this.incomeChartOptions = {

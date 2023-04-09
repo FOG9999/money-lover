@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { LocalStorageService } from '@shared';
+import { User } from 'app/model/user.model';
 
 @Component({
   selector: 'app-user',
@@ -10,7 +12,7 @@ import { Component } from '@angular/core';
       [matMenuTriggerFor]="menu"
     >
       <img class="matero-avatar" src="assets/images/avatar.jpg" width="32" alt="avatar" />
-      <span class="matero-username" fxHide.lt-sm>Zongbin</span>
+      <span class="matero-username" fxHide.lt-sm>{{ user.username }}</span>
     </button>
 
     <mat-menu #menu="matMenu">
@@ -29,4 +31,12 @@ import { Component } from '@angular/core';
     </mat-menu>
   `,
 })
-export class UserComponent {}
+export class UserComponent implements OnInit {
+  constructor(private localStorageSv: LocalStorageService){}
+
+  user: Partial<User> = {};
+
+  ngOnInit(): void {
+      this.user = this.localStorageSv.get('user');
+  }
+}

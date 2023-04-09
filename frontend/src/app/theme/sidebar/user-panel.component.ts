@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { LocalStorageService } from '@shared';
+import { User } from 'app/model/user.model';
 
 @Component({
   selector: 'app-user-panel',
@@ -10,8 +12,8 @@ import { Component } from '@angular/core';
         alt="avatar"
         width="64"
       />
-      <h4 class="matero-user-panel-name">Zongbin</h4>
-      <h5 class="matero-user-panel-email">nzb329@163.com</h5>
+      <h4 class="matero-user-panel-name">{{ user.firstname + ' ' + user.lastname }}</h4>
+      <h5 class="matero-user-panel-email">{{ user.email }}</h5>
       <div class="matero-user-panel-icons">
         <a routerLink="/profile/overview" mat-icon-button>
           <mat-icon>account_circle</mat-icon>
@@ -26,4 +28,12 @@ import { Component } from '@angular/core';
     </div>
   `,
 })
-export class UserPanelComponent {}
+export class UserPanelComponent implements OnInit {
+  constructor(private localStorageSv: LocalStorageService){}
+
+  user: Partial<User> = {};
+
+  ngOnInit(): void {
+      this.user = this.localStorageSv.get('user');
+  }
+}

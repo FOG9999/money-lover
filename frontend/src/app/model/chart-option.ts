@@ -1,7 +1,9 @@
 import {
     ApexNonAxisChartSeries,
     ApexResponsive,
-    ApexChart
+    ApexChart,
+    ApexDataLabels,
+    ApexTooltip
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -9,5 +11,7 @@ export type ChartOptions = {
     chart: ApexChart;
     responsive: ApexResponsive[];
     labels: any;
-    colors: string[]
+    colors: string[];
+    dataLabels: ApexDataLabels;
+    tooltip: ApexTooltip
 };
