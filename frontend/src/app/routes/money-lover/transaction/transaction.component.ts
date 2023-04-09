@@ -199,7 +199,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
     getListTransactionOfOneCategory(category: Category) {
         return this.listTransactions
-            .filter(tran => tran.category._id === category._id && tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to)
+            .filter(tran => tran.category._id === category._id)
     }
 
     formatNumber(text: number) {
@@ -208,6 +208,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
     changeTab(selectedTabIndex: number) {
         this.selectedMonthTab = this.listMonthTabs[selectedTabIndex];
+        this.generateData();
         this.refreshMonthTabs();
         this.updateCharts();        
     }
@@ -216,12 +217,12 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         let income =
             this.listTransactions
                 .filter(tran =>
-                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 1
+                    tran.category.transactionType == 1
                 ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
         let outcome =
             this.listTransactions
                 .filter(tran =>
-                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 0
+                    tran.category.transactionType == 0
                 ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
         this.inOutcomeChartOptions = {
             ...this.inOutcomeChartOptions,
@@ -233,7 +234,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         let outcomeArr =
             this.listTransactions
                 .filter(tran =>
-                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 0
+                    tran.category.transactionType == 0
                 );
         let totalOutcome = outcomeArr.reduce((pre, curr) => ({
             amount: curr.amount + pre.amount
@@ -260,7 +261,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         let incomeArr =
             this.listTransactions
                 .filter(tran =>
-                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 1
+                    tran.category.transactionType == 1
                 );
         let totalIncome = incomeArr.reduce((pre, curr) => ({
             amount: curr.amount + pre.amount
@@ -305,6 +306,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             }
             tempList.push(transaction);
         }
-        this.listTransactions = [...tempList];
+        this.listTransactions = tempList.filter(tran => tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to);
     }
 }
