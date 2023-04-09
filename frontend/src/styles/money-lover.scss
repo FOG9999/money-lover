@@ -2,7 +2,13 @@
     .card-inside-tab {
         margin-bottom: 0px;
     }
-    .mat-paginator{
+
+    .mat-paginator {
         font-size: 14px !important;
-    }  
+    }
+}
+.hover-item:hover {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    cursor: pointer;
 }

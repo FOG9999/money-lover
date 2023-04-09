@@ -1,14 +1,23 @@
 <div class="matero-row" fxLayout="row wrap">
-    <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxFlex.gt-lg="70" fxLayout="row"
-        fxLayoutAlign="center start">
+    <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxFlex.gt-lg="70"
+        fxLayout="row" fxLayoutAlign="center start">
         <mat-card>
-            <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
-                <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
-                    <ng-template matTabContent>
-                        <ng-container *ngTemplateOutlet="displayList"></ng-container>
-                    </ng-template>
-                </mat-tab>
-            </mat-tab-group>
+            <mat-card-content>
+                <div fxLayout="row" fxFill class="p-y-16">
+                    <div fxFlex="grow" class="title" fxLayout="row" fxLayoutAlign="start center">Thống kê giao dịch
+                    </div>
+                    <div fxFlex="auto">
+                        <mat-icon class="cursor-pointer">add</mat-icon>
+                    </div>
+                </div>
+                <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
+                    <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
+                        <ng-template matTabContent>
+                            <ng-container *ngTemplateOutlet="displayList"></ng-container>
+                        </ng-template>
+                    </mat-tab>
+                </mat-tab-group>
+            </mat-card-content>
         </mat-card>
     </div>
     <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex.gt-lg="30" fxFlex="100">
@@ -16,13 +25,9 @@
             <mat-card-header>Báo cáo thu chi</mat-card-header>
             <mat-card-content>
                 <div id="income-outcome-chart">
-                    <apx-chart
-                        [series]="inOutcomeChartOptions.series"
-                        [labels]="inOutcomeChartOptions.labels"
-                        [chart]="inOutcomeChartOptions.chart"
-                        [colors]="inOutcomeChartOptions.colors"
-                        [tooltip]="inOutcomeChartOptions.tooltip"
-                    ></apx-chart>
+                    <apx-chart [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels"
+                        [chart]="inOutcomeChartOptions.chart" [colors]="inOutcomeChartOptions.colors"
+                        [tooltip]="inOutcomeChartOptions.tooltip"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>
@@ -30,12 +35,8 @@
             <mat-card-header>Báo cáo chi tiêu theo chủng loại</mat-card-header>
             <mat-card-content>
                 <div class="outcome-category-based-chart">
-                    <apx-chart
-                        [series]="outcomeChartOptions.series"
-                        [labels]="outcomeChartOptions.labels"
-                        [chart]="outcomeChartOptions.chart"
-                        [tooltip]="outcomeChartOptions.tooltip"
-                    ></apx-chart>
+                    <apx-chart [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels"
+                        [chart]="outcomeChartOptions.chart" [tooltip]="outcomeChartOptions.tooltip"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>
@@ -43,12 +44,8 @@
             <mat-card-header>Báo cáo thu nhập theo chủng loại</mat-card-header>
             <mat-card-content>
                 <div class="income-category-based-chart">
-                    <apx-chart
-                        [series]="incomeChartOptions.series"
-                        [labels]="incomeChartOptions.labels"
-                        [chart]="incomeChartOptions.chart"
-                        [tooltip]="incomeChartOptions.tooltip"
-                    ></apx-chart>
+                    <apx-chart [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels"
+                        [chart]="incomeChartOptions.chart" [tooltip]="incomeChartOptions.tooltip"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>
@@ -73,13 +70,15 @@
                 <!-- transaction details on current category -->
             </div>
             <mat-list role="list">
-                <mat-list-item class="m-y-8" role="listitem" *ngFor="let tran of getListTransactionOfOneCategory(category)">
-                    <div fxLayout="row" fxFill>
+                <mat-list-item class="m-y-8" role="listitem"
+                    *ngFor="let tran of getListTransactionOfOneCategory(category)">
+                    <div class="hover-item transaction-item p-8" fxLayout="row" fxFill>
                         <div fxFlex="grow" class="transaction-date-note">
                             <div class="date">{{ tran.dateCreated.toLocaleDateString('vi-VN') }}</div>
                             <div class="note">{{ tran.note }}</div>
                         </div>
-                        <div fxLayout="row" fxLayoutAlign="end center" [ngClass]="{'transaction-amount': true, 'income': category.transactionType == 1, 'outcome': category.transactionType == 0}">
+                        <div fxLayout="row" fxLayoutAlign="end center"
+                            [ngClass]="{'transaction-amount': true, 'income': category.transactionType == 1, 'outcome': category.transactionType == 0}">
                             {{ formatNumber(tran.amount) }}
                         </div>
                     </div>

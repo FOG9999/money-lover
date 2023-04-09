@@ -7,7 +7,7 @@
 
 .transaction-date-note {
     .date {
-        font-size: large;
+        // font-size: large;
     }
     .note {
         color: rgba(0,0,0,.26);
@@ -33,4 +33,9 @@
 
 .outcome {
     color: #e51c23;
+}
+
+.title {
+    font-size: large;
+    font-weight: 600;
 }
