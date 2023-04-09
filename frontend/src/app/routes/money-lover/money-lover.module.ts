@@ -16,6 +16,7 @@ import { WalletDialogComponent } from './user-wallet/user-wallet-dialog.componen
 import { UserWalletComponent } from './user-wallet/user-wallet.component';
 import { WalletService } from './user-wallet/user-wallet.service';
 import { TransactionListComponent } from './transaction/transaction.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -33,7 +34,7 @@ const COMPONENTS = [
 ];
 
 @NgModule({
-    imports: [SharedModule, MoneyLoverRoutingModule],
+    imports: [SharedModule, MoneyLoverRoutingModule, NgApexchartsModule],
     declarations: [...COMPONENTS],
     providers: [IconService, CommonService, WalletService]
 })

@@ -1,7 +1,7 @@
-<mat-card>
-    <div class="matero-row" fxLayout="row wrap">
-        <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxLayout="row"
-            fxLayoutAlign="center center">
+<div class="matero-row" fxLayout="row wrap">
+    <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxFlex.gt-lg="70" fxLayout="row"
+        fxLayoutAlign="center center">
+        <mat-card>
             <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
                 <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
                     <ng-template matTabContent>
@@ -9,12 +9,47 @@
                     </ng-template>
                 </mat-tab>
             </mat-tab-group>
-        </div>
-        <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex="100">
-            content report
-        </div>
+        </mat-card>
     </div>
-</mat-card>
+    <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex.gt-lg="30" fxFlex="100">
+        <mat-card>
+            <mat-card-header>Báo cáo thu chi</mat-card-header>
+            <mat-card-content>
+                <div id="income-outcome-chart">
+                    <apx-chart
+                        [series]="inOutcomeChartOptions.series"
+                        [labels]="inOutcomeChartOptions.labels"
+                        [chart]="inOutcomeChartOptions.chart"
+                    ></apx-chart>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-header>Báo cáo chi tiêu theo chủng loại</mat-card-header>
+            <mat-card-content>
+                <div class="outcome-category-based-chart">
+                    <apx-chart
+                        [series]="outcomeChartOptions.series"
+                        [labels]="outcomeChartOptions.labels"
+                        [chart]="outcomeChartOptions.chart"
+                    ></apx-chart>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-header>Báo cáo thu nhập theo chủng loại</mat-card-header>
+            <mat-card-content>
+                <div class="income-category-based-chart">
+                    <apx-chart
+                        [series]="incomeChartOptions.series"
+                        [labels]="incomeChartOptions.labels"
+                        [chart]="incomeChartOptions.chart"
+                    ></apx-chart>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
 
 <!-- display list of transaction, grouped by category -->
 <ng-template #displayList>

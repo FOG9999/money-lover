@@ -6,6 +6,8 @@ import { WalletService } from '../user-wallet/user-wallet.service';
 import { takeUntil, Subject, timer } from 'rxjs';
 import { Transaction } from 'app/model/transaction.model';
 import { formatNumber, randomString } from '@shared';
+import { ChartComponent } from 'ng-apexcharts';
+import { ChartOptions } from 'app/model/chart-option';
 
 interface MonthTab {
     from: Date,
@@ -38,6 +40,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.getOtherDataList();
         timer(2000).subscribe(() => {
             this.generateData();
+            this.getInOutcomeChartData();
+            this.getOutcomeChartData();
+            this.getIncomeChartData();
         })
     }
 
@@ -47,6 +52,22 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     listCategories: Category[] = [];
     listWallets: Wallet[] = [];
     listTransactions: Transaction[] = [];
+    inOutcomeChartOptions: Partial<ChartOptions> = {
+        labels: ["Thu nhập", "Tiêu thụ"],
+        chart: {
+            type: "pie"
+        }
+    };
+    outcomeChartOptions: Partial<ChartOptions> = {
+        chart: {
+            type: "pie"
+        }
+    }
+    incomeChartOptions: Partial<ChartOptions> = {
+        chart: {
+            type: "pie"
+        }
+    }
 
     /**
      * create month tabs based on current time
@@ -121,11 +142,11 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
     getTotalValueInOneCategory(category: Category) {
         return formatNumber(
-                this.getListTransactionOfOneCategory(category)
-                .map(tran => ({val: tran.amount, cateId: tran.category._id}))
+            this.getListTransactionOfOneCategory(category)
+                .map(tran => ({ val: tran.amount, cateId: tran.category._id }))
                 .reduce((preTran, tran) => ({ val: tran.val + preTran.val, cateId: tran.cateId }))
                 .val.toString()
-            )
+        )
     }
 
     getListTransactionOfOneCategory(category: Category) {
@@ -133,31 +154,105 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             .filter(tran => tran.category._id === category._id && tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to)
     }
 
-    formatNumber(text: number){
+    formatNumber(text: number) {
         return formatNumber(text.toString());
     }
 
-    changeTab(selectedTabIndex: number){
+    changeTab(selectedTabIndex: number) {
         this.selectedMonthTab = this.listMonthTabs[selectedTabIndex];
         this.refreshMonthTabs();
+        this.getInOutcomeChartData();
+        this.getOutcomeChartData();
+        this.getIncomeChartData();
+    }
+
+    getInOutcomeChartData() {
+        let income =
+            this.listTransactions
+                .filter(tran =>
+                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 1
+                ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount })).amount;
+        let outcome =
+            this.listTransactions
+                .filter(tran =>
+                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 0
+                ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount })).amount;
+        this.inOutcomeChartOptions = {
+            ...this.inOutcomeChartOptions,
+            series: [income, outcome]
+        }
+    }
+
+    getOutcomeChartData() {
+        let outcomeArr =
+            this.listTransactions
+                .filter(tran =>
+                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 0
+                );
+        let totalOutcome = outcomeArr.reduce((pre, curr) => ({
+            amount: curr.amount + pre.amount
+        })).amount;
+        let labels = [];
+        outcomeArr.forEach((tran) => {
+            if(labels.indexOf(tran.category.name) < 0){
+                labels.push(tran.category.name);
+            }
+        })
+        let series = [];
+        labels.forEach((label, ind) => {
+            let amount = outcomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount})).amount;
+            series.push(parseFloat((amount/totalOutcome*100).toFixed(2)));
+        });
+        this.outcomeChartOptions = {
+            ...this.outcomeChartOptions,
+            labels,
+            series
+        }
+    }
+
+    getIncomeChartData(){
+        let incomeArr =
+            this.listTransactions
+                .filter(tran =>
+                    tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to && tran.category.transactionType == 1
+                );
+        let totalIncome = incomeArr.reduce((pre, curr) => ({
+            amount: curr.amount + pre.amount
+        })).amount;
+        let labels = [];
+        incomeArr.forEach((tran) => {
+            if(labels.indexOf(tran.category.name) < 0){
+                labels.push(tran.category.name);
+            }
+        })
+        let series = [];
+        labels.forEach((label, ind) => {
+            let amount = incomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount})).amount;
+            series.push(parseFloat((amount/totalIncome*100).toFixed(2)));
+        });
+        this.incomeChartOptions = {
+            ...this.outcomeChartOptions,
+            labels,
+            series
+        }
     }
 
     generateData() {
         let randomDate = () => new Date((Math.round(Math.random() * (new Date().getTime() - new Date(2023, 2, 1).getTime())) + new Date(2023, 2, 1).getTime()));
         let tempList = [];
+        let lessCategories = this.listCategories.slice(0, 10);
         for (let i = 0; i < 100; i++) {
             let transaction: Transaction = {
                 _id: Math.round(Math.random() * 100000).toString(),
                 amount: Math.round(Math.random() * 1000) * 1000,
                 wallet: this.listWallets[Math.round(Math.random())],
                 budget: null,
-                category: this.listCategories[Math.round(Math.random() * (this.listCategories.length - 1))],
+                category: lessCategories[Math.round(Math.random() * (lessCategories.length - 1))],
                 dateCreated: randomDate(),
                 note: randomString()
             }
             tempList.push(transaction);
         }
         this.listTransactions = [...tempList];
-        console.log(tempList);
     }
 }
