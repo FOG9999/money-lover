@@ -9,4 +9,5 @@ export type ChartOptions = {
     chart: ApexChart;
     responsive: ApexResponsive[];
     labels: any;
+    colors: string[]
 };

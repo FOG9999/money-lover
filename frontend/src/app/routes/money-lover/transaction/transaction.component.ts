@@ -40,9 +40,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.getOtherDataList();
         timer(2000).subscribe(() => {
             this.generateData();
-            this.getInOutcomeChartData();
-            this.getOutcomeChartData();
-            this.getIncomeChartData();
+            this.updateCharts();
         })
     }
 
@@ -56,7 +54,8 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         labels: ["Thu nhập", "Tiêu thụ"],
         chart: {
             type: "pie"
-        }
+        },
+        colors: ["#039be5", "#e51c23"]
     };
     outcomeChartOptions: Partial<ChartOptions> = {
         chart: {
@@ -72,7 +71,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     /**
      * create month tabs based on current time
      */
-    initMonthTabs() {
+    private initMonthTabs() {
         let currentTime = new Date();
         let thisMonth: MonthTab = {
             from: new Date(currentTime.getFullYear(), currentTime.getMonth(), 1),
@@ -87,37 +86,65 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * reset 2 tab beside of selected month tab
+     * reset tab list
      */
-    refreshMonthTabs() {
+    private refreshMonthTabs() {
         let selectedMonth = this.selectedMonthTab.from.getMonth();
         let selectedYear = this.selectedMonthTab.from.getFullYear();
-        let currentMonth = new Date().getMonth();
         let from = new Date(selectedYear, selectedMonth - 1, 1);
-        let to = new Date(selectedYear, selectedMonth + 1, 0);
+        let to = new Date(selectedYear, selectedMonth, 0);
         let previousMonth: MonthTab = {
             from,
             to,
-            title: selectedMonth == currentMonth ? "Tháng trước" : `${from.toLocaleDateString('vi-VN')} - ${to.toLocaleDateString('vi-VN')}`
+            title: `${from.toLocaleDateString('vi-VN')} - ${to.toLocaleDateString('vi-VN')}`
         }
         let nextFrom = new Date(selectedYear, selectedMonth + 1, 1);
         let nextTo = new Date(selectedYear, selectedMonth + 2, 0);
         let nextMonth: MonthTab = {
             from: nextFrom,
             to: nextTo,
-            title: selectedMonth == currentMonth ? "Tháng sau" : `${nextFrom.toLocaleDateString('vi-VN')} - ${nextTo.toLocaleDateString('vi-VN')}`
+            title: `${nextFrom.toLocaleDateString('vi-VN')} - ${nextTo.toLocaleDateString('vi-VN')}`
         }
-        this.listMonthTabs = [
+        let listMonthTabs = [
             previousMonth,
             this.selectedMonthTab,
             nextMonth
+        ]
+        this.updateTabTitles(listMonthTabs);
+    }
+
+    /**
+     * reset title to vietnamese if it's current month, next month or previous month
+     */
+    private updateTabTitles(listMonthTabs: MonthTab[]){
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        listMonthTabs.forEach(tab => {
+            if(tab.from.getMonth() == currentMonth && tab.from.getFullYear() == currentYear){
+                tab.title = "Tháng này"
+            }
+            else if(
+                (tab.from.getMonth() == currentMonth - 1 && tab.from.getFullYear() == currentYear)  || 
+                (tab.from.getMonth() == 11 && tab.from.getFullYear() == currentYear-1)
+            ){
+                tab.title = "Tháng trước"
+            }
+            else if(
+                (tab.from.getMonth() == currentMonth + 1 && tab.from.getFullYear() == currentYear)  || 
+                (tab.from.getMonth() == 0 && tab.from.getFullYear() == currentYear+1)
+            ){
+                tab.title = "Tháng sau"
+            }
+        });
+        this.listMonthTabs = [
+            ...listMonthTabs
         ]
     }
 
     /**
      * get list other data
      */
-    getOtherDataList() {
+    private getOtherDataList() {
         this.commonSv.getListCategories({ search: "" })
             .pipe(
                 takeUntil(this.onDestroy$)
@@ -161,12 +188,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     changeTab(selectedTabIndex: number) {
         this.selectedMonthTab = this.listMonthTabs[selectedTabIndex];
         this.refreshMonthTabs();
-        this.getInOutcomeChartData();
-        this.getOutcomeChartData();
-        this.getIncomeChartData();
+        this.updateCharts();        
     }
 
-    getInOutcomeChartData() {
+    private getInOutcomeChartData() {
         let income =
             this.listTransactions
                 .filter(tran =>
@@ -183,7 +208,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
-    getOutcomeChartData() {
+    private getOutcomeChartData() {
         let outcomeArr =
             this.listTransactions
                 .filter(tran =>
@@ -210,7 +235,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
-    getIncomeChartData(){
+    private getIncomeChartData(){
         let incomeArr =
             this.listTransactions
                 .filter(tran =>
@@ -237,11 +262,17 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
+    private updateCharts(){
+        this.getInOutcomeChartData();
+        this.getOutcomeChartData();
+        this.getIncomeChartData();
+    }
+
     generateData() {
-        let randomDate = () => new Date((Math.round(Math.random() * (new Date().getTime() - new Date(2023, 2, 1).getTime())) + new Date(2023, 2, 1).getTime()));
+        let randomDate = () => new Date((Math.round(Math.random() * (new Date().getTime() - new Date(2023, 0, 1).getTime())) + new Date(2023, 0, 1).getTime()));
         let tempList = [];
         let lessCategories = this.listCategories.slice(0, 10);
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 50; i++) {
             let transaction: Transaction = {
                 _id: Math.round(Math.random() * 100000).toString(),
                 amount: Math.round(Math.random() * 1000) * 1000,

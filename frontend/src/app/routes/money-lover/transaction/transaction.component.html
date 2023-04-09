@@ -1,6 +1,6 @@
 <div class="matero-row" fxLayout="row wrap">
     <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxFlex.gt-lg="70" fxLayout="row"
-        fxLayoutAlign="center center">
+        fxLayoutAlign="center start">
         <mat-card>
             <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
                 <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
@@ -20,6 +20,7 @@
                         [series]="inOutcomeChartOptions.series"
                         [labels]="inOutcomeChartOptions.labels"
                         [chart]="inOutcomeChartOptions.chart"
+                        [colors]="inOutcomeChartOptions.colors"
                     ></apx-chart>
                 </div>
             </mat-card-content>
