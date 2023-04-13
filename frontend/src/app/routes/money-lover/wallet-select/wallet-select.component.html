@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>
+    {{title}}
+</h2>
+<div mat-dialog-content>
+    <mat-form-field class="w-full">
+        <input matInput type="text" [(ngModel)]="search" (keyup.enter)="getDataWallets()" placeholder="Tìm kiếm" />
+        <button mat-icon-button matSuffix (click)="getDataWallets()">
+            <mat-icon>search</mat-icon>
+        </button>
+    </mat-form-field>
+    <mat-list>
+        <mat-list-item *ngFor="let wallet of wallets">
+            <div fxLayout="row" (click)="select(wallet)">
+                <div class="matero-col" fxFlex="20" fxLayout="row" fxLayoutAlign="center center">
+                    <span class="icon-select-wallettype">
+                        <ml-icon [path]="type.icon.path"></ml-icon>
+                    </span>
+                </div>
+                <div fxFlex="grow" fxLayout="row" fxLayoutAlign="center center">
+                    {{wallet.name}}
+                </div>
+                <div fxFlex="10" fxLayout="row" fxLayoutAlign="center center" *ngIf="wallet.id == selected.walletId">
+                    <mat-icon>check</mat-icon>
+                </div>
+            </div>
+        </mat-list-item>
+    </mat-list>
+</div>

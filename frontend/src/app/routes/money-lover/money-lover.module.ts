@@ -18,6 +18,8 @@ import { WalletService } from './user-wallet/user-wallet.service';
 import { TransactionListComponent } from './transaction/transaction.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { TransactionService } from './transaction/transaction.service';
+import { CategorySelectComponent } from './category-select/category-select.component';
+import { WalletSelectComponent } from './wallet-select/wallet-select.component';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -31,7 +33,9 @@ const COMPONENTS = [
     UserCategoryComponent,
     UserWalletComponent,
     WalletDialogComponent,
-    TransactionListComponent
+    TransactionListComponent,
+    CategorySelectComponent,
+    WalletSelectComponent
 ];
 
 @NgModule({
