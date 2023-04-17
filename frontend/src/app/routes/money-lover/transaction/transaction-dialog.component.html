@@ -1,34 +1,29 @@
-<h2 mat-dialog-title>{{title}}</h2>
+<h2 mat-dialog-title>Thêm mới giao dịch</h2>
 <div mat-dialog-content>
     <mat-list>
         <div mat-subheader>Ví tiền</div>
         <mat-list-item>
-            <span class="icon-select-wallet" mat-list-icon>
-                <ml-icon [path]="wallet.icon.path"></ml-icon>
+            <span class="icon-select-wallettype">
+                <ml-icon [path]="type.icon.path"></ml-icon>
             </span>
-            <div mat-line>{{wallet.name}}</div>
-            <div mat-line> {{wallet.amount}} </div>
-        </mat-list-item>
-
-        <div mat-subheader>Chủng loại</div>
-        <mat-list-item>
-            <span class="icon-select-category" mat-list-icon>
-                <ml-icon [path]="category.icon.path"></ml-icon>
+            <div mat-line>{{folder.name}}</div>
+    <div mat-line> {{folder.updated | date}} </div>
+    <div fxLayout="row">
+        <div class="matero-col" fxFlex="20" fxLayout="row" fxLayoutAlign="center center">
+            <span class="icon-select-wallettype">
+                <ml-icon [path]="type.icon.path"></ml-icon>
             </span>
-            <div mat-line>{{category.name}}</div>
-            <div mat-line>
-                <ng-container *ngTemplateOutlet="categoryType; context: {category: category}"></ng-container>
-            </div>
+        </div>
+        <div fxFlex="grow" fxLayout="row" fxLayoutAlign="center center">
+            {{category.name}}
+        </div>
+        <div fxFlex="10" fxLayout="row" fxLayoutAlign="center center" *ngIf="category.id == selected.categoryId">
+            <mat-icon>check</mat-icon>
+        </div>
+    </div>
         </mat-list-item>
     </mat-list>
 </div>
 <div mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button [mat-dialog-close]="true">Delete</button>
-</div>
 
-<!-- display category type -->
-<ng-template #categoryType let-category>
-    <span class="type-income" *ngIf="category.transactionType == 1">Khoản thu</span>
-    <span class="type-outcome" *ngIf="category.transactionType == 0">Khoản chi</span>
-</ng-template>
+</div>

@@ -54,5 +54,3 @@ export const CONSTS = {
         OUTCOME: 'Khoản chi'
     }
 }
-
-export type Mode = "view" | "create" | "edit";
