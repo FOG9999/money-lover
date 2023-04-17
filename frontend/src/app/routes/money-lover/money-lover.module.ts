@@ -17,6 +17,7 @@ import { UserWalletComponent } from './user-wallet/user-wallet.component';
 import { WalletService } from './user-wallet/user-wallet.service';
 import { TransactionListComponent } from './transaction/transaction.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { TransactionService } from './transaction/transaction.service';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -36,6 +37,6 @@ const COMPONENTS = [
 @NgModule({
     imports: [SharedModule, MoneyLoverRoutingModule, NgApexchartsModule],
     declarations: [...COMPONENTS],
-    providers: [IconService, CommonService, WalletService]
+    providers: [IconService, CommonService, WalletService, TransactionService]
 })
 export class MoneyLoverModule { }

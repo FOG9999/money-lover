@@ -74,7 +74,7 @@
                     *ngFor="let tran of getListTransactionOfOneCategory(category)">
                     <div class="hover-item transaction-item p-8" fxLayout="row" fxFill>
                         <div fxFlex="grow" class="transaction-date-note">
-                            <div class="date">{{ tran.dateCreated.toLocaleDateString('vi-VN') }}</div>
+                            <div class="date">{{ tran.dateCreatedObj.toLocaleDateString('vi-VN') }}</div>
                             <div class="note">{{ tran.note }}</div>
                         </div>
                         <div fxLayout="row" fxLayoutAlign="end center"

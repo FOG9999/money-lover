@@ -9,9 +9,9 @@ export interface Transaction extends Base {
     budget?: Budget,
     category?: Category,
     wallet?: Wallet,
-    dateCreated?: Date,
+    dateCreatedObj?: Date,
     isDelete?: boolean,
-    dateUpdated?: Date,
+    dateUpdatedObj?: Date,
     user?: User,
     note?: string
 }

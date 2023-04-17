@@ -5,17 +5,25 @@ const fs = require('fs');
 
 const listTransactions = (req, returnData, callback) => {
     const { search, isDelete } = req.params;
+    let user = req.user;
 
     const query = {
-        $or: [{
-            name: new RegExp(search, 'i')
-        }, {
-            code: new RegExp(search, 'i')
-        }]
+        $or: [
+            // {
+            //     name: new RegExp(search, 'i')
+            // },
+            // {
+            //     code: new RegExp(search, 'i')
+            // }
+            {
+                user: user._id
+            }
+        ]
     };
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
+    else query['isDelete'] = false;
 
     Transaction
         .find()
@@ -47,11 +55,15 @@ const getTransaction = (req, returnData, callback) => {
 }
 
 const addTransaction = (req, returnData, callback) => {
-    const { amount, budget, category, note } = req.params;
+    const { amount, budget, category, note, wallet } = req.params;
     const user = req.user;
 
     if (validator.isNull(category)) {
-        return callback('ERROR_CODE_MISSING');
+        return callback('ERROR_CATEGORY_MISSING');
+    }
+
+    if (validator.isNull(wallet)) {
+        return callback('ERROR_WALLET_MISSING');
     }
 
     async.series([
@@ -59,7 +71,9 @@ const addTransaction = (req, returnData, callback) => {
             let newTransaction = new Transaction({
                 amount,
                 budget,
-                user: user.id,
+                user: user._id,
+                category,
+                wallet,
                 note,
                 dateCreated: new Date()
             })

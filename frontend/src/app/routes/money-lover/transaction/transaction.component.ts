@@ -8,6 +8,7 @@ import { Transaction } from 'app/model/transaction.model';
 import { formatNumber, randomString } from '@shared';
 import { ChartComponent } from 'ng-apexcharts';
 import { ChartOptions } from 'app/model/chart-option';
+import { TransactionService } from './transaction.service';
 
 interface MonthTab {
     from: Date,
@@ -25,7 +26,8 @@ interface MonthTab {
 export class TransactionListComponent implements OnInit, OnDestroy {
     constructor(
         private commonSv: CommonService,
-        private walletSv: WalletService
+        private walletSv: WalletService,
+        private transactionService: TransactionService
     ) { }
 
     private onDestroy$: Subject<boolean> = new Subject<boolean>();
@@ -39,7 +41,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.initMonthTabs();
         this.getOtherDataList();
         timer(2000).subscribe(() => {
-            this.generateData();
+            //this.generateData();
+            this.getListTransaction();
+            
             this.updateCharts();
         })
     }
@@ -208,7 +212,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
     changeTab(selectedTabIndex: number) {
         this.selectedMonthTab = this.listMonthTabs[selectedTabIndex];
-        this.generateData();
+        //this.generateData();
         this.refreshMonthTabs();
         this.updateCharts();        
     }
@@ -290,6 +294,20 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.getIncomeChartData();
     }
 
+    private getListTransaction(){
+        this.transactionService.getListData().subscribe(list => {
+            this.listTransactions = list.map((tran) => {
+                if(tran.dateCreated){
+                    tran.dateCreatedObj = new Date(tran.dateCreated);
+                }
+                if(tran.dateUpdated){
+                    tran.dateUpdatedObj = new Date(tran.dateUpdated);
+                }
+                return tran;
+            });
+        })
+    }
+
     generateData() {
         let randomDate = () => new Date((Math.round(Math.random() * (new Date().getTime() - new Date(2023, 0, 1).getTime())) + new Date(2023, 0, 1).getTime()));
         let tempList = [];
@@ -307,5 +325,23 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             tempList.push(transaction);
         }
         this.listTransactions = tempList.filter(tran => tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to);
+        const data = (this.listTransactions.map(t => ({
+            ...t,
+            budget: null,
+            category: t.category._id,
+            wallet: t.wallet._id
+        })));
+        console.log(data)
+        data.forEach(d => {
+            this.transactionService.insertTransaction({
+                amount: d.amount,
+                category: d.category,
+                wallet: d.wallet,
+                budget: null,
+                note: d.note
+            }).subscribe(res=> {
+                console.log(res);
+            })
+        })
     }
 }
