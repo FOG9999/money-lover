@@ -16,7 +16,8 @@ export interface Transaction extends Base {
     note?: string
 }
 
-export interface NewTransaction {
+// used for form create,update
+export interface NewTransaction extends Base {
     amount: number;
     budget: string;
     category: string;
