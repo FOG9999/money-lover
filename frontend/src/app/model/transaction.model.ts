@@ -6,9 +6,9 @@ import { Wallet } from "./wallet.model";
 
 export interface Transaction extends Base {
     amount?: number,
-    budget?: Budget,
-    category?: Category,
-    wallet?: Wallet,
+    budget?: Partial<Budget>,
+    category?: Partial<Category>,
+    wallet?: Partial<Wallet>,
     dateCreatedObj?: Date,
     isDelete?: boolean,
     dateUpdatedObj?: Date,

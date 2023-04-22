@@ -9,6 +9,9 @@ import { formatNumber, randomString } from '@shared';
 import { ChartComponent } from 'ng-apexcharts';
 import { ChartOptions } from 'app/model/chart-option';
 import { TransactionService } from './transaction.service';
+import { MatDialog } from '@angular/material/dialog';
+import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
+import { ToastrService } from 'ngx-toastr';
 
 interface MonthTab {
     from: Date,
@@ -27,7 +30,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     constructor(
         private commonSv: CommonService,
         private walletSv: WalletService,
-        private transactionService: TransactionService
+        private transactionService: TransactionService,
+        private dialogService: MatDialog,
+        private toastService: ToastrService
     ) { }
 
     private onDestroy$: Subject<boolean> = new Subject<boolean>();
@@ -49,6 +54,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     listCategories: Category[] = [];
     listWallets: Wallet[] = [];
     listTransactions: Transaction[] = [];
+    loading: boolean = false;
     inOutcomeChartOptions: Partial<ChartOptions> = {
         labels: ["Thu nhập", "Tiêu thụ"],
         chart: {
@@ -290,6 +296,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     private getListTransaction(){
+        this.loading = true;
         this.transactionService.getListData({
             from: this.selectedMonthTab.from,
             to: this.selectedMonthTab.to
@@ -303,7 +310,53 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 }
                 return tran;
             });
+            this.loading = false;
             this.updateCharts();
+        }, (err) => {
+            this.loading = false;
+        })
+    }
+
+    /**
+     * open edit transaction dialog
+     */
+    editTransaction(id: string){
+        const ref = this.dialogService.open(TransactionDialogComponent, {
+            data: {
+                id
+            },
+            width: '400px'
+        });
+        ref.afterClosed().subscribe(res => {
+            if(typeof res == 'string'){
+                this.toastService.error(res);
+            }
+            else if(res && res.msg) {
+                this.toastService.success(res.msg);
+            }
+            else {
+                console.log(res)
+            }
+        })
+    }
+
+    /**
+     * create transaction
+     */
+    createTransaction(){
+        const ref = this.dialogService.open(TransactionDialogComponent, {
+            width: '400px'
+        });
+        ref.afterClosed().subscribe(res => {
+            if(typeof res == 'string'){
+                this.toastService.error(res);
+            }
+            else if(res && res.msg) {
+                this.toastService.success(res.msg);
+            }
+            else {
+                console.log(res)
+            }
         })
     }
 

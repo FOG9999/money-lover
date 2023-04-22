@@ -5,11 +5,11 @@ import { Category, NewCategory } from 'app/model/category.model';
 import { Icon } from 'app/model/icon.model';
 import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common/common.service';
-import { IconSelectionComponent } from '../common/category/icon-selection.component';
 import { UserCategoryService } from './user-category.service';
 import { IconService } from '@shared';
 import { CategoryDialogComponent } from '../common/category/category-dialog.component';
 import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
+import { IconSelectionComponent } from '../icon-selection/icon-selection.component';
 
 @Component({
     selector: 'ml-user-category',
@@ -146,25 +146,27 @@ export class UserCategoryComponent implements OnInit {
             maxWidth: 1000
         });
         this.newCategoryDialog.afterClosed().subscribe((data: NewCategory) => {
-            this.iconService.getIconByPath(data.selectedIcon).subscribe((icon: Icon) => {
-                console.log({
-                    name: data.categoryName,
-                    icon: icon._id
-                });
-                this.commonService.insertCategory({
-                    name: data.categoryName,
-                    icon: icon._id,
-                    transactionType: data.transactionType,
-                    isDefault: data.isDefault
-                }).subscribe(res => {
-                    this.toastService.success(CONSTS.messages.insert_category_success);
-                    this.getDataCategories();
+            if(data){
+                this.iconService.getIconByPath(data.selectedIcon).subscribe((icon: Icon) => {
+                    console.log({
+                        name: data.categoryName,
+                        icon: icon._id
+                    });
+                    this.commonService.insertCategory({
+                        name: data.categoryName,
+                        icon: icon._id,
+                        transactionType: data.transactionType,
+                        isDefault: data.isDefault
+                    }).subscribe(res => {
+                        this.toastService.success(CONSTS.messages.insert_category_success);
+                        this.getDataCategories();
+                    }, error => {
+                        this.toastService.error(CONSTS.messages.insert_category_fail);
+                    })
                 }, error => {
-                    this.toastService.error(CONSTS.messages.insert_category_fail);
+                    this.toastService.error(CONSTS.messages.icon_not_found)
                 })
-            }, error => {
-                this.toastService.error(CONSTS.messages.icon_not_found)
-            })
+            }
         })
     }
 

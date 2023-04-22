@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<div mat-dialog-content>
+    <ng-container *ngIf="transaction; else loading">
+        <mat-list>
+            <!-- Loại ví và số tiền còn lại -->
+            <div mat-subheader>Ví tiền</div>
+            <mat-list-item class="hover-item" (click)="openSelectWallet()">
+                <span class="icon icon-select-wallet" mat-list-icon>
+                    <ml-icon [path]="transaction.wallet.walletType.icon.path"></ml-icon>
+                </span>
+                <div mat-line>{{transaction.wallet.walletType.name}}</div>
+                <div mat-line> {{transaction.wallet.amount}} </div>
+            </mat-list-item>
+    
+            <!-- Chủng loại giao dịch -->
+            <div mat-subheader>Chủng loại</div>
+            <mat-list-item class="hover-item" (click)="openSelectCategory()">
+                <span class="icon icon-select-category" mat-list-icon>
+                    <ml-icon [path]="transaction.category.icon.path"></ml-icon>
+                </span>
+                <div mat-line>{{transaction.category.name}}</div>
+                <div mat-line>
+                    <ng-container *ngTemplateOutlet="categoryType; context: {category: transaction.category}"></ng-container>
+                </div>
+            </mat-list-item>
+        </mat-list>
+        <form class="form-field-full" [formGroup]="transactionForm">
+            <!-- Sô tiền -->
+            <mat-form-field appearance="outline">
+                <mat-label>Số tiền</mat-label>
+                <input matInput placeholder="Nhập số tiền" type="text" formControlName="amount" numberFormat required>
+                <mat-error *ngIf="transactionForm.get('amount').invalid">Số tiền nhập không hợp lệ</mat-error>
+            </mat-form-field>
+
+            <!-- Note -->
+            <mat-form-field appearance="outline">
+                <mat-label>Ghi chú</mat-label>
+                <textarea matInput placeholder="Ghi chú" type="text" formControlName="note" cols="3"></textarea>
+            </mat-form-field>
+        </form>
+    </ng-container>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
+    <button mat-button [disabled]="!isValid()" color="primary" (click)="save()">Lưu</button>
+</div>
+
+<!-- display category type -->
+<ng-template #categoryType let-category="category">
+    <span class="income" *ngIf="category.transactionType == 1">Khoản thu</span>
+    <span class="outcome" *ngIf="category.transactionType == 0">Khoản chi</span>
+</ng-template>
+
+<!-- loading -->
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

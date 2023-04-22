@@ -14,7 +14,7 @@ interface SelectedCategory {
 
 export class CategorySelectComponent implements OnInit {
     constructor(
-        @Inject(MAT_DIALOG_DATA) public selected: Partial<SelectedCategory>,
+        @Inject(MAT_DIALOG_DATA) public data: Partial<SelectedCategory>,
         private ref: MatDialogRef<CategorySelectComponent>,
         private commonService: CommonService
     ) { }
@@ -26,14 +26,36 @@ export class CategorySelectComponent implements OnInit {
     title: string = "Chọn chủng loại";
     search: string = "";
     categories: Category[] = [];
+    selectedCategory: Partial<Category>;
+    loading: boolean = false;
 
     select(category: Category){
-        this.ref.close(category);
+        this.selectedCategory = category;
+    }
+
+    save(){
+        this.ref.close(this.selectedCategory);
+    }
+
+    close(){
+        this.ref.close();
     }
 
     getDataCategories() {
+        this.loading = true;
         this.commonService.getListCategories({ search: this.search }).subscribe(res => {
             this.categories = [...res];
+            if(this.data && this.data.categoryId){
+                this.selectedCategory = res.find(x => x._id == this.data.categoryId) ? res.find(x => x._id == this.data.categoryId): {_id: ''}
+            }
+            else {
+                this.selectedCategory = {
+                    _id: ''
+                }
+            }
+            this.loading = false;
+        }, (err) => {
+            this.loading = false;
         })
     }
 }

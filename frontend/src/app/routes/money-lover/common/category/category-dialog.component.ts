@@ -21,7 +21,7 @@ export class CategoryDialogComponent implements OnInit {
 
     category: NewCategory = {
         categoryName: "Tên chủng loại 1",
-        selectedIcon: "icon_not_selected.png",
+        selectedIcon: CONSTS.icon_not_selected,
         transactionType: 0
     }
     selectedIndexIcon: number = -1;

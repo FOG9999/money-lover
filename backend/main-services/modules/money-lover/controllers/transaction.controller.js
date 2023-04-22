@@ -19,12 +19,12 @@ const listTransactions = (req, returnData, callback) => {
     }
     else query['isDelete'] = false;
 
-    if(!validator.isNull(from) || !validator.isNull(to)){
+    if (!validator.isNull(from) || !validator.isNull(to)) {
         query['dateCreated'] = {};
-        if(!validator.isNull(from)){
+        if (!validator.isNull(from)) {
             query['dateCreated']['$gt'] = from;
         }
-        if(!validator.isNull(to)){
+        if (!validator.isNull(to)) {
             query['dateCreated']['$lt'] = to;
         }
     }
@@ -48,8 +48,21 @@ const getTransaction = (req, returnData, callback) => {
     Transaction
         .findOne({ _id: id })
         .populate("budget")
-        .populate("category")
-        .populate("wallet")
+        .populate({
+            path: 'category',
+            populate: {
+                path: 'icon'
+            }
+        })
+        .populate({
+            path: 'wallet',
+            populate: {
+                path: 'walletType',
+                populate: {
+                    path: 'icon'
+                }
+            }
+        })
         .exec((err, data) => {
             if (err) return callback(err);
             if (!data) return callback('ERROR_TRANSACTION_NOT_FOUND');

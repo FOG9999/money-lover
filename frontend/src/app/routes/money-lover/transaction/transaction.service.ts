@@ -22,4 +22,9 @@ export class TransactionService {
         return this.http.post<Transaction[]>(environment.SERVER_URL, { api_name: api, ...search }, { observe: "body" });
     }
 
+    getTransaction(id: string){
+        const api: string = "api.v1.transaction.get";
+        return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, id }, { observe: "body" });
+    }
+
 }

@@ -5,7 +5,7 @@ import { WalletType } from 'app/model/wallet-type.model';
 import { Icon } from 'app/model/icon.model';
 import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common.service';
-import { IconSelectionComponent } from '../category/icon-selection.component';
+import { IconSelectionComponent } from '../../icon-selection/icon-selection.component';
 
 @Component({
     selector: 'ml-wallet-type',

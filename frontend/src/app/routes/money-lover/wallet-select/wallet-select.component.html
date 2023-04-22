@@ -8,21 +8,32 @@
             <mat-icon>search</mat-icon>
         </button>
     </mat-form-field>
-    <mat-list>
-        <mat-list-item *ngFor="let wallet of wallets">
-            <div fxLayout="row" (click)="select(wallet)">
-                <div class="matero-col" fxFlex="20" fxLayout="row" fxLayoutAlign="center center">
-                    <span class="icon-select-wallettype">
-                        <ml-icon [path]="type.icon.path"></ml-icon>
-                    </span>
+    <ng-container *ngIf="!loading; else loadingTpl">
+        <mat-list>
+            <mat-list-item class="hover-item" *ngFor="let wallet of wallets" (click)="select(wallet)">
+                <span class="icon icon-select-wallettype" mat-list-icon>
+                    <ml-icon [path]="wallet.walletType.icon.path"></ml-icon>
+                </span>
+                <div mat-line>
+                    <div fxLayout="row">
+                        <div fxFlex="90" fxLayout="row" fxLayoutAlign="start center">
+                            {{wallet.walletType.name}}
+                        </div>
+                        <div fxFlex="10" fxLayout="row" fxLayoutAlign="center center" *ngIf="wallet._id == selectedWallet._id">
+                            <mat-icon>check</mat-icon>
+                        </div>
+                    </div>
                 </div>
-                <div fxFlex="grow" fxLayout="row" fxLayoutAlign="center center">
-                    {{wallet.name}}
-                </div>
-                <div fxFlex="10" fxLayout="row" fxLayoutAlign="center center" *ngIf="wallet.id == selected.walletId">
-                    <mat-icon>check</mat-icon>
-                </div>
-            </div>
-        </mat-list-item>
-    </mat-list>
+            </mat-list-item>
+        </mat-list>
+    </ng-container>
 </div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
+    <button mat-button color="primary" (click)="save()">Lưu</button>
+</div>
+
+<!-- loading -->
+<ng-template #loadingTpl>
+    <app-loading></app-loading>
+</ng-template>

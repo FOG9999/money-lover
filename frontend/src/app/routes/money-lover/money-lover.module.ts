@@ -3,7 +3,6 @@ import { IconService } from '@shared';
 import { SharedModule } from '@shared/shared.module';
 import { CategoryDialogComponent } from './common/category/category-dialog.component';
 import { CategoryComponent } from './common/category/category.component';
-import { IconSelectionComponent } from './common/category/icon-selection.component';
 import { MoneyCommonComponent } from './common/common.component';
 import { CommonService } from './common/common.service';
 import { IconAddComponent } from './common/icon-mng/icon-add-dialog.component';
@@ -20,6 +19,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { TransactionService } from './transaction/transaction.service';
 import { CategorySelectComponent } from './category-select/category-select.component';
 import { WalletSelectComponent } from './wallet-select/wallet-select.component';
+import { TransactionDialogComponent } from './transaction/transaction-dialog/transaction-dialog.component';
+import { IconSelectionComponent } from './icon-selection/icon-selection.component';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -35,7 +36,8 @@ const COMPONENTS = [
     WalletDialogComponent,
     TransactionListComponent,
     CategorySelectComponent,
-    WalletSelectComponent
+    WalletSelectComponent,
+    TransactionDialogComponent
 ];
 
 @NgModule({

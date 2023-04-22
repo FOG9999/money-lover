@@ -14,7 +14,7 @@ interface SelectedWallet {
 
 export class WalletSelectComponent implements OnInit {
     constructor(
-        @Inject(MAT_DIALOG_DATA) public selected: Partial<SelectedWallet>,
+        @Inject(MAT_DIALOG_DATA) public data: Partial<SelectedWallet>,
         private ref: MatDialogRef<WalletSelectComponent>,
         private walletService: WalletService
     ) { }
@@ -26,14 +26,36 @@ export class WalletSelectComponent implements OnInit {
     title: string = "Chọn chủng loại";
     search: string = "";
     wallets: Wallet[] = [];
+    selectedWallet: Partial<Wallet>;
+    loading: boolean = false;
 
     select(wallet: Wallet){
-        this.ref.close(wallet);
+        this.selectedWallet = wallet;
+    }
+
+    save(){
+        this.ref.close(this.selectedWallet);
+    }
+
+    close(){
+        this.ref.close();
     }
 
     getDataWallets() {
+        this.loading = true;
         this.walletService.getListWallets({ search: this.search }).subscribe(res => {
             this.wallets = [...res];
+            if(this.data && this.data.walletId){
+                this.selectedWallet = res.find(x => x._id == this.data.walletId) ? res.find(x => x._id == this.data.walletId): {_id: ''}
+            }
+            else {
+                this.selectedWallet = {
+                    _id: ''
+                }
+            }
+            this.loading = false;
+        }, (err) => {
+            this.loading = false;
         })
     }
 }
