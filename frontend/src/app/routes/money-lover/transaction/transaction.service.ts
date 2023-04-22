@@ -14,9 +14,12 @@ export class TransactionService {
         return this.http.post(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
 
-    getListData() {
+    getListData(search: {
+        from: Date,
+        to: Date
+    }) {
         let api: string = `api.v1.transaction.list`;
-        return this.http.post<Transaction[]>(environment.SERVER_URL, { api_name: api }, { observe: "body" });
+        return this.http.post<Transaction[]>(environment.SERVER_URL, { api_name: api, ...search }, { observe: "body" });
     }
 
 }

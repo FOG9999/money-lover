@@ -4,17 +4,11 @@ const async = require('async');
 const fs = require('fs');
 
 const listTransactions = (req, returnData, callback) => {
-    const { search, isDelete } = req.params;
+    const { search, isDelete, from, to } = req.params;
     let user = req.user;
 
     const query = {
         $or: [
-            // {
-            //     name: new RegExp(search, 'i')
-            // },
-            // {
-            //     code: new RegExp(search, 'i')
-            // }
             {
                 user: user._id
             }
@@ -24,6 +18,16 @@ const listTransactions = (req, returnData, callback) => {
         query['isDelete'] = isDelete;
     }
     else query['isDelete'] = false;
+
+    if(!validator.isNull(from) || !validator.isNull(to)){
+        query['dateCreated'] = {};
+        if(!validator.isNull(from)){
+            query['dateCreated']['$gt'] = from;
+        }
+        if(!validator.isNull(to)){
+            query['dateCreated']['$lt'] = to;
+        }
+    }
 
     Transaction
         .find()

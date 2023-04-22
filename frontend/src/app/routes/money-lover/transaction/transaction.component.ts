@@ -40,12 +40,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.initMonthTabs();
         this.getOtherDataList();
-        timer(2000).subscribe(() => {
-            //this.generateData();
-            this.getListTransaction();
-            
-            this.updateCharts();
-        })
+        this.getListTransaction();
     }
 
     listMonthTabs: MonthTab[] = [];
@@ -214,7 +209,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.selectedMonthTab = this.listMonthTabs[selectedTabIndex];
         //this.generateData();
         this.refreshMonthTabs();
-        this.updateCharts();        
+        this.getListTransaction();        
     }
 
     private getInOutcomeChartData() {
@@ -295,7 +290,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     private getListTransaction(){
-        this.transactionService.getListData().subscribe(list => {
+        this.transactionService.getListData({
+            from: this.selectedMonthTab.from,
+            to: this.selectedMonthTab.to
+        }).subscribe(list => {
             this.listTransactions = list.map((tran) => {
                 if(tran.dateCreated){
                     tran.dateCreatedObj = new Date(tran.dateCreated);
@@ -305,6 +303,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 }
                 return tran;
             });
+            this.updateCharts();
         })
     }
 

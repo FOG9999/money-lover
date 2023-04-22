@@ -27,11 +27,11 @@ let TransactionSchema = new Schema({
     },
     dateCreated: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     },
     dateUpdated: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     },
     isDelete: {
         type: Boolean,
