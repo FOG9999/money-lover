@@ -74,7 +74,7 @@
             <mat-list role="list">
                 <mat-list-item class="m-y-8" role="listitem"
                     *ngFor="let tran of getListTransactionOfOneCategory(category)">
-                    <div class="hover-item transaction-item p-8" fxLayout="row" fxFill (click)="editTransaction(tran._id)">
+                    <div class="hover-item transaction-item p-8" fxLayout="row" fxFill (click)="viewTransaction(tran._id)">
                         <div fxFlex="grow" class="transaction-date-note">
                             <div class="date">{{ tran.dateCreatedObj.toLocaleDateString('vi-VN') }}</div>
                             <div class="note">{{ tran.note }}</div>

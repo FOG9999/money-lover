@@ -12,6 +12,7 @@ import { TransactionService } from './transaction.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { TransactionViewComponent } from './transaction-view/transaction-view.component';
 
 interface MonthTab {
     from: Date,
@@ -317,10 +318,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * open edit transaction dialog
+     * open view transaction dialog
      */
-    editTransaction(id: string){
-        const ref = this.dialogService.open(TransactionDialogComponent, {
+    viewTransaction(id: string){
+        const ref = this.dialogService.open(TransactionViewComponent, {
             data: {
                 id
             },
@@ -330,12 +331,8 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             if(typeof res == 'string'){
                 this.toastService.error(res);
             }
-            else if(res && res.msg) {
-                this.toastService.success(res.msg);
+            if(res.isEditted){
                 this.getListTransaction();
-            }
-            else {
-                console.log(res)
             }
         })
     }

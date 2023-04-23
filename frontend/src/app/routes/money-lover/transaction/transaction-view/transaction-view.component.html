@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<div mat-dialog-content>
+    <ng-container *ngIf="transaction; else loading">
+        <mat-list>
+            <!-- Loại ví và số tiền còn lại -->
+            <div mat-subheader>Ví tiền</div>
+            <mat-list-item class="hover-item">
+                <span class="icon icon-select-wallet" mat-list-icon>
+                    <ml-icon [path]="transaction.wallet.walletType.icon.path"></ml-icon>
+                </span>
+                <div mat-line>{{transaction.wallet.walletType.name}}</div>
+                <div mat-line> {{transaction.wallet.amount}} </div>
+            </mat-list-item>
+    
+            <!-- Chủng loại giao dịch -->
+            <div mat-subheader>Chủng loại</div>
+            <mat-list-item class="hover-item">
+                <span class="icon icon-select-category" mat-list-icon>
+                    <ml-icon [path]="transaction.category.icon.path"></ml-icon>
+                </span>
+                <div mat-line>{{transaction.category.name}}</div>
+                <div mat-line>
+                    <ng-container *ngTemplateOutlet="categoryType; context: {category: transaction.category}"></ng-container>
+                </div>
+            </mat-list-item>
+        </mat-list>
+        <div class="form-field-full">
+            <!-- Chọn ngày giao dịch -->
+            <div class="m-y-16">
+                <mat-label>Ngày giao dịch</mat-label>
+                <p>{{ transaction.dateCreated | date: "dd/MM/yyyy" }}</p>
+              </div>
+
+            <!-- Sô tiền -->
+            <div class="m-y-16">
+                <mat-label>Số tiền</mat-label>
+                <p>{{ formatNumber(transaction.amount ? transaction.amount.toString(): '') }}</p>
+            </div>
+
+            <!-- Note -->
+            <div class="m-y-16">
+                <mat-label>Ghi chú</mat-label>
+                <p>{{ transaction.note }}</p>
+            </div>
+        </div>
+    </ng-container>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
+    <button mat-button color="primary" (click)="edit()">Chỉnh sửa</button>
+</div>
+
+<!-- display category type -->
+<ng-template #categoryType let-category="category">
+    <span class="income" *ngIf="category.transactionType == 1">Khoản thu</span>
+    <span class="outcome" *ngIf="category.transactionType == 0">Khoản chi</span>
+</ng-template>
+
+<!-- loading -->
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>
