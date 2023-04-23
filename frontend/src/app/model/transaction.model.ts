@@ -23,4 +23,5 @@ export interface NewTransaction extends Base {
     category: string;
     wallet: string;
     note: string;
+    dateCreated: Date
 }

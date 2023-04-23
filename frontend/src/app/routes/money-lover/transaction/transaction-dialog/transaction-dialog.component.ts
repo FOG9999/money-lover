@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CONSTS, Mode } from 'app/consts';
+import { CONSTS } from 'app/consts';
 import { NewTransaction, Transaction } from 'app/model/transaction.model';
-import { Wallet } from 'app/model/wallet.model';
 import { TransactionService } from '../transaction.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { WalletSelectComponent } from '../../wallet-select/wallet-select.component';
 import { CategorySelectComponent } from '../../category-select/category-select.component';
+import { currencyToNumber } from '@shared';
 
 @Component({
     selector: 'transaction-dialog',
@@ -29,7 +29,8 @@ export class TransactionDialogComponent implements OnInit {
                 this.transaction = res;
                 this.transactionForm.setValue({
                     amount: res.amount,
-                    note: res.note
+                    note: res.note,
+                    dateCreated: new Date(res.dateCreated)
                 })
             }, (err) => {
                 console.error(err);
@@ -62,22 +63,42 @@ export class TransactionDialogComponent implements OnInit {
     title: string = "Chỉnh sửa giao dịch";
     transactionForm: FormGroup = new FormGroup({
         amount: new FormControl('0', Validators.required),
-        note: new FormControl('')
+        note: new FormControl(''),
+        dateCreated: new FormControl(new Date(), Validators.required)
     });
 
-    close(msg?: string){
+    /**
+     * close current dialog
+     * @param msg string if having error; obj when successful
+     */
+    close(msg?: string | {msg: string}){
         this.dialogRef.close(msg);
     }
 
     getCurrentData(): NewTransaction{
         return {
-            ...this.transaction,
-            ...this.transactionForm.value,
+            _id: this.transaction._id ? this.transaction._id: '',
+            budget: null,
+            dateCreated: new Date(this.transactionForm.get('dateCreated').value),
+            amount: currencyToNumber(this.transactionForm.get('amount').value),
+            note: this.transactionForm.get('note').value,
+            category: this.transaction.category._id,
+            wallet: this.transaction.wallet._id
         }
     }
 
     save(){
         console.log(this.getCurrentData())
+        if(this.data && this.data.id){
+            this.transactionService.updateTransaction(this.getCurrentData())
+            .subscribe(res => {
+                console.log(res);
+                this.close({msg: "Cập nhật giao dịch thành công"})
+            }, err => {
+                console.error(err);
+                this.close("Cập nhật giao dịch thất bại");
+            })
+        }
     }
 
     isValid(){
@@ -126,5 +147,9 @@ export class TransactionDialogComponent implements OnInit {
                 }
             }
         })
+    }
+
+    clearFormControl(name: string){
+        this.transactionForm.get(name).setValue(null);
     }
 }

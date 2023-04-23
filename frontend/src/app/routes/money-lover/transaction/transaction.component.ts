@@ -333,6 +333,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             }
             else if(res && res.msg) {
                 this.toastService.success(res.msg);
+                this.getListTransaction();
             }
             else {
                 console.log(res)
@@ -353,6 +354,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             }
             else if(res && res.msg) {
                 this.toastService.success(res.msg);
+                this.getListTransaction();
             }
             else {
                 console.log(res)

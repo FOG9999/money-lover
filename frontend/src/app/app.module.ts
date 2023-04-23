@@ -20,6 +20,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AuthInterceptor } from '@core';
 import { StoreModule } from '@ngrx/store';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 // Required for AOT compilation
 export function TranslateHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -51,6 +52,10 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
+    },
+    {
+      provide: MAT_DATE_LOCALE,
+      useValue: 'vi-VN'
     }
   ],
   bootstrap: [AppComponent],

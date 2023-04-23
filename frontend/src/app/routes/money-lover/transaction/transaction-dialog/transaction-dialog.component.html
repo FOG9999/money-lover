@@ -25,10 +25,19 @@
             </mat-list-item>
         </mat-list>
         <form class="form-field-full" [formGroup]="transactionForm">
+            <!-- Chọn ngày giao dịch -->
+            <mat-form-field appearance="outline">
+                <mat-label>Ngày giao dịch</mat-label>
+                <input matInput formControlName="dateCreated" [matDatepicker]="picker">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+
             <!-- Sô tiền -->
             <mat-form-field appearance="outline">
                 <mat-label>Số tiền</mat-label>
                 <input matInput placeholder="Nhập số tiền" type="text" formControlName="amount" numberFormat required>
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('amount')">close</mat-icon>
                 <mat-error *ngIf="transactionForm.get('amount').invalid">Số tiền nhập không hợp lệ</mat-error>
             </mat-form-field>
 
@@ -36,6 +45,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Ghi chú</mat-label>
                 <textarea matInput placeholder="Ghi chú" type="text" formControlName="note" cols="3"></textarea>
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('note')">close</mat-icon>
             </mat-form-field>
         </form>
     </ng-container>

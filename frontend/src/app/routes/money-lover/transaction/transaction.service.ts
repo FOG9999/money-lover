@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { Transaction } from 'app/model/transaction.model';
+import { NewTransaction, Transaction } from 'app/model/transaction.model';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionService {
@@ -25,6 +25,11 @@ export class TransactionService {
     getTransaction(id: string){
         const api: string = "api.v1.transaction.get";
         return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, id }, { observe: "body" });
+    }
+
+    updateTransaction(transaction: NewTransaction){
+        const api: string = "api.v1.transaction.update";
+        return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, ...transaction }, { observe: "body" });
     }
 
 }

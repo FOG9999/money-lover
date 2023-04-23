@@ -2,6 +2,7 @@ const Transaction = require('../models/transaction');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
+const utils = require(__libs_path + '/utils');
 
 const listTransactions = (req, returnData, callback) => {
     const { search, isDelete, from, to } = req.params;
@@ -110,15 +111,18 @@ const addTransaction = (req, returnData, callback) => {
 }
 
 const updateTransaction = (req, returnData, callback) => {
-    let { amount, budget, category, note } = req.params;
+    let { amount, budget, category, note, dateCreated, _id } = req.params;
 
     if (validator.isNull(category)) {
         return callback('ERROR_CODE_MISSING');
     }
+    if (validator.isNull(dateCreated)) {
+        return callback('ERROR_DATECREATED_MISSING');
+    }
 
     Transaction
         .findOne()
-        .where({ _id: id })
+        .where({ _id })
         .exec((err, result) => {
             if (err) {
                 return callback(err);
@@ -127,7 +131,7 @@ const updateTransaction = (req, returnData, callback) => {
                 return callback('ERROR_TRANSACTION_NOT_FOUND');
             }
             else {
-                utils.merge(result, { amount, budget, category, note });
+                utils.merge(result, { amount, budget, category, note, dateCreated });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
