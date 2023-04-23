@@ -99,6 +99,16 @@ export class TransactionDialogComponent implements OnInit {
                 this.close("Cập nhật giao dịch thất bại");
             })
         }
+        else {
+            this.transactionService.createTransaction(this.getCurrentData())
+            .subscribe(res => {
+                console.log(res);
+                this.close({msg: "Thêm giao dịch thành công"})
+            }, err => {
+                console.error(err);
+                this.close("Thêm giao dịch thất bại");
+            })
+        }
     }
 
     isValid(){

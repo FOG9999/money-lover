@@ -32,4 +32,9 @@ export class TransactionService {
         return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, ...transaction }, { observe: "body" });
     }
 
+    createTransaction(transaction: NewTransaction){
+        const api: string = "api.v1.transaction.add";
+        return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, ...transaction }, { observe: "body" });
+    }
+
 }

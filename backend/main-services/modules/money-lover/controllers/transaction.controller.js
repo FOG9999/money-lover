@@ -73,7 +73,7 @@ const getTransaction = (req, returnData, callback) => {
 }
 
 const addTransaction = (req, returnData, callback) => {
-    const { amount, budget, category, note, wallet } = req.params;
+    const { amount, budget, category, note, wallet, dateCreated } = req.params;
     const user = req.user;
 
     if (validator.isNull(category)) {
@@ -82,6 +82,10 @@ const addTransaction = (req, returnData, callback) => {
 
     if (validator.isNull(wallet)) {
         return callback('ERROR_WALLET_MISSING');
+    }
+
+    if (validator.isNull(dateCreated)) {
+        return callback('ERROR_DATECREATED_MISSING');
     }
 
     async.series([
@@ -93,7 +97,7 @@ const addTransaction = (req, returnData, callback) => {
                 category,
                 wallet,
                 note,
-                dateCreated: new Date()
+                dateCreated
             })
             newTransaction.save((err, result) => {
                 if (err) cb(err);

@@ -213,7 +213,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
     changeTab(selectedTabIndex: number) {
         this.selectedMonthTab = this.listMonthTabs[selectedTabIndex];
-        //this.generateData();
         this.refreshMonthTabs();
         this.getListTransaction();        
     }
@@ -359,43 +358,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             else {
                 console.log(res)
             }
-        })
-    }
-
-    generateData() {
-        let randomDate = () => new Date((Math.round(Math.random() * (new Date().getTime() - new Date(2023, 0, 1).getTime())) + new Date(2023, 0, 1).getTime()));
-        let tempList = [];
-        let lessCategories = this.listCategories.slice(0, 10);
-        for (let i = 0; i < 50; i++) {
-            let transaction: Transaction = {
-                _id: Math.round(Math.random() * 100000).toString(),
-                amount: Math.round(Math.random() * 1000) * 1000,
-                wallet: this.listWallets[Math.round(Math.random())],
-                budget: null,
-                category: lessCategories[Math.round(Math.random() * (lessCategories.length - 1))],
-                dateCreated: randomDate(),
-                note: randomString()
-            }
-            tempList.push(transaction);
-        }
-        this.listTransactions = tempList.filter(tran => tran.dateCreated >= this.selectedMonthTab.from && tran.dateCreated <= this.selectedMonthTab.to);
-        const data = (this.listTransactions.map(t => ({
-            ...t,
-            budget: null,
-            category: t.category._id,
-            wallet: t.wallet._id
-        })));
-        console.log(data)
-        data.forEach(d => {
-            this.transactionService.insertTransaction({
-                amount: d.amount,
-                category: d.category,
-                wallet: d.wallet,
-                budget: null,
-                note: d.note
-            }).subscribe(res=> {
-                console.log(res);
-            })
         })
     }
 }
