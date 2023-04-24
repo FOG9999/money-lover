@@ -37,4 +37,9 @@ export class TransactionService {
         return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, ...transaction }, { observe: "body" });
     }
 
+    deleteTransaction(_id: string){
+        const api: string = "api.v1.transaction.delete";
+        return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, id: _id }, { observe: "body" });
+    }
+
 }

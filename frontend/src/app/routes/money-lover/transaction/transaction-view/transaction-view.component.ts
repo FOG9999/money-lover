@@ -6,6 +6,7 @@ import { TransactionDialogComponent } from '../transaction-dialog/transaction-di
 import { TransactionService } from '../transaction.service';
 import { formatNumber } from '@shared';
 import { ToastrService } from 'ngx-toastr';
+import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
 
 @Component({
     selector: 'transaction-view',
@@ -31,7 +32,7 @@ export class TransactionViewComponent implements OnInit {
     title: string = "Xem chi tiết giao dịch";
     formatNumber = formatNumber;
     /**
-     * check if this transaction editted or not to reload when close view dialog
+     * check if this transaction editted or deleted or not to reload when close view dialog
      */
     isEditted: boolean = false;
 
@@ -79,6 +80,26 @@ export class TransactionViewComponent implements OnInit {
             }
             else {
                 console.log(res)
+            }
+        })
+    }
+
+    deleteTransaction(){
+        const ref = this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                message: "Xóa giao dịch này?",
+                title: "Xác nhận xóa"
+            }
+        });
+        ref.afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if(isConfirmed){
+                this.transactionService.deleteTransaction(this.data.id).subscribe(res => {
+                    this.isEditted = true;
+                    this.toastService.success("Xóa giao dịch thành công");
+                    this.close();
+                }, (er) =>{
+                    this.toastService.error("Xóa giao dịch thất bại");
+                })
             }
         })
     }

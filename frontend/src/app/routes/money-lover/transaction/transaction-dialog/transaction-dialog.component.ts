@@ -102,7 +102,6 @@ export class TransactionDialogComponent implements OnInit {
         else {
             this.transactionService.createTransaction(this.getCurrentData())
             .subscribe(res => {
-                console.log(res);
                 this.close({msg: "Thêm giao dịch thành công"})
             }, err => {
                 console.error(err);
