@@ -41,6 +41,10 @@ const routes: Routes = [
         data: {title: "Giao dịch", titleI18n: 'transaction'}
       },
       {
+        path: 'report',
+        loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
+      },
+      {
         path: '**', redirectTo: 'user-category'
       }
     ]

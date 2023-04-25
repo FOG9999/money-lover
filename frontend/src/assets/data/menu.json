@@ -39,6 +39,12 @@
           "name": "user-wallet",
           "level": ["USER"],
           "type": "link"
+        },
+        {
+          "route": "report",
+          "name": "report",
+          "level": ["USER"],
+          "type": "link"
         }
       ]
     }

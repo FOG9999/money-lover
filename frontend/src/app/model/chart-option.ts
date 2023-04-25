@@ -3,15 +3,28 @@ import {
     ApexResponsive,
     ApexChart,
     ApexDataLabels,
-    ApexTooltip
+    ApexTooltip,
+    ApexFill,
+    ApexLegend,
+    ApexPlotOptions,
+    ApexStroke,
+    ApexXAxis,
+    ApexYAxis,
+    ApexAxisChartSeries
 } from "ng-apexcharts";
 
 export type ChartOptions = {
-    series: ApexNonAxisChartSeries;
+    series: ApexNonAxisChartSeries | ApexAxisChartSeries;
     chart: ApexChart;
     responsive: ApexResponsive[];
     labels: any;
     colors: string[];
     dataLabels: ApexDataLabels;
-    tooltip: ApexTooltip
+    plotOptions: ApexPlotOptions;
+    yaxis: ApexYAxis;
+    xaxis: ApexXAxis;
+    fill: ApexFill;
+    tooltip: ApexTooltip;
+    stroke: ApexStroke;
+    legend: ApexLegend;
 };

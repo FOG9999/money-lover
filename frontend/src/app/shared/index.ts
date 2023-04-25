@@ -15,3 +15,6 @@ export * from './utils/utils';
 
 // Directives
 export * from './directives/number-foramat.directive';
+
+// Pipes
+export * from './pipes/number-format.pipe'

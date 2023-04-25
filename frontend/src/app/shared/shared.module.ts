@@ -22,6 +22,7 @@ import { MLIconComponent } from './components/money-lover/icon/icon.component';
 import { ConfirmDeletionComponent } from './components/money-lover/confirm-deletion/confirm-deletion.component';
 import { NumberFormatDirective } from './directives/number-foramat.directive';
 import { AppLoadingComponent } from './components/money-lover/app-loading/app-loading.component';
+import { FormatNumberPipe } from './pipes/number-format.pipe';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -39,7 +40,7 @@ const THIRD_MODULES = [
 const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent];
 const COMPONENTS_DYNAMIC = [];
 const DIRECTIVES = [NumberFormatDirective];
-const PIPES = [];
+const PIPES = [FormatNumberPipe];
 
 @NgModule({
   declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, ...DIRECTIVES, ...PIPES],
