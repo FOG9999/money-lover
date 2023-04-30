@@ -10,6 +10,7 @@ import { WalletService } from './user-wallet.service';
 import { AppState } from 'app/app.state';
 import { Store } from '@ngrx/store';
 import { CoreActions } from '@core/store/core.actions';
+import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
 @Component({
     selector: 'ml-user-wallet',
     templateUrl: 'user-wallet.component.html',
@@ -31,8 +32,6 @@ export class UserWalletComponent implements OnInit {
     listCategories: Category[] = [];
     loading: boolean;
 
-    walletDialogRef: MatDialogRef<WalletDialogComponent>;
-
     ngOnInit() {
         this.getListWallets();
         this.getDataCategories();
@@ -45,17 +44,24 @@ export class UserWalletComponent implements OnInit {
                 setTimeout(() => {
                     this.renewListChecked();
                 });
+            }, () => {
+                this.toastService.error("Lỗi tải danh sách ví")
             })
     }
 
     openAddWallet() {
-        this.walletDialogRef = this.dialog.open(WalletDialogComponent, {
+        const walletDialogRef = this.dialog.open(WalletDialogComponent, {
             data: {
                 wallet: {
                     walletType: '',
                     amount: 0,
                     includeInTotal: false
                 }
+            }
+        })
+        walletDialogRef.afterClosed().subscribe((res: {isEditted: boolean}) => {
+            if(res && res.isEditted){
+                this.getListWallets();
             }
         })
     }
@@ -78,11 +84,42 @@ export class UserWalletComponent implements OnInit {
         this.store.dispatch(new CoreActions({loading: true}));
         this.walletService.getWallet(id).subscribe((wallet: Wallet) => {
             this.store.dispatch(new CoreActions({loading: false}));
-            this.walletDialogRef = this.dialog.open(WalletDialogComponent, {
+            const walletDialogRef = this.dialog.open(WalletDialogComponent, {
                 data: {
                     wallet
                 }
             })
+            walletDialogRef.afterClosed().subscribe((res: {isEditted: boolean}) => {
+                if(res && res.isEditted){
+                    this.getListWallets();
+                }
+            })
         });
+    }
+
+    deleteWallet(){
+        const walletsDelete = this.listWallets.filter((w, i) => this.listChecked[i]);
+        if(walletsDelete.length){
+            const ref = this.dialog.open(ConfirmDeletionComponent, {
+                data: {
+                    title: "Xác nhận xóa ví?",
+                    message: `Đồng ý xóa ${walletsDelete.length} ví?`
+                }
+            });
+    
+            ref.afterClosed().subscribe(res => {
+                if(res){
+                    this.store.dispatch(new CoreActions({loading: true}));
+                    this.walletService.deleteWallet(walletsDelete.map(w => w._id)).subscribe(res=> {
+                        this.toastService.success("Xóa ví thành công")    
+                        this.store.dispatch(new CoreActions({loading: false}));  
+                        this.getListWallets()                  
+                    }, err => {
+                        this.toastService.error("Xóa ví thất bại")             
+                        this.store.dispatch(new CoreActions({loading: false}));           
+                    })
+                }
+            })
+        }
     }
 }
