@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ReportService } from '../report.service';
 
 @Component({
@@ -9,10 +9,9 @@ import { ReportService } from '../report.service';
 
 export class TotalOutcomeComponent implements OnInit {
     constructor(
-        private service: ReportService
     ) { }
 
-    totalOutcome: number = 123123123;
+    @Input() totalOutcome: number = 123123123;
 
     ngOnInit() { }
 }

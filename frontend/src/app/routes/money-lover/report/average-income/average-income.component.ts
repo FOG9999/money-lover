@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ReportService } from '../report.service';
 
 @Component({
@@ -9,10 +9,9 @@ import { ReportService } from '../report.service';
 
 export class AverageIncomeComponent implements OnInit {
     constructor(
-        private service: ReportService
     ) { }
 
-    averageIncome: number = 100000;
+    @Input() averageIncome: number = 0;
 
     ngOnInit() { }
 }

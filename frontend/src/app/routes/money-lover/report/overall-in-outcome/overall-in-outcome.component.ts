@@ -1,4 +1,6 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, Input, ViewChild, OnChanges, SimpleChanges } from "@angular/core";
+import { formatNumber } from "@shared";
+import { CONSTS } from "app/consts";
 import { ChartOptions } from "app/model/chart-option";
 import {
   ChartComponent,
@@ -9,8 +11,8 @@ import {
   templateUrl: "./overall-in-outcome.component.html",
   styleUrls: ["../report.component.scss"]
 })
-export class OverallInOutcomeComponent {
-  @ViewChild("chart") chart: ChartComponent;
+export class OverallInOutcomeComponent implements OnChanges {
+  @ViewChild(ChartComponent) chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
   constructor() {
@@ -18,11 +20,11 @@ export class OverallInOutcomeComponent {
       series: [
         {
           name: "Chi tiêu",
-          data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+          data: []
         },
         {
           name: "Thu nhập",
-          data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+          data: []
         }
       ],
       chart: {
@@ -45,20 +47,17 @@ export class OverallInOutcomeComponent {
       },
       xaxis: {
         categories: [
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct"
+          ...CONSTS.months.filter((i, ind) => ind <= new Date().getMonth())
         ]
       },
       yaxis: {
         title: {
-          text: "$ (thousands)"
+          text: "VND"
+        },
+        labels: {
+          formatter: (val) => {
+            return formatNumber(val.toString());
+          }
         }
       },
       fill: {
@@ -67,10 +66,33 @@ export class OverallInOutcomeComponent {
       tooltip: {
         y: {
           formatter: function(val) {
-            return "$ " + val + " thousands";
+            return formatNumber(val.toString());
           }
         }
       }
     };
+  }
+
+  @Input() data: {income: number[], outcome: number[]} = {income: [], outcome: []}
+
+  ngOnChanges(changes: SimpleChanges){
+    const {data} = changes;
+    if(data && !data.firstChange){
+      const newSeries = [
+        {
+          name: "Chi tiêu",
+          data: []
+        },
+        {
+          name: "Thu nhập",
+          data: []
+        }
+      ]
+      newSeries[0].data = data.currentValue.income;
+      newSeries[1].data = data.currentValue.outcome;
+      if(this.chart){
+        this.chart.updateSeries(newSeries)
+      }
+    }
   }
 }
