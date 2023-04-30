@@ -64,10 +64,6 @@ const getOverallEveryMonth = (req, returnData, callback) => {
                         transactionsInMonth.filter(x => x.category.transactionType == consts.type_outcome).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), { amount: 0 }).amount
                     )
                 }
-                else {
-                    overall.income.push(0);
-                    overall.outcome.push(0);
-                }
             }
             returnData.set({ ...overall })
             callback();

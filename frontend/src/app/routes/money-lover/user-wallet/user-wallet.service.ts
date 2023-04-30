@@ -17,12 +17,17 @@ export class WalletService {
         return this.http.post<Wallet>(environment.SERVER_URL, { api_name, ...wallet }, { observe: "body" });
     }
 
-    deleteWallet(id: string){
+    deleteWallet(ids: string[]){
         const api_name = "api.v1.wallet.delete";
-        return this.http.post(environment.SERVER_URL, { api_name, id }, { observe: "body" });
+        return this.http.post(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
     }
 
-    updateWallet(wallet: Wallet){
+    updateWallet(wallet: {
+        _id: string,
+        amount: number,
+        walletType: string,
+        includeInTotal: boolean
+    }){
         const api_name = "api.v1.wallet.update";
         return this.http.post(environment.SERVER_URL, { api_name, ...wallet}, { observe: "body" });
     }

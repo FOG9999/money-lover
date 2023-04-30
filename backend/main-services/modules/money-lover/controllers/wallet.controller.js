@@ -2,6 +2,7 @@ const Wallet = require('../models/wallet');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
+const utils = require(__libs_path + '/utils');
 
 const listWallets = (req, returnData, callback) => {
     let { search, isDelete } = req.params;
@@ -104,7 +105,7 @@ const addWallet = (req, returnData, callback) => {
 }
 
 const updateWallet = (req, returnData, callback) => {
-    let { walletType, includeInTotal, isDefault } = req.params;
+    let { walletType, includeInTotal, _id, amount } = req.params;
 
     if (validator.isNull(walletType)) {
         return callback('ERROR_WALLETTYPE_MISSING');
@@ -112,7 +113,7 @@ const updateWallet = (req, returnData, callback) => {
 
     Wallet
         .findOne()
-        .where({ _id: id })
+        .where({ _id })
         .exec((err, result) => {
             if (err) {
                 return callback(err);
@@ -121,7 +122,7 @@ const updateWallet = (req, returnData, callback) => {
                 return callback('ERROR_WALLET_NOT_FOUND');
             }
             else {
-                utils.merge(result, { walletType, includeInTotal, isDefault });
+                utils.merge(result, { walletType, includeInTotal, amount });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
@@ -132,15 +133,17 @@ const updateWallet = (req, returnData, callback) => {
 }
 
 const deleteWallet = (req, returnData, callback) => {
-    let { id } = req.params;
+    let { ids } = req.params;
 
-    if (validator.isNull(id)) {
-        return callback('ERROR_ID_MISSING');
+    if (validator.isNull(ids) || !Array.isArray(ids)) {
+        return callback('ERROR_IDs_MISSING');
     }
 
     Wallet
-        .update({
-            _id: id
+        .updateMany({
+            _id: {
+                $in: ids
+            }
         }, {
             $set: {
                 isDelete: true

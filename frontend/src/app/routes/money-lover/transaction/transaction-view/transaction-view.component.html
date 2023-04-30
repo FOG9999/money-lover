@@ -24,25 +24,24 @@
                 </div>
             </mat-list-item>
         </mat-list>
-        <div class="form-field-full">
+        <mat-list class="form-field-full">
             <!-- Chọn ngày giao dịch -->
-            <div class="m-y-16">
-                <mat-label>Ngày giao dịch</mat-label>
-                <p>{{ transaction.dateCreated | date: "dd/MM/yyyy" }}</p>
-              </div>
-
+            <div mat-subheader>Ngày giao dịch</div>
+            <mat-list-item>
+                <p mat-line>{{ transaction.dateCreated | date: "dd/MM/yyyy" }}</p>
+            </mat-list-item>
             <!-- Sô tiền -->
-            <div class="m-y-16">
-                <mat-label>Số tiền</mat-label>
-                <p>{{ formatNumber(transaction.amount ? transaction.amount.toString(): '') }}</p>
-            </div>
+            <div mat-subheader>Số tiền</div>
+            <mat-list-item>
+                <p mat-line>{{ formatNumber(transaction.amount ? transaction.amount.toString(): '') }}</p>
+            </mat-list-item>
 
             <!-- Note -->
-            <div class="m-y-16">
-                <mat-label>Ghi chú</mat-label>
-                <p>{{ transaction.note }}</p>
-            </div>
-        </div>
+            <div mat-subheader>Ghi chú</div>
+            <mat-list-item>
+                <p mat-line>{{ transaction.note }}</p>
+            </mat-list-item>
+        </mat-list>
     </ng-container>
 </div>
 <div mat-dialog-actions align="end">

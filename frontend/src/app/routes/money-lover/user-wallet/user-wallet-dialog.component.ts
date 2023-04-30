@@ -10,6 +10,7 @@ import { WalletType } from 'app/model/wallet-type.model';
 import { Wallet, WalletForm } from 'app/model/wallet.model';
 import { CommonService } from '../common/common.service';
 import { WalletService } from './user-wallet.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'ml-wallet-dialog',
@@ -27,7 +28,8 @@ export class WalletDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<WalletDialogComponent>,
         private commonService: CommonService,
         private walletService: WalletService,
-        private store: Store<AppState>
+        private store: Store<AppState>,
+        private toastService: ToastrService
     ) { }
 
     wallet: WalletForm;
@@ -52,18 +54,40 @@ export class WalletDialogComponent implements OnInit {
     }
 
     saveWallet(){
-        this.wallet = {
-            ...this.wallet,
-            ...this.walletForm.value,
-            isDefault: 0,
-            amount: currencyToNumber(this.walletForm.get('amount').value)
-        }        
         this.store.dispatch(new CoreActions({loading: true}))
-        this.walletService.saveWallet(this.wallet).subscribe((res: Wallet) => {
-            this.store.dispatch(new CoreActions({loading: false}));
-        }, (err) => {
-            this.store.dispatch(new CoreActions({loading: false}));
-        })
+        if(this.data.wallet._id){
+            this.walletService.updateWallet({
+                _id: this.data.wallet._id,
+                walletType: this.wallet.walletType,
+                amount: currencyToNumber(this.walletForm.get('amount').value)  ,
+                includeInTotal: this.walletForm.get('includeInTotal')?.value
+            }).subscribe(() => {
+                this.toastService.success("Cập nhật ví thành công");
+                this.dialogRef.close({
+                    isEditted: true
+                });
+                this.store.dispatch(new CoreActions({loading: false}));
+            }, (err) => {
+                this.store.dispatch(new CoreActions({loading: false}));
+            })    
+        }
+        else {
+            this.wallet = {
+                ...this.wallet,
+                ...this.walletForm.value,
+                isDefault: 0,
+                amount: currencyToNumber(this.walletForm.get('amount').value)
+            }        
+            this.walletService.saveWallet(this.wallet).subscribe((res: Wallet) => {
+                this.toastService.success("Thêm ví thành công");
+                this.dialogRef.close({
+                    isEditted: true
+                });
+                this.store.dispatch(new CoreActions({loading: false}));
+            }, (err) => {
+                this.store.dispatch(new CoreActions({loading: false}));
+            })
+        }
     }
 
     formInit(){

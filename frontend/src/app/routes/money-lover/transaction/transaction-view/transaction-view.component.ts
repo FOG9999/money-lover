@@ -10,7 +10,8 @@ import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm
 
 @Component({
     selector: 'transaction-view',
-    templateUrl: 'transaction-view.component.html'
+    templateUrl: 'transaction-view.component.html',
+    styleUrls: ['../transaction.component.scss']
 })
 
 export class TransactionViewComponent implements OnInit {
