@@ -14,6 +14,8 @@ const Query = mongoose.Query;
 const ObjectId = mongoose.Types.ObjectId;
 const consts = require(__config_path + '/consts');
 const config = require(__config_path + '/config');
+const xlsx = require('xlsx');
+const formidable = require("formidable");
 
 exports.arrayIndexOf = arrayIndexOf
 exports.arrayFilter = arrayFilter
@@ -471,3 +473,26 @@ exports.error = function (...args) {
         console.error.apply(this, args);
     }
 };
+
+/**
+ * utils for excel reader
+ */
+exports.readExcel = (file, callback, handleErr) => {
+    try {        
+        /* parse body and implement logic in callback */
+        // (new formidable.IncomingForm()).parse(req, function(err, fields, files) {
+        //     /* if successful, files is an object whose keys are param names */
+        //     const file = files["upload"]; // <input type="file" id="upload" name="upload">
+        //     /* file.path is a location in the filesystem, usually in a temp folder */
+        //     const workbook = XLSX.readFile(file.filepath);
+        //     // print the first worksheet back as a CSV
+        //     // res.end(XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]));
+        //     callback(workbook);
+        //     handleErr(err);
+        // });
+        const workbook = xlsx.readFile(file.path);
+        callback(workbook);
+    } catch (error) {
+        handleErr(error)
+    }
+}
