@@ -475,23 +475,17 @@ exports.error = function (...args) {
 };
 
 /**
- * utils for excel reader
+ * utils for excel reader, return {sheetName1: []}
  */
 exports.readExcel = (file, callback, handleErr) => {
-    try {        
-        /* parse body and implement logic in callback */
-        // (new formidable.IncomingForm()).parse(req, function(err, fields, files) {
-        //     /* if successful, files is an object whose keys are param names */
-        //     const file = files["upload"]; // <input type="file" id="upload" name="upload">
-        //     /* file.path is a location in the filesystem, usually in a temp folder */
-        //     const workbook = XLSX.readFile(file.filepath);
-        //     // print the first worksheet back as a CSV
-        //     // res.end(XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]));
-        //     callback(workbook);
-        //     handleErr(err);
-        // });
-        const workbook = xlsx.readFile(file.path);
-        callback(workbook);
+    try {  
+        const workbook = xlsx.readFile(file.path);   
+        const sheetNames = workbook.SheetNames;
+        let output = {};
+        sheetNames.forEach(name => {
+            output[name] = xlsx.utils.sheet_to_json(workbook.Sheets[name])
+        })     
+        callback(output);
     } catch (error) {
         handleErr(error)
     }
