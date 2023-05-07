@@ -1,4 +1,4 @@
-import { Category, NewCategory } from "app/model/category.model";
+import { FileExtension, UploadTypeMIME } from "app/consts";
 
 /**
  * 序列化 JSON，同时转义，删除两边空格
@@ -154,4 +154,96 @@ export function randomString() {
     counter += 1;
   }
   return result;
+}
+
+/**
+ * mapping file extension with MIME types
+ */
+export function mapMIMEType(fileExts: FileExtension[]): UploadTypeMIME[]{
+  let output: UploadTypeMIME[] = [];
+  fileExts.forEach(ext => {
+    switch(ext){
+      case "csv": {
+        output.push("text/csv");
+        break;
+      }
+      case "doc": {
+        output.push("application/msword");
+        break;
+      }
+      case "docx": {
+        output.push("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        break;
+      }
+      case "jpg": {
+        output.push("image/jpeg");
+        break;
+      }
+      case "json": {
+        output.push("application/json");
+        break;
+      }
+      case "pdf": {
+        output.push("application/pdf");
+        break;
+      }
+      case "png": {
+        output.push("image/png");
+        break;
+      }
+      case "ppt": {
+        output.push("application/vnd.ms-powerpoint");
+        break;
+      }
+      case "pptx": {
+        output.push("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+        break;
+      }
+      case "svg": {
+        output.push("image/svg+xml");
+        break;
+      }
+      case "webm": {
+        output.push("video/webm");
+        break;
+      }
+      case "webp": {
+        output.push("image/webp");
+        break;
+      }
+      case "xls": {
+        output.push("application/vnd.ms-excel");
+        break;
+      }
+      case "xlsx": {
+        output.push("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  })
+  return output;
+}
+
+// exchange input size in string to bytes
+export function exchangeToByte(sizeStr: string){
+  const lowerCase = sizeStr.toLowerCase();
+  const unit = lowerCase.substring(lowerCase.length-2, lowerCase.length);
+  const size = Number(lowerCase.substring(0, lowerCase.length-2));
+  switch(unit){
+    case "kb": {
+      return 1024*size;
+    }
+    case "mb": {
+      return 1024*1024*size;
+    }
+    case "gb": {
+      return 1024*1024*1024*size;
+    }
+    default: {
+      return size;
+    }
+  }
 }

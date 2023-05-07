@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { NewTransaction, Transaction } from 'app/model/transaction.model';
+import { NewTransaction, Transaction, TransactionImport } from 'app/model/transaction.model';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionService {
@@ -40,6 +40,14 @@ export class TransactionService {
     deleteTransaction(_id: string){
         const api: string = "api.v1.transaction.delete";
         return this.http.post<Transaction>(environment.SERVER_URL, { api_name: api, id: _id }, { observe: "body" });
+    }
+
+    readImportFile(file: File){
+        const api: string = "api.v1.file.read_import";
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_name", api)
+        return this.http.post<TransactionImport[]>(environment.SERVER_URL, formData, { observe: "body" });
     }
 
 }

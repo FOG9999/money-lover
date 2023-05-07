@@ -73,7 +73,8 @@
     "money-lover.user-category": "Chủng loại",
     "money-lover.user-transaction": "Giao dịch",
     "money-lover.user-wallet": "Ví tiền",
-    "money-lover.report": "Báo cáo"
+    "money-lover.report": "Báo cáo",
+    "money-lover.import-transaction": "Import giao dịch"
   },
   "user": {
     "profile": "profile",

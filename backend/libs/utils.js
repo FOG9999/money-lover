@@ -490,3 +490,12 @@ exports.readExcel = (file, callback, handleErr) => {
         handleErr(error)
     }
 }
+
+/**
+ * transform to Date object
+ * @param {*} dateStr DD/MM/YYYY
+ */
+exports.transformDateFromString = (dateStr) => {
+    const parts = dateStr.split("/");
+    return new Date(`${parts[2]}/${parts[1]}/${parts[0]}`)
+}

@@ -1,0 +1,18 @@
+<div class="upload-container">
+    <mat-toolbar>
+        <mat-form-field>
+            <input matInput [value]="fileName" disabled />
+            <button matSuffix mat-icon-button>
+                <mat-icon *ngIf="!fileName; else clearbtn">cloud_upload</mat-icon>
+                <ng-template #clearbtn>
+                    <mat-icon (click)="clear()">close</mat-icon>
+                </ng-template>
+            </button>
+            <input type="file" id="fileInput" (change)="selectFile($event)" name="fileInput" [multiple]="allowMultiple" />
+        </mat-form-field>
+    </mat-toolbar>
+    <!-- preview area -->
+    <ng-container *ngIf="isPreviewing">
+        <ng-content></ng-content>
+    </ng-container>
+</div>

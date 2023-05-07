@@ -59,6 +59,8 @@ const readMoneyLoverReport = (req, returnData, callback) => {
                 transactions.forEach(tran => {
                     tran.CATEGORY = data[1].find(cate => cate.name == tran.CATEGORY)
                     tran.WALLET = walletsWithTypes.find(wallet => wallet.walletType.name == tran.WALLET)
+                    tran.notIncludeInReport = tran["EXCLUDE REPORT"] == "True" ? true: false;
+                    tran.dateCreatedObj = utils.transformDateFromString(tran.DATE)
                 })
                 //#endregion
                 returnData.set(transactions)
@@ -70,4 +72,23 @@ const readMoneyLoverReport = (req, returnData, callback) => {
     })
 }
 
+/**
+ * save after readMoneyLoverReport
+ */
+const saveDataMoneyLover = (req, returnData, callback) => {
+    const {transactions} = req.params;
+    Transaction
+        .insertMany(transactions)
+        .exec((err, data) => {
+            if(err) callback(err);
+            else {
+                returnData.set({
+                    inserted: transactions.length
+                });
+                callback();
+            }
+        })
+}
+
 exports.readMoneyLoverReport = readMoneyLoverReport;
+exports.saveDataMoneyLover = saveDataMoneyLover;

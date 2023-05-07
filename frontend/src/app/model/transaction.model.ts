@@ -25,3 +25,14 @@ export interface NewTransaction extends Base {
     note: string;
     dateCreated: Date
 }
+
+// used to import transactions from Money Lover
+export interface TransactionImport {
+    CATEGORY: Category;
+    AMOUNT: number;
+    NOTE: string;
+    WALLET: Wallet;
+    notIncludeInReport: boolean;
+    DATE: string;
+    dateCreatedObj: Date;    
+}

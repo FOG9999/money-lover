@@ -22,6 +22,7 @@ import { WalletSelectComponent } from './wallet-select/wallet-select.component';
 import { TransactionDialogComponent } from './transaction/transaction-dialog/transaction-dialog.component';
 import { IconSelectionComponent } from './icon-selection/icon-selection.component';
 import { TransactionViewComponent } from './transaction/transaction-view/transaction-view.component';
+import { TransactionImportComponent } from './transaction/transaction-import/transaction-import.component';
 
 const COMPONENTS = [
     MoneyCommonComponent,
@@ -39,7 +40,8 @@ const COMPONENTS = [
     CategorySelectComponent,
     WalletSelectComponent,
     TransactionDialogComponent,
-    TransactionViewComponent
+    TransactionViewComponent,
+    TransactionImportComponent
 ];
 
 @NgModule({

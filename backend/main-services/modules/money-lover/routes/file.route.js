@@ -6,5 +6,5 @@ module.exports = function () {
     // Root routing
     var controller = require('../controllers/file.controller.js');
 
-    consts.registerApi('api.v1.file.import_moneylover', controller.importFromMoneyLover, { anyAuthApi: true });
+    consts.registerApi('api.v1.file.read_import', controller.readMoneyLoverReport, { anyAuthApi: true });
 };

@@ -5,6 +5,7 @@ import { MoneyCommonComponent } from './common/common.component';
 import { UserCategoryComponent } from './user-category/user-category.component';
 import { UserWalletComponent } from './user-wallet/user-wallet.component';
 import { TransactionListComponent } from './transaction/transaction.component';
+import { TransactionImportComponent } from './transaction/transaction-import/transaction-import.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,11 @@ const routes: Routes = [
         path: 'user-transaction',
         component: TransactionListComponent,
         data: {title: "Giao dịch", titleI18n: 'transaction'}
+      },
+      {
+        path: 'import-transaction',
+        component: TransactionImportComponent,
+        data: {title: "Import giao dịch", titleI18n: 'import-transaction'}
       },
       {
         path: 'report',
