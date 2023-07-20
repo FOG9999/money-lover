@@ -23,6 +23,20 @@
           ]
         },
         {
+          "route": "system",
+          "type": "sub",
+          "name": "system",
+          "level": ["ADMIN", "SYSTEM"],
+          "children": [
+            {
+              "route": "user-list",
+              "type": "link",
+              "name": "user-list",
+              "level": ["ADMIN", "SYSTEM"]
+            }
+          ]
+        },
+        {
           "route": "user-transaction",
           "name": "user-transaction",
           "level": ["USER"],

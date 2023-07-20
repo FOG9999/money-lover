@@ -4,6 +4,7 @@
 
 export const environment = {
   SERVER_URL: 'http://localhost:8081/api/rest',
+  // SERVER_URL: 'http://54.237.58.197:8081/api/rest',
   production: false,
   useHash: true,
   hmr: false,

@@ -23,6 +23,11 @@ const routes: Routes = [
     ]
   },
   {
+    path: "system",
+    data: { title: 'Hệ thống', titleI18n: 'system' },
+    loadChildren: () => import("../sysytem/system.module").then(m => m.SystemModule)
+  },
+  {
     path: '',
     canActivate: [AuthGuardService],
     children: [

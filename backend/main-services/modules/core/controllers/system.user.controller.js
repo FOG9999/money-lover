@@ -12,7 +12,47 @@ let mongoose = require('mongoose'),
 const redis = require('../../../../libs/redis');
 
 const list = (req, returnData, callback) => {
+    const { search, status } = req.params;
+    let query = {};
+    if (!validator.isNull(status)) {
+        query['status'] = status;
+    }
+    else query['status'] = 1;
 
+    query = {
+        ...query,
+        $and: [
+            {
+                $or: [
+                    {
+                        username: new RegExp(search, 'i')
+                    },
+                    {
+                        firstname: new RegExp(search, 'i')
+                    },
+                    {
+                        lastname: new RegExp(search, 'i')
+                    },
+                    {
+                        address: new RegExp(search, 'i')
+                    },
+                    {
+                        email: new RegExp(search, 'i')
+                    },
+                ]
+            }
+        ]
+    }
+
+    User
+        .find()
+        .where(query)
+        .sort({ dateCreated: -1 })
+        .exec((err, results) => {
+            if (err) return callback(err);
+            returnData.set(results);
+            callback();
+        })
 }
 
 const login = (req, returnData, callback) => {
@@ -223,16 +263,16 @@ const deactivateUser = (req, returnData, callback) => {
     }
 
     User
-    .update({
-        _id: id
-    },{
-        $set: {
-            is_delete: true
-        }
-    }, (err, data) => {
-        if(err) return callback(err);
-        callback();
-    })
+        .update({
+            _id: id
+        }, {
+            $set: {
+                is_delete: true
+            }
+        }, (err, data) => {
+            if (err) return callback(err);
+            callback();
+        })
 }
 
 const createUser = (req, returnData, callback) => {
@@ -245,22 +285,22 @@ const createUser = (req, returnData, callback) => {
         level
     } = req.params;
 
-    if(validator.isNull(username)){
+    if (validator.isNull(username)) {
         return callback('ERROR_USERNAME_MISSING');
     }
-    if(validator.isNull(password)){
+    if (validator.isNull(password)) {
         return callback('ERROR_PASSWORD_MISSING');
     }
-    if(validator.isNull(email)){
+    if (validator.isNull(email)) {
         return callback('ERROR_EMAIL_MISSING');
     }
-    if(validator.isNull(firstname)){
+    if (validator.isNull(firstname)) {
         return callback('ERROR_FIRSTNAME_MISSING');
     }
-    if(validator.isNull(lastname)){
+    if (validator.isNull(lastname)) {
         return callback('ERROR_LASTNAME_MISSING');
     }
-    if(validator.isNull(level)){
+    if (validator.isNull(level)) {
         return callback('ERROR_LEVEL_MISSING');
     }
 
@@ -276,31 +316,31 @@ const createUser = (req, returnData, callback) => {
     }
 
     User
-    .findOne()
-    .where(query)
-    .exec((err, data) => {
-        if(err){
-            return callback(err);
-        }
-        if(data){
-            return callback('ERROR_USER_EXIST');
-        }
-
-        let newUser = new User();
-        utils.merge(newUser, {username, firstname, lastname, email, password, level});
-        newUser.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
-        newUser.save((err1, result) => {
-            if(err1){
-                return callback(err1);
+        .findOne()
+        .where(query)
+        .exec((err, data) => {
+            if (err) {
+                return callback(err);
             }
-            returnData.set(result);
-            callback();
+            if (data) {
+                return callback('ERROR_USER_EXIST');
+            }
+
+            let newUser = new User();
+            utils.merge(newUser, { username, firstname, lastname, email, password, level });
+            newUser.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
+            newUser.save((err1, result) => {
+                if (err1) {
+                    return callback(err1);
+                }
+                returnData.set(result);
+                callback();
+            })
         })
-    })
 }
 
 exports.deactivateUser = deactivateUser;
-// exports.list = list;
+exports.list = list;
 exports.checkEmailExist = checkEmailExist;
 exports.login = login;
 exports.getUser = getUser;
