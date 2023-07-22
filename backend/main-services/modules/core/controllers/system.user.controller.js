@@ -17,7 +17,6 @@ const list = (req, returnData, callback) => {
     if (!validator.isNull(status)) {
         query['status'] = status;
     }
-    else query['status'] = 1;
 
     query = {
         ...query,
@@ -266,27 +265,59 @@ const changePassword = (req, returnData, callback) => {
 //         });
 // };
 
-const deactivateUser = (req, returnData, callback) => {
-    let { id } = req.params;
+const deactivateUsers = (req, returnData, callback) => {
+    let { ids } = req.params;
 
-    if (validator.isNull(id)) {
-        return callback('ERROR_ID_MISSING');
+    if (validator.isNull(ids)) {
+        return callback('ERROR_IDS_MISSING');
+    }
+    if(!Array.isArray(ids)){
+        return callback('ERROR_IDS_NOT_ARRAY')
     }
 
     User
         .update({
-            _id: id
+            _id: {
+                $in: ids
+            }
+        }, {
+            $set: {
+                status: 0
+            }
+        }, (err, data) => {
+            if (err) return callback(err);
+            returnData.set({data})
+            callback();
+        })
+}
+
+const deleteUsers = (req, returnData, callback) => {
+    let { ids } = req.params;
+
+    if (validator.isNull(ids)) {
+        return callback('ERROR_IDS_MISSING');
+    }
+    if(!Array.isArray(ids)){
+        return callback('ERROR_IDS_NOT_ARRAY')
+    }
+
+    User
+        .updateMany({
+            _id: {
+                $in: ids
+            }
         }, {
             $set: {
                 is_delete: true
             }
         }, (err, data) => {
             if (err) return callback(err);
+            returnData.set({data})
             callback();
         })
 }
 
-const createUser = (req, returnData, callback) => {
+const signUp = (req, returnData, callback) => {
     let {
         username,
         firstname,
@@ -350,10 +381,11 @@ const createUser = (req, returnData, callback) => {
         })
 }
 
-exports.deactivateUser = deactivateUser;
+exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
 exports.login = login;
 exports.getUser = getUser;
 exports.changePassword = changePassword;
-exports.createUser = createUser;
+exports.signUp = signUp;
+exports.deleteUsers = deleteUsers;

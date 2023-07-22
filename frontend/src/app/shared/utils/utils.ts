@@ -246,4 +246,14 @@ export function exchangeToByte(sizeStr: string){
       return size;
     }
   }
+
+}
+
+export function getResponseErrorMessage(message: string){
+  switch (message) {
+    case 'ERROR_USER_LOCK':
+      return 'Người dùng đã bị khóa. Vui lòng thử lại.'  
+    default:
+      return 'Không tồn tại mesage';
+  }
 }

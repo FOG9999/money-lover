@@ -1,10 +1,13 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/authentication/authentication.service';
-import { LocalStorageService } from '@shared';
+import { LocalStorageService, getResponseErrorMessage } from '@shared';
 import { CONSTS } from 'app/consts';
+import { HttpResposeError } from 'app/model/error.model';
 import { User } from 'app/model/user.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +17,7 @@ import { User } from 'app/model/user.model';
 export class LoginComponent implements OnInit {
   reactiveForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService, private localStorage: LocalStorageService) {
+  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService, private localStorage: LocalStorageService, private toastService: ToastrService) {
     this.reactiveForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
@@ -25,16 +28,18 @@ export class LoginComponent implements OnInit {
 
   login() {
     let { username, password } = this.reactiveForm.value;
-    this.authService.login(username, password).subscribe((res: User) => {
-      if (res._id) {
+    this.authService.login(username, password).subscribe((res: HttpResponse<User>) => {
+      if (res.body && res.body._id) {
         this.localStorage.set('user', res);
-        if (res.level === CONSTS.auth.ADMIN || res.level === CONSTS.auth.SYSTEM) {
+        if (res.body.level === CONSTS.auth.ADMIN || res.body.level === CONSTS.auth.SYSTEM) {
           this.router.navigateByUrl('/money-lover/admin');
         }
         else {
           this.router.navigateByUrl('/money-lover/');
         }
       }
+    }, (err) => {
+      this.toastService.error(getResponseErrorMessage(err.message))
     })
   }
 }

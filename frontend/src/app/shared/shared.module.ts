@@ -24,6 +24,7 @@ import { NumberFormatDirective } from './directives/number-foramat.directive';
 import { AppLoadingComponent } from './components/money-lover/app-loading/app-loading.component';
 import { FormatNumberPipe } from './pipes/number-format.pipe';
 import { UploadComponent } from './components/money-lover/upload/upload.component';
+import { LevelRolePipe } from './pipes/level.pipe';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -41,7 +42,7 @@ const THIRD_MODULES = [
 const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent];
 const COMPONENTS_DYNAMIC = [];
 const DIRECTIVES = [NumberFormatDirective];
-const PIPES = [FormatNumberPipe];
+const PIPES = [FormatNumberPipe, LevelRolePipe];
 
 @NgModule({
   declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, ...DIRECTIVES, ...PIPES],

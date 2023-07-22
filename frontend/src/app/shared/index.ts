@@ -18,3 +18,4 @@ export * from './directives/number-foramat.directive';
 
 // Pipes
 export * from './pipes/number-format.pipe'
+export * from './pipes/level.pipe';

@@ -26,3 +26,17 @@
 button .mat-icon {
     font-size: 20px;
 }
+
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    table {
+        min-width: 500px;
+        width: 100%;
+    }
+}

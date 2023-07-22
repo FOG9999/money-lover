@@ -12,7 +12,7 @@ export class AuthService {
 
     login(username: string, password: string) {
         let api_name = "api.v1.systemuser.login";
-        return this.http.post<User>(environment.SERVER_URL, {username, password, api_name})
+        return this.http.post<User>(environment.SERVER_URL, {username, password, api_name}, {observe: 'response'})
     }
 
     createUser(data: {
@@ -23,7 +23,7 @@ export class AuthService {
         email: string,
         level: 'ADMIN' | 'SYSTEM' | 'USER'
     }){
-        const api_name: string = "api.v1.systemuser.create";
+        const api_name: string = "api.v1.systemuser.signup";
         return this.http.post(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
 

@@ -3,6 +3,6 @@
     {{data.message}}
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="close()">Đóng</button>
     <button mat-button [mat-dialog-close]="isConfirmed" color="accent">Đồng ý</button>
+    <button mat-button (click)="close()">Đóng</button>
 </div>
