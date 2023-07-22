@@ -50,8 +50,19 @@ const list = (req, returnData, callback) => {
         .sort({ dateCreated: -1 })
         .exec((err, results) => {
             if (err) return callback(err);
-            returnData.set(results);
-            callback();
+            // calculate count
+            User.aggregate([{
+                $match: query
+            }, {
+                $count: "total"
+            }])
+            .exec((errCount, result) => {
+                if(errCount || !result[0]){
+                    return callback(errCount);
+                }
+                returnData.set({results, total: result[0].total});
+                callback();
+            })
         })
 }
 
