@@ -17,11 +17,15 @@
                     <mat-icon>add</mat-icon>
                     Thêm mới
                 </button>
-                <button mat-button color="warn" (click)="deactivate()">
+                <button mat-button *ngIf="isShowLockButton()" color="warn" (click)="deactivate()">
                     <mat-icon>block</mat-icon>
                     Vô hiệu
                 </button>
-                <button mat-button color="accent" (click)="delete()">
+                <button mat-button *ngIf="isShowUnlockButton()" color="success" class="mat-success-outlined" (click)="openLock()">
+                    <mat-icon>lock_open</mat-icon>
+                    Mở khóa
+                </button>
+                <button mat-button *ngIf="listChecked.size > 0" color="accent" (click)="delete()">
                     <mat-icon>delete</mat-icon>
                     Xóa
                 </button>

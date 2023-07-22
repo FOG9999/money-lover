@@ -12,7 +12,7 @@ export class AuthService {
 
     login(username: string, password: string) {
         let api_name = "api.v1.systemuser.login";
-        return this.http.post<User>(environment.SERVER_URL, {username, password, api_name}, {observe: 'response'})
+        return this.http.post<User>(environment.SERVER_URL, {username, password, api_name}, {observe: 'body'})
     }
 
     createUser(data: {

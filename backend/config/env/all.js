@@ -3,7 +3,9 @@ module.exports = {
     port: 8080,
     redis: {
         host: 'localhost',
-        port: 6379
+        port: 6379,
+        // require when up code
+        password: "Khongcanhoi123!"
     },
     app: {
         name: 'My money lover',

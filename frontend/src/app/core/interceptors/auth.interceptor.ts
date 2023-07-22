@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, of, throwError } from 'rxjs';
-import { LocalStorageService } from '@shared';
+import { LocalStorageService, getResponseErrorMessage } from '@shared';
 import { ToastrService } from 'ngx-toastr';
 import { CONSTS } from 'app/consts';
 import { Router } from '@angular/router';
@@ -29,6 +29,9 @@ export class AuthInterceptor implements HttpInterceptor {
                 window.location.href = "/"
             });
         }
-        return of(event);
+        if(event.status == 400){
+            this.toastService.error(getResponseErrorMessage(event.error.message))
+        }
+        return throwError(event);
     }
 }

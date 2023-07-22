@@ -21,5 +21,10 @@ export class UsersService {
         let api: string = `api.v1.systemuser.delete`;
         return this.http.post<{results: any}>(environment.SERVER_URL, {api_name: api, ids}, {observe: 'body'});
     }
+
+    unlockUsers(ids: string[]){
+        let api: string = `api.v1.systemuser.unlock`;
+        return this.http.post<{results: any}>(environment.SERVER_URL, {api_name: api, ids}, {observe: 'body'});
+    }
     
 }

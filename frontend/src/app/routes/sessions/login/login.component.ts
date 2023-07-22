@@ -28,18 +28,16 @@ export class LoginComponent implements OnInit {
 
   login() {
     let { username, password } = this.reactiveForm.value;
-    this.authService.login(username, password).subscribe((res: HttpResponse<User>) => {
-      if (res.body && res.body._id) {
+    this.authService.login(username, password).subscribe((res: User) => {
+      if (res && res._id) {
         this.localStorage.set('user', res);
-        if (res.body.level === CONSTS.auth.ADMIN || res.body.level === CONSTS.auth.SYSTEM) {
+        if (res.level === CONSTS.auth.ADMIN || res.level === CONSTS.auth.SYSTEM) {
           this.router.navigateByUrl('/money-lover/admin');
         }
         else {
           this.router.navigateByUrl('/money-lover/');
         }
       }
-    }, (err) => {
-      this.toastService.error(getResponseErrorMessage(err.message))
     })
   }
 }

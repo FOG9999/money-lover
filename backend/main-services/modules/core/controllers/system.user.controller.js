@@ -12,10 +12,16 @@ let mongoose = require('mongoose'),
 const redis = require('../../../../libs/redis');
 
 const list = (req, returnData, callback) => {
-    const { search, status } = req.params;
+    const { search, status, isDelete } = req.params;
     let query = {};
     if (!validator.isNull(status)) {
         query['status'] = status;
+    }
+    if (!validator.isNull(isDelete)) {
+        query['status'] = isDelete;
+    }
+    else {
+        query['is_delete'] = false;
     }
 
     query = {
@@ -276,7 +282,7 @@ const deactivateUsers = (req, returnData, callback) => {
     }
 
     User
-        .update({
+        .updateMany({
             _id: {
                 $in: ids
             }
@@ -312,7 +318,7 @@ const deleteUsers = (req, returnData, callback) => {
             }
         }, (err, data) => {
             if (err) return callback(err);
-            returnData.set({data})
+            returnData.set({...data})
             callback();
         })
 }
@@ -381,6 +387,32 @@ const signUp = (req, returnData, callback) => {
         })
 }
 
+const unlockUsers = (req, returnData, callback) => {
+    let { ids } = req.params;
+
+    if (validator.isNull(ids)) {
+        return callback('ERROR_IDS_MISSING');
+    }
+    if(!Array.isArray(ids)){
+        return callback('ERROR_IDS_NOT_ARRAY')
+    }
+
+    User
+        .updateMany({
+            _id: {
+                $in: ids
+            }
+        }, {
+            $set: {
+                status: 1
+            }
+        }, (err, data) => {
+            if (err) return callback(err);
+            returnData.set({data})
+            callback();
+        })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -389,3 +421,4 @@ exports.getUser = getUser;
 exports.changePassword = changePassword;
 exports.signUp = signUp;
 exports.deleteUsers = deleteUsers;
+exports.unlockUsers = unlockUsers;

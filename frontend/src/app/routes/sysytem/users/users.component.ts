@@ -53,6 +53,7 @@ export class UsersListComponent implements OnInit {
                     this.loading = false;
                     this.toast.success("Vô hiệu hóa tài khoản thành công");
                     this.searchUsers();
+                    this.listChecked.clear();
                 }, err => {
                     this.loading = false;
                     this.toast.error("Vô hiệu hóa tài khoản thất bại")
@@ -62,7 +63,27 @@ export class UsersListComponent implements OnInit {
     }
 
     delete(){
-
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: "Xác nhận xóa tài khoản?",
+                message: `Xóa vĩnh viễn ${this.listChecked.size} tài khoản?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.loading = true;
+                this.usersService.deleteUsers(Array.from(this.listChecked))
+                .subscribe(res => {
+                    this.loading = false;
+                    this.toast.success("Xóa vĩnh viễn tài khoản thành công");
+                    this.searchUsers();
+                    this.listChecked.clear();
+                }, err => {
+                    this.loading = false;
+                    this.toast.error("Xóa vĩnh viễn tài khoản thất bại")
+                })                
+            }
+        })
     }
 
     searchUsers(){
@@ -111,5 +132,41 @@ export class UsersListComponent implements OnInit {
         else {
             this.listChecked.clear();
         }
+    }
+
+    openLock(){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: "Xác nhận mở khóa tài khoản?",
+                message: `Mở khóa ${this.listChecked.size} tài khoản?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.loading = true;
+                this.usersService.unlockUsers(Array.from(this.listChecked))
+                .subscribe(res => {
+                    this.loading = false;
+                    this.toast.success("Mở khóa tài khoản thành công");
+                    this.searchUsers();
+                    this.listChecked.clear();
+                }, err => {
+                    this.loading = false;
+                    this.toast.error("Mở khóa tài khoản thất bại")
+                })                
+            }
+        })
+    }
+
+    isShowLockButton(){
+        if(this.listChecked.size)
+            return this.userList.filter(u => this.listChecked.has(u._id)).map(u => u.status).find(s => s == 0) == null;
+        else return false;
+    }
+
+    isShowUnlockButton(){
+        if(this.listChecked.size)
+            return this.userList.filter(u => this.listChecked.has(u._id)).map(u => u.status).find(s => s == 1) == null;
+        else return false;
     }
 }
