@@ -1,0 +1,4 @@
+- add new job: crontab -e
+- At every minute past hour 3 on day-of-month 23 in July (>> for expand log file and 
+> for overwrite log file): 
+*/1 3 23 7 * /home/ec2-user/money-lover/db-cron-insert.sh >> /home/ec2-user/money-lover/db-cron-insert.log 2>&1

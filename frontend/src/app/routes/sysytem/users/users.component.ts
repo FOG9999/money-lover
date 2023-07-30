@@ -25,8 +25,8 @@ export class UsersListComponent implements OnInit {
 
     searchKey: string = "";
     userList: Partial<User>[] = [];
-    displayedColumns: string[] = ['action','Username', 'Họ Tên', 'Email', 'Vai trò', 'Trạng thái'];
-    columnProps: string[] = ['action','username','fullname', 'email', 'level', 'status'];
+    displayedColumns: string[] = ['action','Username', 'Họ Tên', 'Email', 'Vai trò', 'Ngày tạo', 'Trạng thái'];
+    columnProps: string[] = ['action','username','fullname', 'email', 'level', 'dateCreated', 'status'];
     total: number = 0;
     pageSize: number = CONSTS.page_size;
     pageSizeOptions: number[] = CONSTS.page_size_options;

@@ -70,7 +70,12 @@
                                             {{element[column] | levelRole}}
                                         </ng-container>
                                         <ng-template #other4>
-                                            {{element[column]}}
+                                            <ng-container *ngIf="column == 'dateCreated'; else other5">
+                                                {{element[column] | date: "dd/MM/yyyy HH:MM"}}
+                                            </ng-container>
+                                            <ng-template #other5>
+                                                {{element[column]}}
+                                            </ng-template>
                                         </ng-template>
                                     </ng-template>
                                 </ng-template>

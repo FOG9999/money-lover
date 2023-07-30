@@ -1,0 +1,12 @@
+.login-with-others {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    gap: 10px;
+    margin-top: 10px;
+    border-top: solid 1px black;
+    * {
+        text-align: center;
+    }
+}
+

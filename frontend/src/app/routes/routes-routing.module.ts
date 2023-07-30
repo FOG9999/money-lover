@@ -6,6 +6,7 @@ import { AdminLayoutComponent } from '../theme/admin-layout/admin-layout.compone
 import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component';
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
+import { RedirectComponent } from './sysytem/redirect/redirect.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
       },
       { path: '**', redirectTo: 'login' }
     ],
+  },
+  {
+    path: 'redirect',
+    component: RedirectComponent
   },
   { path: '**', redirectTo: 'auth' },
 ];

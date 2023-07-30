@@ -4,9 +4,11 @@
 
 export const environment = {
   SERVER_URL: 'http://localhost:8081/api/rest',
+  PassportLoginServerURL: "http://localhost:9000/api",
+  MoneyLoverURL: "http://localhost:4200",
   // SERVER_URL: 'http://54.237.58.197:8081/api/rest',
   production: false,
-  useHash: true,
+  useHash: false,
   hmr: false,
 };
 

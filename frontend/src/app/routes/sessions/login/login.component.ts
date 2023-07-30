@@ -3,15 +3,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/authentication/authentication.service';
+import { environment } from '@env/environment';
 import { LocalStorageService, getResponseErrorMessage } from '@shared';
 import { CONSTS } from 'app/consts';
-import { HttpResposeError } from 'app/model/error.model';
 import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+  styleUrls: ['login.component.scss'],
   providers: [AuthService]
 })
 export class LoginComponent implements OnInit {
@@ -39,5 +40,16 @@ export class LoginComponent implements OnInit {
         }
       }
     })
+  }
+
+  loginWith(appName: string){
+    switch (appName) {
+      case 'github':
+        window.location.href = `${environment.PassportLoginServerURL}/github?callbackUrl=${environment.MoneyLoverURL}/redirect&failbackUrl=${environment.MoneyLoverURL}/auth/login`;
+        break;
+    
+      default:
+        break;
+    }
   }
 }
