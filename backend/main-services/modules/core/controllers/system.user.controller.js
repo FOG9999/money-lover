@@ -472,6 +472,9 @@ const createUserOAuth = (req, returnData, callback) => {
                     if (err) {
                         return callback(err);
                     }
+                    if(!jsonData.status){
+                        return callback("ERROR_USER_LOCK");
+                    }
                     returnData.set({...jsonData});
                     callback();
                 })
