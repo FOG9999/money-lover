@@ -1,0 +1,1 @@
+mongorestore -u fog9999 -p fog9999 --db my-money-lover --dir %1

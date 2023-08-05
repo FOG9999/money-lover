@@ -112,38 +112,46 @@ const login = (req, returnData, callback) => {
                         }
                         // set model để module khác dùng lại
                         returnData.model = result;
-
                         // convert từ model sang object
                         var jsonData = result.toObject();
-
-                        // xóa đi trường hashed_password
-                        delete jsonData.hashed_password;
-                        delete jsonData.salt;
-
-                        var cacheUser = {
-                            _id: jsonData._id,
-                            token: jsonData.token,
-                            fullname: jsonData.firstname + ' ' + jsonData.lastname,
-                            username: jsonData.username,
-                            avatar: jsonData.avatar,
-                            level: jsonData.level,
-                            // role: jsonData.role.title
-                        };
-
-                        // lưu memcache
-                        redis.HSET(consts.redis_key.user, cacheUser.token, JSON.stringify(cacheUser), function (err) {
-                            if (err) {
+                        setUserCache(jsonData, (err) => {
+                            if(err){
                                 return callback(err);
                             }
-                            // set data api trả về
                             returnData.data = jsonData;
-                            // callback kết thúc api
                             callback();
-                        });
+                        })
                     })
                 }
             }
         })
+}
+
+/**
+ * set User to Cache for authorization
+ * @param {*} jsonData User data
+ * @param {*} callback callback when finish
+ */
+const setUserCache = (jsonData, callback) => {
+    // xóa đi trường hashed_password
+    delete jsonData.hashed_password;
+    delete jsonData.salt;
+    var cacheUser = {
+        _id: jsonData._id,
+        token: jsonData.token,
+        fullname: jsonData.firstname + ' ' + jsonData.lastname,
+        username: jsonData.username,
+        avatar: jsonData.avatar,
+        level: jsonData.level,
+    };
+
+    // lưu memcache
+    redis.HSET(consts.redis_key.user, cacheUser.token, JSON.stringify(cacheUser), function (err) {
+        if (err) {
+            return callback(err);
+        }
+        callback();
+    });
 }
 
 const checkEmailExist = (req, returnData, callback) => {
@@ -413,6 +421,82 @@ const unlockUsers = (req, returnData, callback) => {
         })
 }
 
+const createUserOAuth = (req, returnData, callback) => {
+    let {
+        username,
+        firstname,
+        lastname,
+        email,
+        password,
+        level,
+        authId
+    } = req.params;
+
+    if (validator.isNull(username)) {
+        return callback('ERROR_USERNAME_MISSING');
+    }
+    if (validator.isNull(password)) {
+        return callback('ERROR_PASSWORD_MISSING');
+    }
+    if (validator.isNull(email)) {
+        return callback('ERROR_EMAIL_MISSING');
+    }
+    if (validator.isNull(firstname)) {
+        return callback('ERROR_FIRSTNAME_MISSING');
+    }
+    if (validator.isNull(lastname)) {
+        return callback('ERROR_LASTNAME_MISSING');
+    }
+    if (validator.isNull(level)) {
+        return callback('ERROR_LEVEL_MISSING');
+    }
+    if (validator.isNull(authId)) {
+        return callback('ERROR_AUTHID_MISSING');
+    }
+
+    let query = {
+            username: username.toLowerCase(),
+            authId: authId.toString()
+        }
+
+    User
+        .findOne()
+        .where(query)
+        .exec((err, data) => {
+            if (err) {
+                return callback(err);
+            }
+            if (data) {
+                const jsonData = data.toObject();
+                setUserCache(jsonData, err => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    returnData.set({...jsonData});
+                    callback();
+                })
+                return;
+            }
+
+            let newUser = new User();
+            utils.merge(newUser, { username, firstname, lastname, email, password, level, authId: authId.toString() });
+            newUser.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
+            newUser.save((err1, result) => {
+                if (err1) {
+                    return callback(err1);
+                }
+                const jsonData = result.toObject();
+                setUserCache(jsonData, err => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    returnData.set({...jsonData});
+                    callback();
+                })
+            })
+        })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -422,3 +506,4 @@ exports.changePassword = changePassword;
 exports.signUp = signUp;
 exports.deleteUsers = deleteUsers;
 exports.unlockUsers = unlockUsers;
+exports.createUserOAuth = createUserOAuth;

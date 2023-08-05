@@ -39,15 +39,20 @@ export class LoginComponent implements OnInit {
           this.router.navigateByUrl('/money-lover/');
         }
       }
+      else {
+        this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
+      }
+    }, err => {
+      this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
     })
   }
 
-  loginWith(appName: string){
+  loginWith(appName: string) {
     switch (appName) {
       case 'github':
         window.location.href = `${environment.PassportLoginServerURL}/github?callbackUrl=${environment.MoneyLoverURL}/redirect&failbackUrl=${environment.MoneyLoverURL}/auth/login`;
         break;
-    
+
       default:
         break;
     }

@@ -27,4 +27,17 @@ export class AuthService {
         return this.http.post(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
 
+    createUserOAuth(data: {
+        username: string,
+        password: string,
+        firstname: string,
+        lastname: string,
+        email: string,
+        level: 'ADMIN' | 'SYSTEM' | 'USER',
+        authId: number | string
+    }){
+        const api_name: string = "api.v1.systemuser.signupwithoauth";
+        return this.http.post<User>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
+    }
+
 }

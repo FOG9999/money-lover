@@ -143,8 +143,11 @@ export function numberDisplay(
   }
 }
 
-export function randomString() {
-  const length = Math.round(Math.random()*20);
+export function randomString(isRandomLength: boolean = true, setLength?: number) {
+  let length = Math.round(Math.random()*20);
+  if(!isRandomLength){
+    length = setLength;
+  }
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;

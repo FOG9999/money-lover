@@ -14,5 +14,6 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.get', controller.getUser, { systemApi: true });
     consts.registerApi('api.v1.systemuser.changepassword', controller.changePassword, { systemApi: true });
     consts.registerApi('api.v1.systemuser.signup', controller.signUp, { notAuth: true });
+    consts.registerApi('api.v1.systemuser.signupwithoauth', controller.createUserOAuth, { notAuth: true });
     consts.registerApi('api.v1.systemuser.delete', controller.deleteUsers, { systemApi: true });
 };

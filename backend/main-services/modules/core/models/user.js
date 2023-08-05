@@ -88,6 +88,10 @@ var UserSchema = new Schema({
     is_delete: {
         type: Boolean,
         default: false
+    },
+    authId: {
+        type: String,
+        default: null
     }
 }, consts.schemaOptions);
 

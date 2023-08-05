@@ -13,5 +13,9 @@ export interface User extends Base {
     dateCreated: Date,
     is_delete: boolean,
     dateUpdated: Date,
-    token: string
+    token: string,
+    /**
+     * id of oauth when login with other system
+     */
+    authId: string | number
 }
