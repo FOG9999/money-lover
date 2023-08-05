@@ -9,6 +9,8 @@ let mongoose = require('mongoose'),
     moment = require('moment'),
     validator = require('validator'),
     consts = require(__config_path + '/consts');
+const { sendMailPromise } = require('../../../../libs/aws-ses');
+const log = require('../../../../libs/log');
 const redis = require('../../../../libs/redis');
 
 const list = (req, returnData, callback) => {
@@ -475,6 +477,19 @@ const createUserOAuth = (req, returnData, callback) => {
                     if(!jsonData.status){
                         return callback("ERROR_USER_LOCK");
                     }
+                    sendMailPromise([
+                        'andithang.work@gmail.com'
+                    ], [], 'Test SES', 'Warning login from My Money Lover', (err, resData) => {
+                        if(err){
+                            log.error({
+                                code: err.code,
+                                message: err.message,
+                            })
+                        }
+                        else {
+                            console.log(resData);
+                        }
+                    })
                     returnData.set({...jsonData});
                     callback();
                 })
