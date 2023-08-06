@@ -37,8 +37,8 @@ export class SecurityQuestionComponent implements OnInit {
     @Input() saveCallback: () => void;
 
     getListQuestions(){
-        this.questionService.getListSecurityQuestions().subscribe(res => {
-            this.listQuestions = res;
+        this.questionService.getListSecurityQuestions("", 0, 1000).subscribe(res => {
+            this.listQuestions = res.data;
         })
     }
 

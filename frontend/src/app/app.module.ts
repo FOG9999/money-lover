@@ -9,7 +9,7 @@ import { ThemeModule } from './theme/theme.module';
 import { RoutesModule } from './routes/routes.module';
 import { AppComponent } from './app.component';
 
-import { StartupService } from '@core';
+import { CustomPaginatior, StartupService } from '@core';
 export function StartupServiceFactory(startupService: StartupService) {
   return () => startupService.load();
 }
@@ -21,6 +21,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AuthInterceptor } from '@core';
 import { StoreModule } from '@ngrx/store';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 // Required for AOT compilation
 export function TranslateHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -56,6 +57,10 @@ export function TranslateHttpLoaderFactory(http: HttpClient) {
     {
       provide: MAT_DATE_LOCALE,
       useValue: 'vi-VN'
+    },
+    {
+      provide: MatPaginatorIntl,
+      useClass: CustomPaginatior
     }
   ],
   bootstrap: [AppComponent],

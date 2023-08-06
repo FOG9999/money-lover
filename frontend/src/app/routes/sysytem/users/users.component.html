@@ -88,7 +88,7 @@
                 </table>
             </div>
         </ng-template>
-        <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [pageIndex]="page" (page)="onChangePage($event)"
             aria-label="Select page">
         </mat-paginator>
     </mat-card-content>

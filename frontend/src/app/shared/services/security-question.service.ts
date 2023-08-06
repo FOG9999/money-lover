@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
+import { CONSTS } from 'app/consts';
 import { SecurityQuestion } from 'app/model/question.model';
 
 @Injectable({providedIn: 'root'})
@@ -9,9 +10,9 @@ export class SecurityQuestionService {
         private http: HttpClient
     ) { }
 
-    getListSecurityQuestions(search: string = ""){
+    getListSecurityQuestions(search: string = "", page: number = 0, size: number = CONSTS.page_size){
         const api_name: string = "api.v1.securityquestion.list";
-        return this.http.post<SecurityQuestion[]>(environment.SERVER_URL, { api_name, search }, { observe: "body" });
+        return this.http.post<{data: SecurityQuestion[], total: number}>(environment.SERVER_URL, { api_name, search, page, size }, { observe: "body" });
     }
 
     addQuestion(question: Partial<SecurityQuestion>){
@@ -22,6 +23,11 @@ export class SecurityQuestionService {
     updateQuestion(question: Partial<SecurityQuestion>){
         const api_name: string = "api.v1.securityquestion.update";
         return this.http.post<SecurityQuestion[]>(environment.SERVER_URL, { api_name, ...question }, { observe: "body" });
+    }
+
+    deleteQuestion(ids: string[]){
+        const api_name: string = "api.v1.securityquestion.delete";
+        return this.http.post<SecurityQuestion[]>(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
     }
     
 }

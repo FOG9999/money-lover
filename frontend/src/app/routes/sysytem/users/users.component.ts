@@ -5,6 +5,7 @@ import { CONSTS } from 'app/consts';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
 import { ToastrService } from 'ngx-toastr';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'users-list',
@@ -29,6 +30,7 @@ export class UsersListComponent implements OnInit {
     columnProps: string[] = ['action','username','fullname', 'email', 'level', 'dateCreated', 'status'];
     total: number = 0;
     pageSize: number = CONSTS.page_size;
+    page: number = 0;
     pageSizeOptions: number[] = CONSTS.page_size_options;
     listChecked: Set<string> = new Set<string>();
     isAllChecked: boolean = false;
@@ -168,5 +170,11 @@ export class UsersListComponent implements OnInit {
         if(this.listChecked.size)
             return this.userList.filter(u => this.listChecked.has(u._id)).map(u => u.status).find(s => s == 1) == null;
         else return false;
+    }
+
+    onChangePage(evt: PageEvent){
+        this.page = evt.pageIndex;
+        this.pageSize = evt.pageSize;
+        this.searchUsers();
     }
 }

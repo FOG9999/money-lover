@@ -14,7 +14,7 @@ const log = require('../../../../libs/log');
 const redis = require('../../../../libs/redis');
 
 const list = (req, returnData, callback) => {
-    const { search, status, isDelete } = req.params;
+    let { search, status, isDelete, page, size } = req.params;
     let query = {};
     if (!validator.isNull(status)) {
         query['status'] = status;
@@ -24,6 +24,12 @@ const list = (req, returnData, callback) => {
     }
     else {
         query['is_delete'] = false;
+    }
+    if (!validator.isNull(page)) {
+        page = 0;
+    }
+    if (!validator.isNull(size)) {
+        size = consts.page_size;
     }
 
     query = {
@@ -55,6 +61,8 @@ const list = (req, returnData, callback) => {
         .find()
         .where(query)
         .sort({ dateCreated: -1 })
+        .skip(page*size)
+        .limit(size)
         .exec((err, results) => {
             if (err) return callback(err);
             // calculate count

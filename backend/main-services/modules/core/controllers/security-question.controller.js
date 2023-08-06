@@ -2,11 +2,12 @@ const SecurityQuestion = require('../models/security-question');
 const validator = require('validator');
 const async = require('async');
 const bcrypt = require('bcrypt');
-const consts = require('../../../../config/consts');
-const UserSecurityQuestion = require('../models/user-security-question');
+const consts = require(__config_path + '/consts');
+const UserSecurityQuestion = require('../models/user-security-question'),
+utils = require(__libs_path + '/utils');
 
 const listSecurityQuestions = (req, returnData, callback) => {
-    const { search, isDelete } = req.params;
+    let { search, isDelete, page, size } = req.params;
 
     const query = {
         question: new RegExp(search, 'i')
@@ -14,14 +15,37 @@ const listSecurityQuestions = (req, returnData, callback) => {
     if (!validator.isNull(isDelete)) {
         query['isDelete'] = isDelete;
     }
+    else {
+        query['isDelete'] = false;
+    }
+    if (validator.isNull(page)) {
+        page = 0;
+    }
+    if (validator.isNull(size)) {
+        size = consts.page_size;
+    }
 
     SecurityQuestion
         .find()
         .where(query)
-        .exec((err, results) => {
+        .sort({dateCreated: -1})
+        .skip(page*size)
+        .limit(size)
+        .exec(async (err, results) => {
             if (err) return callback(err);
-            returnData.set(results);
-            callback();
+            const countArrPromises = results.map(q => {
+                return UserSecurityQuestion.where({question: q._id}).distinct("user").count();
+            });
+            const total = await SecurityQuestion.where(query).count();
+            Promise.all(countArrPromises)
+            .then((responses) => {
+                const data = results.map((quesModel, ind) => ({
+                    ...quesModel.toObject(),
+                    currentUsage: responses[ind]
+                }));
+                returnData.set({data, total});
+                callback();
+            })
         })
 }
 
@@ -91,7 +115,7 @@ const updateSecurityQuestion = (req, returnData, callback) => {
         return callback('ERROR_ID_MISSING');
     }
 
-    checkIfQuestionCanBeModified(_id, canBeModified => {
+    checkIfQuestionCanBeModified([_id], canBeModified => {
         if (canBeModified) {
             SecurityQuestion
                 .findOne()
@@ -119,30 +143,35 @@ const updateSecurityQuestion = (req, returnData, callback) => {
     })
 }
 
-const checkIfQuestionCanBeModified = (id, callback) => {
+const checkIfQuestionCanBeModified = (ids, callback) => {
     UserSecurityQuestion.findOne({
-        question: id
+        question: {$in: ids}
     }, (err, result) => {
         if (err) {
             callback(true);
         }
         else {
-            callback(false);
+            if(result){
+                callback(false);
+            }
+            else {
+                callback(true);
+            }
         }
     })
 }
 
 const deleteSecurityQuestion = (req, returnData, callback) => {
-    let id = req.params._id;
+    let ids = req.params.ids;
 
-    if (validator.isNull(id)) {
+    if (!Array.isArray(ids)) {
         return callback('ERROR_ID_MISSING');
     }
-    checkIfQuestionCanBeModified(id, canBeModified => {
+    checkIfQuestionCanBeModified(ids, canBeModified => {
         if (canBeModified) {
             SecurityQuestion
-                .update({
-                    _id: id
+                .updateMany({
+                    _id: {$in: ids}
                 }, {
                     $set: {
                         isDelete: true
