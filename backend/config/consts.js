@@ -87,5 +87,6 @@ module.exports = {
         "Tháng 10",
         "Tháng 11",
         "Tháng 12",
-    ]
+    ],
+    saltRounds: 10
 }

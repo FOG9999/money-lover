@@ -33,6 +33,12 @@
               "type": "link",
               "name": "user-list",
               "level": ["ADMIN", "SYSTEM"]
+            },
+            {
+              "route": "security-question",
+              "type": "link",
+              "name": "security-question",
+              "level": ["ADMIN", "SYSTEM"]
             }
           ]
         },

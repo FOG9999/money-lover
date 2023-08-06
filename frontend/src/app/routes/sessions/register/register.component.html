@@ -1,64 +1,69 @@
 <div class="w-full h-full" fxLayout="row wrap" fxLayoutAlign="center center">
-  <mat-card class="mat-elevation-z4 m-b-0" style="max-width: 380px;">
-    <mat-card-title class="m-b-24">
-      <div>Welcome, </div>It only takes a few seconds to create your account
-    </mat-card-title>
-    <mat-card-content>
-      <form class="form-field-full" [formGroup]="reactiveForm">
-        <mat-form-field appearance="outline">
-          <mat-label>Firstname</mat-label>
-          <input matInput placeholder="Họ" formControlName="firstname" required>
-          <mat-error *ngIf="reactiveForm.get('firstname').hasError('required')">{{errors.firstname_required}}</mat-error>
-          <mat-error *ngIf="reactiveForm.get('firstname').hasError('invalid')">{{errors.firstname_invalid}}</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Lastname</mat-label>
-          <input matInput placeholder="Tên" formControlName="lastname" required>
-          <mat-error *ngIf="reactiveForm.get('lastname').hasError('required')">{{errors.lastname_required}}</mat-error>
-          <mat-error *ngIf="reactiveForm.get('lastname').hasError('invalid')">{{errors.lastname_invalid}}</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput placeholder="Email" formControlName="email" required>
-          <mat-error *ngIf="reactiveForm.get('email').hasError('required')">{{errors.email_required}}</mat-error>
-          <mat-error *ngIf="reactiveForm.get('email').hasError('invalid')">{{errors.email_invalid}}</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Username</mat-label>
-          <input matInput placeholder="Username" formControlName="username" required>
-          <mat-error *ngIf="reactiveForm.get('username').hasError('required')">{{errors.username_required}}</mat-error>
-          <mat-error *ngIf="reactiveForm.get('username').hasError('invalid')">{{errors.username_invalid}}</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
-          <input matInput placeholder="Password" type="password" formControlName="password"
-                 required>
-          <mat-error *ngIf="reactiveForm.get('password').hasError('required')">{{errors.password_required}}</mat-error>
-          <mat-error *ngIf="reactiveForm.get('password').hasError('invalid')">{{errors.password_invalid}}</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Confirm Password</mat-label>
-          <input matInput placeholder="Confirm Password" type="password"
-                 formControlName="confirmPassword" required>
-          <mat-error *ngIf="reactiveForm.get('confirmPassword').hasError('required')">{{errors.confirm_password_required}}
-          </mat-error>
-          <mat-error *ngIf="reactiveForm.get('confirmPassword').hasError('confirm')">{{errors.confirm_password_inconsistent}}
-          </mat-error>
-        </mat-form-field>
-
-        <!-- <div class="m-y-16" fxLayout="row" fxLayoutAlign="space-between center">
-          <mat-checkbox>I have read and agree to the terms of service.</mat-checkbox>
-        </div> -->
-
-        <button class="w-full" mat-raised-button color="primary" [disabled]="reactiveForm.invalid || isSubmitted" (click)="register()">Đăng ký</button>
-
-        <div class="m-t-16">Already have an account? <a routerLink="/auth/login">Sign in</a></div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+  <ng-container *ngIf="!showQuestion; else showQuestionTpl">
+    <mat-card class="mat-elevation-z4 m-b-0" style="max-width: 380px;">
+      <mat-card-title class="m-b-24">
+        <div>Xin chào, </div>Chỉ cần mất vài phút để tạo tài khoản mới
+      </mat-card-title>
+      <mat-card-content>
+        <form class="form-field-full" [formGroup]="reactiveForm">
+          <mat-form-field appearance="outline">
+            <mat-label>Họ</mat-label>
+            <input matInput placeholder="Họ" formControlName="firstname" required>
+            <mat-error *ngIf="reactiveForm.get('firstname').hasError('required')">{{errors.firstname_required}}</mat-error>
+            <mat-error *ngIf="reactiveForm.get('firstname').hasError('invalid')">{{errors.firstname_invalid}}</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Tên</mat-label>
+            <input matInput placeholder="Tên" formControlName="lastname" required>
+            <mat-error *ngIf="reactiveForm.get('lastname').hasError('required')">{{errors.lastname_required}}</mat-error>
+            <mat-error *ngIf="reactiveForm.get('lastname').hasError('invalid')">{{errors.lastname_invalid}}</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="Email" formControlName="email" required>
+            <mat-error *ngIf="reactiveForm.get('email').hasError('required')">{{errors.email_required}}</mat-error>
+            <mat-error *ngIf="reactiveForm.get('email').hasError('invalid')">{{errors.email_invalid}}</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Tên đăng nhập</mat-label>
+            <input matInput placeholder="Username" formControlName="username" required>
+            <mat-error *ngIf="reactiveForm.get('username').hasError('required')">{{errors.username_required}}</mat-error>
+            <mat-error *ngIf="reactiveForm.get('username').hasError('invalid')">{{errors.username_invalid}}</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Mật khẩu</mat-label>
+            <input matInput placeholder="Password" type="password" formControlName="password"
+                   required>
+            <mat-error *ngIf="reactiveForm.get('password').hasError('required')">{{errors.password_required}}</mat-error>
+            <mat-error *ngIf="reactiveForm.get('password').hasError('invalid')">{{errors.password_invalid}}</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="outline">
+            <mat-label>Xác nhân mật khẩu</mat-label>
+            <input matInput placeholder="Confirm Password" type="password"
+                   formControlName="confirmPassword" required>
+            <mat-error *ngIf="reactiveForm.get('confirmPassword').hasError('required')">{{errors.confirm_password_required}}
+            </mat-error>
+            <mat-error *ngIf="reactiveForm.get('confirmPassword').hasError('confirm')">{{errors.confirm_password_inconsistent}}
+            </mat-error>
+          </mat-form-field>
+  
+          <!-- <div class="m-y-16" fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-checkbox>I have read and agree to the terms of service.</mat-checkbox>
+          </div> -->
+  
+          <button class="w-full" mat-raised-button color="primary" (click)="setupSecurityQuestion()">Đăng ký</button>
+  
+          <div class="m-t-16">Bạn đã có tài khoản? <a routerLink="/auth/login">Đăng nhập ngay</a></div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+  <ng-template #showQuestionTpl>
+    <security-question [goBackCallback]="backToRegister" [saveCallback]="register"></security-question>
+  </ng-template>
 </div>

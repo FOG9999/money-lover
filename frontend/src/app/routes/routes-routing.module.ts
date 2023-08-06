@@ -7,6 +7,7 @@ import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component'
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { RedirectComponent } from './sysytem/redirect/redirect.component';
+import { SecurityQuestionComponent } from './sessions/security-question/security-question.component';
 
 const routes: Routes = [
   {

@@ -4,20 +4,20 @@
     <mat-card-content>
       <form class="form-field-full" [formGroup]="reactiveForm">
         <mat-form-field appearance="outline">
-          <mat-label>Username</mat-label>
+          <mat-label>Tên đăng nhập</mat-label>
           <input matInput placeholder="Simple placeholder" formControlName="username" required>
-          <mat-error *ngIf="reactiveForm.get('username').invalid">Please enter username</mat-error>
+          <mat-error *ngIf="reactiveForm.get('username').invalid">Tên đăng nhập bắt buộc nhập</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
+          <mat-label>Mật khẩu</mat-label>
           <input matInput placeholder="Simple placeholder" type="password" formControlName="password" required>
-          <mat-error *ngIf="reactiveForm.get('password').invalid">Please enter password</mat-error>
+          <mat-error *ngIf="reactiveForm.get('password').invalid">Mật khẩu bắt buộc nhập</mat-error>
         </mat-form-field>
 
         <div class="m-y-16" fxLayout="row" fxLayoutAlign="space-between center">
-          <mat-checkbox>Remember Me</mat-checkbox>
-          <a href="">Forgot Password?</a>
+          <mat-checkbox>Ghi nhớ</mat-checkbox>
+          <a href="">Quên mật khẩu?</a>
         </div>
 
         <button class="w-full" mat-raised-button color="primary" (click)="login()"
@@ -56,8 +56,7 @@
           </div>
         </div>
 
-        <div class="m-t-16">Don't have an account? <a routerLink="/auth/register">Click here to
-            create one</a></div>
+        <div class="m-t-16">Bạn chưa có tài khoản? <a routerLink="/auth/register">Ấn vào link này để tạo ngay.</a></div>
       </form>
     </mat-card-content>
   </mat-card>

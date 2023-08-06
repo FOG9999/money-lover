@@ -1,0 +1,47 @@
+<mat-card class="mat-elevation-z4 m-b-0" style="max-width: 380px;">
+    <mat-card-title class="text-center m-b-24">Câu hỏi bảo mật</mat-card-title>
+    <mat-card-content>
+        <form class="form-field-full" [formGroup]="formGroup">
+            <mat-form-field appearance="fill" class="m-y-8">
+                <mat-label>Câu hỏi 1</mat-label>
+                <mat-select [(ngModel)]="questionOne" [ngModelOptions]="{standalone: true}">
+                    <mat-option *ngFor="let question of listQuestions" [value]="question._id">
+                        {{ question.question }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="Nhập câu trả lời" type="text" formControlName="answerOne" required>
+                <mat-error *ngIf="formGroup.get('answerOne').invalid">Câu trả lời bắt buộc nhập</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="m-y-8">
+                <mat-label>Câu hỏi 2</mat-label>
+                <mat-select [(ngModel)]="questionTwo" [ngModelOptions]="{standalone: true}">
+                    <mat-option *ngFor="let question of listQuestions" [value]="question._id">
+                        {{ question.question }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="Nhập câu trả lời" type="text" formControlName="answerTwo" required>
+                <mat-error *ngIf="formGroup.get('answerTwo').invalid">Câu trả lời bắt buộc nhập</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="m-y-8">
+                <mat-label>Câu hỏi 3</mat-label>
+                <mat-select [(ngModel)]="questionThree" [ngModelOptions]="{standalone: true}">
+                    <mat-option *ngFor="let question of listQuestions" [value]="question._id">
+                        {{ question.question }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="Nhập câu trả lời" type="text" formControlName="answerThree" required>
+                <mat-error *ngIf="formGroup.get('answerThree').invalid">Câu trả lời bắt buộc nhập</mat-error>
+            </mat-form-field>
+
+            <button class="w-full" mat-raised-button color="primary" [disabled]="formGroup.invalid">Lưu thay
+                đổi</button>
+            <button class="w-full m-t-8" mat-raised-button (click)="goBack()">Quay lại</button>
+        </form>
+    </mat-card-content>
+</mat-card>

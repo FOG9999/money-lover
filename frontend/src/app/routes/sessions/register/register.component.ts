@@ -14,6 +14,7 @@ export class RegisterComponent implements OnInit {
   reactiveForm: FormGroup;
   errors = CONSTS.messages.register;
   isSubmitted: boolean = false;
+  showQuestion: boolean = false;
 
   constructor(private fb: FormBuilder, private router: Router, private authenService: AuthService, private toast: ToastrService) {
     this.reactiveForm = this.fb.group({
@@ -37,7 +38,15 @@ export class RegisterComponent implements OnInit {
     return {};
   };
 
-  register(){
+  backToRegister = () => {
+    this.showQuestion = false;
+  }
+
+  setupSecurityQuestion(){
+    this.showQuestion = true;
+  }
+
+  register = () => {
     this.isSubmitted = true;
     this.authenService.createUser({
       ...this.reactiveForm.value,

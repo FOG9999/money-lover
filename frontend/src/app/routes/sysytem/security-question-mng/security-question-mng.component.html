@@ -1,0 +1,44 @@
+<mat-card>
+    <mat-card-title>Câu hỏi bảo mật</mat-card-title>
+    <mat-card-subtitle>
+        Danh sách câu hỏi để người dùng có thể sử dụng để định danh chính chủ cho tài khoản của mình.
+    </mat-card-subtitle>
+    <mat-card-content>
+        <div class="p-y-4">
+            <mat-form-field class="w-full">
+                <input matInput type="text" [(ngModel)]="searchKey" (keyup.enter)="searchQuestion()"
+                    placeholder="Tìm kiếm" />
+                <button mat-icon-button matSuffix (click)="searchQuestion()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+            <mat-card-actions>
+                <button mat-button color="primary" (click)="open()">
+                    <mat-icon>add</mat-icon>
+                    Thêm mới
+                </button>
+                <button mat-button color="accent" (click)="delete()">
+                    <mat-icon>delete</mat-icon>
+                    Xóa
+                </button>
+            </mat-card-actions>
+        </div>
+        <ng-container *ngIf="loading; else loaded">
+            <app-loading></app-loading>
+        </ng-container>
+        <ng-template #loaded>
+            <mat-list *ngIf="listQuestions.length > 0; else emptyTpl">
+                <mat-list-item class="hover-item" *ngFor="let question of listQuestions" (click)="open(question)">
+                    <mat-icon class="icon-list-item">question_answer</mat-icon>
+                    <div class="tile-list-item">
+                        {{question.question}}
+                        <div class="subtitle-list-item">5 người đang sử dụng câu hỏi này</div>
+                    </div>
+                </mat-list-item>
+            </mat-list>
+            <ng-template #emptyTpl>
+                <empty></empty>
+            </ng-template>
+        </ng-template>
+    </mat-card-content>
+</mat-card>

@@ -25,6 +25,7 @@ import { AppLoadingComponent } from './components/money-lover/app-loading/app-lo
 import { FormatNumberPipe } from './pipes/number-format.pipe';
 import { UploadComponent } from './components/money-lover/upload/upload.component';
 import { LevelRolePipe } from './pipes/level.pipe';
+import { EmptyComponent } from './components/empty/empty.component';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -39,7 +40,7 @@ const THIRD_MODULES = [
   ToastrModule,
   TranslateModule,
 ];
-const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent];
+const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent, EmptyComponent];
 const COMPONENTS_DYNAMIC = [];
 const DIRECTIVES = [NumberFormatDirective];
 const PIPES = [FormatNumberPipe, LevelRolePipe];
