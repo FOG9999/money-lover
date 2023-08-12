@@ -56,7 +56,7 @@
             <mat-checkbox>I have read and agree to the terms of service.</mat-checkbox>
           </div> -->
   
-          <button class="w-full" mat-raised-button color="primary" (click)="setupSecurityQuestion()">Đăng ký</button>
+          <button class="w-full" mat-raised-button color="primary" [disabled]="reactiveForm.invalid" (click)="setupSecurityQuestion()">Đăng ký</button>
   
           <div class="m-t-16">Bạn đã có tài khoản? <a routerLink="/auth/login">Đăng nhập ngay</a></div>
         </form>

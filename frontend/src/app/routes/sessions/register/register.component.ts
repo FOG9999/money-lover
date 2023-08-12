@@ -46,15 +46,18 @@ export class RegisterComponent implements OnInit {
     this.showQuestion = true;
   }
 
-  register = () => {
+  register = (questions: string[], answers: string[]) => {
     this.isSubmitted = true;
     this.authenService.createUser({
       ...this.reactiveForm.value,
+      questions,
+      answers,
       level: 'USER'
     }).subscribe((res: any) => {
       if(res.code){
         this.toast.error(res.message);
         this.isSubmitted = false;
+        this.showQuestion = false;
       }
       else {
         this.toast.success(CONSTS.messages.create_account_success);

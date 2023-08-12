@@ -21,7 +21,9 @@ export class AuthService {
         firstname: string,
         lastname: string,
         email: string,
-        level: 'ADMIN' | 'SYSTEM' | 'USER'
+        level: 'ADMIN' | 'SYSTEM' | 'USER',
+        questions: string[],
+        answers: string[]
     }){
         const api_name: string = "api.v1.systemuser.signup";
         return this.http.post(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });

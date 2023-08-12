@@ -29,5 +29,13 @@ export class SecurityQuestionService {
         const api_name: string = "api.v1.securityquestion.delete";
         return this.http.post<SecurityQuestion[]>(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
     }
+
+    /**
+     * use ONLY when user update their questions, NOT when creating new account
+     */
+    answerQuestion(questions: string[], answers: string[]){
+        const api_name: string = "api.v1.securityquestion.useranswer";
+        return this.http.post(environment.SERVER_URL, { api_name, questions, answers }, { observe: "body" });
+    }
     
 }

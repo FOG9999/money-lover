@@ -1,17 +1,14 @@
 let mongoose = require('mongoose'),
-    dataDb = require(__db_path + '/system-db'),
     ObjectId = mongoose.Types.ObjectId,
     User = require('../models/user'),
     utils = require(__libs_path + '/utils'),
-    _ = require('lodash'),
-    async = require('async'),
-    restify = require('restify'),
-    moment = require('moment'),
     validator = require('validator'),
     consts = require(__config_path + '/consts');
-const { sendMailPromise } = require('../../../../libs/aws-ses');
-const log = require('../../../../libs/log');
-const redis = require('../../../../libs/redis');
+const { sendMailPromise } = require(__libs_path + '/aws-ses');
+const log = require(__libs_path + '/log');
+const redis = require(__libs_path + '/redis');
+const bcrypt = require('bcrypt');
+const UserSecurityQuestion = require('../models/user-security-question');
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -348,7 +345,9 @@ const signUp = (req, returnData, callback) => {
         lastname,
         email,
         password,
-        level
+        level,
+        questions,
+        answers
     } = req.params;
 
     if (validator.isNull(username)) {
@@ -399,8 +398,26 @@ const signUp = (req, returnData, callback) => {
                 if (err1) {
                     return callback(err1);
                 }
-                returnData.set(result);
-                callback();
+                // create questions security
+                let answerHashes = answers.map(ans => {
+                    return bcrypt.hashSync(ans, consts.saltRounds);
+                });
+                const models = answerHashes.map((hash, ind) => {
+                    let newUserQuesAns = new UserSecurityQuestion({
+                        question: questions[ind],
+                        user: result._id,
+                        answer: hash
+                    });
+                    return newUserQuesAns;
+                });
+                UserSecurityQuestion.insertMany(models, (errQuestion, resultQuestion) => {
+                    let error = null;
+                    if (err) {
+                        error = "ERROR_INSERT_USER_QUESTION";
+                    }
+                    returnData.set({result, error});
+                    callback();
+                })
             })
         })
 }

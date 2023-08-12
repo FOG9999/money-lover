@@ -193,9 +193,18 @@ const cleanOldUserQues = (userId, callback) => {
     });
 }
 
+/**
+ * handle when user update their security questions, NOT when creating account
+ */
 const handleUserAnswerQuestion = (req, returnData, callback) => {
     let { questions, answers } = req.params;
     const user = req.user;
+    if(!Array.isArray(questions)){
+        return callback("ERROR_MISSING_QUESTIONS");
+    }
+    if(!Array.isArray(answers)){
+        return callback("ERROR_MISSING_ANSWERS");
+    }
     cleanOldUserQues(user._id, (err, delRes) => {
         if (err) {
             return callback("ERROR_DELETE_OLD_USER_QUESTION")
@@ -228,9 +237,43 @@ const handleUserAnswerQuestion = (req, returnData, callback) => {
     })
 }
 
+const authUserByCheckSecurityQuestion = (req, returnData, callback) => {
+    const {questions, answers} = req.params;
+    if(!Array.isArray(questions)){
+        return callback("ERROR_MISSING_QUESTIONS");
+    }
+    if(!Array.isArray(answers)){
+        return callback("ERROR_MISSING_ANSWERS");
+    }
+    const userId = req.user._id;
+    UserSecurityQuestion.find({user: userId})
+    .exec((err, data) => {
+        if(err){
+            return callback("ERROR_AUTH_USER_QUESTION")
+        }
+        let isAuth = true;
+        let dbUserQues = data.map(model => model.toObject());
+        for (let index = 0; index < dbUserQues.length; index++) {
+            const userQues = dbUserQues[index];
+            const quesInd = questions.findIndex(q => q == userQues.question);
+            if(quesInd < 0){
+                isAuth = false;
+                break;
+            }
+            if(!bcrypt.compareSync(answers[quesInd], userQues.answer)){
+                isAuth = false;
+                break;
+            }            
+        }
+        returnData.set({isAuth});
+        callback();
+    })
+}
+
 exports.deleteSecurityQuestion = deleteSecurityQuestion;
 exports.listSecurityQuestions = listSecurityQuestions;
 exports.addSecurityQuestion = addSecurityQuestion;
 exports.getSecurityQuestion = getSecurityQuestion;
 exports.updateSecurityQuestion = updateSecurityQuestion;
 exports.handleUserAnswerQuestion = handleUserAnswerQuestion;
+exports.authUserByCheckSecurityQuestion = authUserByCheckSecurityQuestion;
