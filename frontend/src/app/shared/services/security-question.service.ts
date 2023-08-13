@@ -37,5 +37,10 @@ export class SecurityQuestionService {
         const api_name: string = "api.v1.securityquestion.useranswer";
         return this.http.post(environment.SERVER_URL, { api_name, questions, answers }, { observe: "body" });
     }
+
+    authUserByQuestions(questions: string[], answers: string[]){
+        const api_name: string = "api.v1.securityquestion.checkuser";
+        return this.http.post<{isAuth: boolean}>(environment.SERVER_URL, { api_name, questions, answers }, { observe: "body" });
+    }
     
 }

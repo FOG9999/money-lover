@@ -11,6 +11,6 @@ module.exports = function() {
     consts.registerApi('api.v1.securityquestion.add', controller.addSecurityQuestion, { systemApi: true });
     consts.registerApi('api.v1.securityquestion.get', controller.getSecurityQuestion, { systemApi: true });
     consts.registerApi('api.v1.securityquestion.update', controller.updateSecurityQuestion, { systemApi: true });
-    consts.registerApi('api.v1.securityquestion.useranswer', controller.handleUserAnswerQuestion, { notAuth: true });
+    consts.registerApi('api.v1.securityquestion.useranswer', controller.handleUserAnswerQuestion, { anyAuth: true });
     consts.registerApi('api.v1.securityquestion.checkuser', controller.authUserByCheckSecurityQuestion, { anyAuth: true });
 };

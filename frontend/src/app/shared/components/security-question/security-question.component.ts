@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SecurityQuestionService } from '@shared';
 import { SecurityQuestion } from 'app/model/question.model';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'security-question',
@@ -12,7 +11,6 @@ import { ToastrService } from 'ngx-toastr';
 export class SecurityQuestionComponent implements OnInit {
     constructor(
         private questionService: SecurityQuestionService,
-        private toast: ToastrService
     ) { }
 
     ngOnInit() { 
@@ -29,6 +27,12 @@ export class SecurityQuestionComponent implements OnInit {
         answerThree: new FormControl("", [Validators.required]),
     })
     isSaving: boolean = false;
+    /**
+     * is in authentication mode or creating account
+     */
+    @Input() isAuthMode: boolean = true;
+    @Input() saveTitle: string = "Lưu thay đổi";
+    @Input() title: string = "Tạo câu hỏi bảo mật";
 
     /**
      * callback function if user wants to go back where they were
@@ -56,8 +60,10 @@ export class SecurityQuestionComponent implements OnInit {
 
     saveQuestions(){
         const {answerOne, answerTwo, answerThree} = this.formGroup.value;
+        this.isSaving = true;
         if(this.saveCallback){
             this.saveCallback([this.questionOne, this.questionTwo, this.questionThree], [answerOne, answerTwo, answerThree])
+            this.isSaving = false;
         }
     }
 }

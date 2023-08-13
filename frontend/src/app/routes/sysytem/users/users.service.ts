@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { User } from 'app/model/user.model';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class UsersService {
     constructor(private http: HttpClient) { }
 
@@ -27,4 +29,13 @@ export class UsersService {
         return this.http.post<{results: any}>(environment.SERVER_URL, {api_name: api, ids}, {observe: 'body'});
     }
     
+    updateUser(user: Partial<User>){
+        let api: string = `api.v1.systemuser.update`;
+        return this.http.post(environment.SERVER_URL, {api_name: api, ...user}, {observe: 'body'});
+    }
+
+    getUser(){
+        let api: string = `api.v1.systemuser.get`;
+        return this.http.post<User>(environment.SERVER_URL, {api_name: api}, {observe: 'body'});
+    }
 }

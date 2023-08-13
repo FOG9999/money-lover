@@ -25,7 +25,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.localStorage.clear()
+  }
 
   login() {
     let { username, password } = this.reactiveForm.value;

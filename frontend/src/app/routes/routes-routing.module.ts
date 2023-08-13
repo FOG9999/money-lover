@@ -7,7 +7,8 @@ import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component'
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { RedirectComponent } from './sysytem/redirect/redirect.component';
-import { SecurityQuestionComponent } from './sessions/security-question/security-question.component';
+import { AccountGuardService, AuthGuardService } from '@shared';
+import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component.';
 
 const routes: Routes = [
   {
@@ -26,6 +27,12 @@ const routes: Routes = [
         component: RegisterComponent,
         data: { title: 'Register', titleI18n: 'register' },
       },
+      {
+        path: 'auth-question',
+        component: AuthByQuestionComponent,
+        canActivate: [AccountGuardService],
+        data: { title: 'Auth by question', titleI18n: 'auth-question' },
+      },
       { path: '**', redirectTo: 'login' }
     ],
   },
@@ -33,7 +40,13 @@ const routes: Routes = [
     path: 'redirect',
     component: RedirectComponent
   },
-  { path: '**', redirectTo: 'auth' },
+  {
+    path: 'profile',
+    canActivate: [AccountGuardService],
+    loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
+    data: { title: 'Profile', titleI18n: 'profile' },
+  },
+  { path: '**', redirectTo: 'money-lover' },
 ];
 
 @NgModule({

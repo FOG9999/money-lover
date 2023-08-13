@@ -7,8 +7,10 @@ export * from './services/directionality.service';
 export * from './services/money-lover/icon.service';
 export * from './services/money-lover/admin-guard.service';
 export * from './services/money-lover/auth-guard.service';
+export * from './services/money-lover/account-guard.service';
 export * from './services/passport-login.service'
 export * from './services/security-question.service'
+export * from './services/auth-data.service'
 
 // Utils
 export * from './utils/colors';

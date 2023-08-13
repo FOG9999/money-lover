@@ -540,6 +540,36 @@ const createUserOAuth = (req, returnData, callback) => {
         })
 }
 
+const updateUser = (req, returnData, callback) => {
+    const {username, email, firstname, lastname} = req.params;
+    const userId = req.user._id;
+
+    User.findOne({ _id: userId })
+        .exec((err, data) => {
+            if (err) {
+                return callback("ERROR_CANNOT_FIND_USER");
+            }
+            if (!data) {
+                return callback("ERROR_USER_NOT_EXIST");
+            }
+            User.update({ _id: userId }, {
+                $set: {
+                    username: username,
+                    email: email,
+                    firstname: firstname,
+                    lastname: lastname
+                }
+            })
+                .exec((errSave, dataSave) => {
+                    if (errSave) {
+                        return callback("ERROR_CANNOT_UPDATE_USER");
+                    }
+                    returnData.set({...dataSave})
+                    callback();
+                })
+        })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -550,3 +580,4 @@ exports.signUp = signUp;
 exports.deleteUsers = deleteUsers;
 exports.unlockUsers = unlockUsers;
 exports.createUserOAuth = createUserOAuth;
+exports.updateUser = updateUser;

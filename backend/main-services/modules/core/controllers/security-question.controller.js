@@ -253,14 +253,12 @@ const authUserByCheckSecurityQuestion = (req, returnData, callback) => {
         }
         let isAuth = true;
         let dbUserQues = data.map(model => model.toObject());
+        if(dbUserQues.length == 0){
+            return callback("ERROR_USER_NOT_SET_QUESTIONS")
+        }
         for (let index = 0; index < dbUserQues.length; index++) {
             const userQues = dbUserQues[index];
-            const quesInd = questions.findIndex(q => q == userQues.question);
-            if(quesInd < 0){
-                isAuth = false;
-                break;
-            }
-            if(!bcrypt.compareSync(answers[quesInd], userQues.answer)){
+            if(!bcrypt.compareSync(answers[index], userQues.answer) || questions[index] != userQues.question){
                 isAuth = false;
                 break;
             }            

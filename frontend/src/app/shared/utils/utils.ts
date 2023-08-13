@@ -255,7 +255,33 @@ export function exchangeToByte(sizeStr: string){
 export function getResponseErrorMessage(message: string){
   switch (message) {
     case 'ERROR_USER_LOCK':
-      return 'Người dùng đã bị khóa. Vui lòng thử lại.'  
+      return 'Người dùng đã bị khóa. Vui lòng thử lại.' 
+    case 'ERROR_QUESTION_NOT_FOUND':
+      return 'Không tìm thấy câu hỏi.' 
+    case 'ERROR_QUESTION_CONTENT_MISSING':
+      return 'Nội dung câu hỏi là bắt buộc.' 
+    case 'ERROR_QUESTION_EXIST':
+      return 'Câu hỏi này đã tồn tại.' 
+    case 'ERROR_ID_MISSING':
+      return 'Thiếu trường _id.' 
+    case 'ERROR_QUESTION_CANNOT_BE_MODIFIED':
+      return 'Câu hỏi không thể bị ghi đè.' 
+    case 'ERROR_MISSING_QUESTIONS':
+      return 'Thiếu danh sách câu hỏi.'
+    case 'ERROR_DELETE_OLD_USER_QUESTION':
+      return 'Xóa danh sách câu hỏi cũ của người dùng thất bại.'
+    case 'ERROR_DEL_WHEN_INSERT_USER_QUESTION':
+      return 'Xoá liên kết cũ người dùng với câu hỏi bảo mật thât bại.'
+    case 'ERROR_INSERT_USER_QUESTION':
+      return 'Liên kết người dùng với câu hỏi bảo mật thât bại.'
+    case 'ERROR_AUTH_USER_QUESTION':
+      return 'Xác thực người dùng thất bại.'
+    case 'ERROR_USER_NOT_SET_QUESTIONS':
+      return 'Người dùng chưa cài đặt câu hỏi bảo mật.'
+    case 'ERROR_CANNOT_FIND_USER':
+      return 'Lỗi lấy thông tin người dùng.'
+    case 'ERROR_CANNOT_UPDATE_USER':
+      return 'Lỗi cập nhật thông tin người dùng.'
     default:
       return 'Không tồn tại mesage';
   }
