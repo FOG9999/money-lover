@@ -570,6 +570,33 @@ const updateUser = (req, returnData, callback) => {
         })
 }
 
+const encryptSessionAndUrl = (req, returnData, callback) => {
+    const {url} = req.params;
+    if(url.startsWith('http')){
+        return callback("ERROR_URL_INVALID");
+    }
+    const currTime = new Date().getTime();
+    const userId = req.user._id;
+    const salt = Number(process.env.SALT_ENCRYPT_SESSION_URL);
+    const hashedKey = bcrypt.hashSync(JSON.stringify({userId, url}), salt); // this key can only be used in 5min
+    returnData.set({k: hashedKey, endTime: currTime + consts.timeKeyExpired, url });
+    callback();
+}
+
+const authenticateKeyUrl = (req, returnData, callback) => {
+    const {k, endTime, url} = req.params;
+    if(url.startsWith('http')){
+        return callback("ERROR_URL_INVALID");
+    }
+    if(new Date().getTime() > endTime){
+        return callback("ERROR_KEY_EXPIRED");
+    }
+    const userId = req.user._id;
+    const isValid = bcrypt.compareSync(JSON.stringify({userId, url}), k);
+    returnData.set({isValid});
+    callback();
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -581,3 +608,5 @@ exports.deleteUsers = deleteUsers;
 exports.unlockUsers = unlockUsers;
 exports.createUserOAuth = createUserOAuth;
 exports.updateUser = updateUser;
+exports.encryptSessionAndUrl = encryptSessionAndUrl;
+exports.authenticateKeyUrl = authenticateKeyUrl;

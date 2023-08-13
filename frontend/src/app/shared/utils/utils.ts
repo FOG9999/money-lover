@@ -282,6 +282,10 @@ export function getResponseErrorMessage(message: string){
       return 'Lỗi lấy thông tin người dùng.'
     case 'ERROR_CANNOT_UPDATE_USER':
       return 'Lỗi cập nhật thông tin người dùng.'
+    case 'ERROR_URL_INVALID':
+      return 'Đường dẫn không hợp lệ.'
+    case 'ERROR_KEY_EXPIRED':
+      return 'Khóa hết hạn. Vui lòng thử lại.'
     default:
       return 'Không tồn tại mesage';
   }

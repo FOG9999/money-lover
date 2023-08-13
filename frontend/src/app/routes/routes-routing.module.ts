@@ -8,7 +8,7 @@ import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { RedirectComponent } from './sysytem/redirect/redirect.component';
 import { AccountGuardService, AuthGuardService } from '@shared';
-import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component.';
+import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component';
 
 const routes: Routes = [
   {

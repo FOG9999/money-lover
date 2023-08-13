@@ -19,7 +19,7 @@ export class AuthByQuestionComponent implements OnInit, OnDestroy {
     ) { 
         this.authDataService.redirectFromAuthByQuestionChange$.pipe(takeUntil(this.destroy$))
         .subscribe(res => {
-            this.redirectUrl = res;
+            this.redirectUrl = `${res['url']}?k=${res['k']}&endTime=${res['endTime']}`;
         })
     }
 

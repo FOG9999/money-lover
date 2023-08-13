@@ -88,5 +88,6 @@ module.exports = {
         "Tháng 11",
         "Tháng 12",
     ],
-    saltRounds: 10
+    saltRounds: 10,
+    timeKeyExpired: 180000
 }

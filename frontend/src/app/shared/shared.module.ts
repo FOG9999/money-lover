@@ -26,7 +26,7 @@ import { FormatNumberPipe } from './pipes/number-format.pipe';
 import { UploadComponent } from './components/money-lover/upload/upload.component';
 import { LevelRolePipe } from './pipes/level.pipe';
 import { EmptyComponent } from './components/empty/empty.component';
-import { AuthByQuestionComponent } from './components/auth-by-question/auth-by-question.component.';
+import { AuthByQuestionComponent } from './components/auth-by-question/auth-by-question.component';
 import { ChangeSecurityQuestionComponent } from './components/change-security-quesion/change-security-question.component';
 import { SecurityQuestionComponent } from './components/security-question/security-question.component';
 

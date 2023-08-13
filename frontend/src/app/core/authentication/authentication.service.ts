@@ -42,4 +42,20 @@ export class AuthService {
         return this.http.post<User>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
 
+    /**
+     * get encrypted key from url and session_id to protect sharing or spam reload
+     * @param url url to protect
+     */
+    getKey(url: string){
+        const api_name: string = "api.v1.systemuser.getkey";
+        return this.http.post<{k: string, endTime: number, url: string}>(environment.SERVER_URL, { api_name, url }, { observe: "body" });
+    }
+
+    /**
+     * authenitcate the key stored in url (get from getKey)
+     */
+    authKey(k: string, endTime: number, url: string){
+        const api_name: string = "api.v1.systemuser.authkey";
+        return this.http.post<{isValid: boolean}>(environment.SERVER_URL, { api_name, k, endTime, url }, { observe: "body" });
+    }
 }

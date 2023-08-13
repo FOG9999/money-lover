@@ -5,6 +5,6 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthDataService {
     constructor() { }
 
-    redirectFromAuthByQuestionChange$ = new BehaviorSubject<string>("/");
+    redirectFromAuthByQuestionChange$ = new BehaviorSubject<Object>({});
     
 }
