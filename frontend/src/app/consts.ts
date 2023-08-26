@@ -1,6 +1,7 @@
 export const CONSTS = {
     page_size: 10,
     page_size_options: [10, 20, 50],
+    page_size_get_all: 10000,
     icon_not_selected: 'icon_not_selected.png',
     icon_allow_types: ['png'],
     image_invalid: 'Ảnh không hợp lệ',

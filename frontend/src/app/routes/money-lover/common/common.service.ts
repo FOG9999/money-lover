@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { Icon } from 'app/model/icon.model';
 import { Category } from 'app/model/category.model';
+import { CONSTS } from 'app/consts';
 
 @Injectable()
 export class CommonService {
@@ -15,9 +16,9 @@ export class CommonService {
     }
 
     /* #region Category */
-    getListCategories(search: any) {
+    getListCategories(search: string, page: number = 0, size: number = CONSTS.page_size_get_all) {
         const api_name: string = "api.v1.category.list";
-        return this.http.post<Category[]>(environment.SERVER_URL, { api_name, ...search }, { observe: "body" });
+        return this.http.post<{results: Category[], total: number}>(environment.SERVER_URL, { api_name, search, page, size }, { observe: "body" });
     }
 
     insertCategory(data: { name: string, icon: string, transactionType: number, isDefault?: number }) {

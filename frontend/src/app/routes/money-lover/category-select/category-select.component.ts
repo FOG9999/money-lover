@@ -43,10 +43,10 @@ export class CategorySelectComponent implements OnInit {
 
     getDataCategories() {
         this.loading = true;
-        this.commonService.getListCategories({ search: this.search }).subscribe(res => {
-            this.categories = [...res];
+        this.commonService.getListCategories(this.search).subscribe(res => {
+            this.categories = [...res.results];
             if(this.data && this.data.categoryId){
-                this.selectedCategory = res.find(x => x._id == this.data.categoryId) ? res.find(x => x._id == this.data.categoryId): {_id: ''}
+                this.selectedCategory = res.results.find(x => x._id == this.data.categoryId) ? res.results.find(x => x._id == this.data.categoryId): {_id: ''}
             }
             else {
                 this.selectedCategory = {

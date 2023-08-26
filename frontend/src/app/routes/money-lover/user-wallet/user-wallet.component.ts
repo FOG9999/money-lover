@@ -75,8 +75,8 @@ export class UserWalletComponent implements OnInit {
     }
 
     getDataCategories() {
-        this.commonService.getListCategories({ search: this.search }).subscribe(res => {
-            this.listCategories = [...res];
+        this.commonService.getListCategories(this.search).subscribe(res => {
+            this.listCategories = [...res.results];
         })
     }
 

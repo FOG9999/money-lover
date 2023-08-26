@@ -172,11 +172,11 @@ export class TransactionListComponent implements OnInit, OnDestroy {
      * get list other data
      */
     private getOtherDataList() {
-        this.commonSv.getListCategories({ search: "" })
+        this.commonSv.getListCategories("")
             .pipe(
                 takeUntil(this.onDestroy$)
             ).subscribe(data => {
-                this.listCategories = [...data];
+                this.listCategories = [...data.results];
             });
         this.walletSv.getListWallets({}).pipe(
             takeUntil(this.onDestroy$)

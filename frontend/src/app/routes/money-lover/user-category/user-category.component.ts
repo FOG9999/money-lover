@@ -10,6 +10,7 @@ import { IconService } from '@shared';
 import { CategoryDialogComponent } from '../common/category/category-dialog.component';
 import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
 import { IconSelectionComponent } from '../icon-selection/icon-selection.component';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'ml-user-category',
@@ -42,6 +43,8 @@ export class UserCategoryComponent implements OnInit {
 
     icons: Icon[] = [];
     search: string = "";
+    page: number = 0;
+    total: number = 0;
 
     ngOnInit() {
         this.getListIcons();
@@ -102,13 +105,20 @@ export class UserCategoryComponent implements OnInit {
     }
 
     getDataCategories() {
-        this.commonService.getListCategories({ search: this.search }).subscribe(res => {
-            this.listCategories = [...res];
+        this.commonService.getListCategories(this.search, this.page, this.pageSize).subscribe(res => {
+            this.listCategories = [...res.results];
+            this.total = res.total;
             setTimeout(() => {
                 this.renewListChecked();
                 this.updatePreviousState();
             });
         })
+    }
+
+    onPageEvent(evt: PageEvent){
+        this.page = evt.pageIndex;
+        this.pageSize = evt.pageSize;
+        this.getDataCategories();
     }
 
     getListIcons() {

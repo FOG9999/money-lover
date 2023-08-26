@@ -22,10 +22,10 @@ const list = (req, returnData, callback) => {
     else {
         query['is_delete'] = false;
     }
-    if (!validator.isNull(page)) {
+    if (validator.isNull(page)) {
         page = 0;
     }
-    if (!validator.isNull(size)) {
+    if (validator.isNull(size)) {
         size = consts.page_size;
     }
 

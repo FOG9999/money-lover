@@ -8,7 +8,7 @@ const utils = require(__libs_path + '/utils'),
     consts = require(__config_path + '/consts');
 
 const listCategorys = (req, returnData, callback) => {
-    let { search, isDelete, isDefault } = req.params;
+    let { search, isDelete, isDefault, page, size } = req.params;
     const user = req.user;
 
     let query = {};
@@ -16,6 +16,12 @@ const listCategorys = (req, returnData, callback) => {
         query['isDelete'] = isDelete;
     }
     else query['isDelete'] = false;
+    if (validator.isNull(page)) {
+        page = 0;
+    }
+    if (validator.isNull(size)) {
+        size = consts.page_size;
+    }
     // query only default categories for ADMIN role
     if (validator.isNull(isDefault) && (user.level == consts.user_roles.ADMIN || user.level == consts.user_roles.SYSTEM_USER)) {
         isDefault = 1;
@@ -48,12 +54,25 @@ const listCategorys = (req, returnData, callback) => {
     Category
         .find()
         .where(query)
+        .skip(page*size)
+        .limit(size)
         .populate('icon')
         .sort({ dateCreated: -1 })
         .exec((err, results) => {
             if (err) return callback(err);
-            returnData.set(results);
-            callback();
+            // calculate count
+            Category.aggregate([{
+                $match: query
+            }, {
+                $count: "total"
+            }])
+            .exec((errCount, result) => {
+                if(errCount || !result[0]){
+                    return callback(errCount);
+                }
+                returnData.set({results, total: result[0].total});
+                callback();
+            })
         })
 }
 

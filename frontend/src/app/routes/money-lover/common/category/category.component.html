@@ -30,5 +30,5 @@
         </div>
     </div>
 </div>
-<mat-paginator [length]="listCategories.length" [pageSize]="pageSize">
+<mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" (page)="onPageEvent($event)">
 </mat-paginator>

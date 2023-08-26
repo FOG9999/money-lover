@@ -6,6 +6,7 @@ import { Icon } from 'app/model/icon.model';
 import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common.service';
 import { IconSelectionComponent } from '../../icon-selection/icon-selection.component';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'ml-category',
@@ -23,6 +24,8 @@ export class CategoryComponent implements OnInit, OnChanges {
     indexHovering: number = -1;
     nameEditting: string = "";
     pageSize: number = CONSTS.page_size;
+    page: number = 0;
+    total: number = 0;
     iconSelectionDialogRef: MatDialogRef<IconSelectionComponent>;
 
     @ViewChild("editInput") editInput: ElementRef;
@@ -97,13 +100,20 @@ export class CategoryComponent implements OnInit, OnChanges {
     }
 
     getDataCategories() {
-        this.commonService.getListCategories({ search: this.search }).subscribe(res => {
-            this.listCategories = [...res];
+        this.commonService.getListCategories(this.search, this.page, this.pageSize).subscribe(res => {
+            this.listCategories = [...res.results];
+            this.total = res.total;
             setTimeout(() => {
                 this.renewListChecked();
                 this.updatePreviousState();
             });            
         })
+    }
+
+    onPageEvent(evt: PageEvent){
+        this.page = evt.pageIndex;
+        this.pageSize = evt.pageSize;
+        this.getDataCategories();
     }
 
     editCategoryIcon(index: number) {
