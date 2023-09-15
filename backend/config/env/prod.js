@@ -6,7 +6,9 @@ module.exports = {
             db_host: 'localhost',
             db_port: 27017,
             db_prefix: 'mongodb',
-            db_database: 'system-base'
+            db_database: 'system-base',
+            db_user: "fog99999",
+            db_pass: "fog99999"
         }
     }
 }

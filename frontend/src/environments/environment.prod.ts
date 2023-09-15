@@ -1,7 +1,7 @@
 export const environment = {
-  PassportLoginServerURL: "http://54.237.58.197:9000/api",
-  MoneyLoverURL: "http://54.237.58.197:4200",
-  SERVER_URL: 'http://54.237.58.197:8081/api/rest',
+  PassportLoginServerURL: "https://59u9issq74.execute-api.us-east-1.amazonaws.com/api",
+  MoneyLoverURL: "https://my-ml.net/",
+  SERVER_URL: 'https://gzo62gz3a0.execute-api.us-east-1.amazonaws.com/api/rest',
   production: false,
   useHash: false,
   hmr: false,
