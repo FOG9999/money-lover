@@ -9,6 +9,17 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
+  styles: [
+    `
+      :host {
+        height: 100%;
+        display: block;
+        > div {
+            min-height: 100vh;
+        }
+      }
+    `
+  ]
 })
 export class RegisterComponent implements OnInit {
   reactiveForm: FormGroup;

@@ -63,7 +63,8 @@ export class RedirectComponent implements OnInit, OnDestroy {
             lastname: string,
             email: string,
             level: 'ADMIN' | 'SYSTEM' | 'USER',
-            authId: number | string
+            authId: number | string,
+            avatar: string
         } = {
             username: user.email,
             email: user.email,
@@ -71,7 +72,8 @@ export class RedirectComponent implements OnInit, OnDestroy {
             lastname: user.given_name,
             level: "USER",
             password: randomString(),
-            authId: user.sub
+            authId: user.sub,
+            avatar: user.picture
         };
         this.createUserOAuth(systemUser);
     }

@@ -15,3 +15,11 @@
     gap: 10px;
     justify-content: center;
 }
+
+:host {
+    height: 100%;
+    display: block;
+    > div {
+        min-height: 100vh;
+    }
+}
