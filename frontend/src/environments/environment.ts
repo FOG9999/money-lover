@@ -10,6 +10,7 @@ export const environment = {
   production: false,
   useHash: false,
   hmr: false,
+  GOOGLE_LOGIN_URI: "http://localhost:9000/gg-cloud/verify-token"
 };
 
 /*

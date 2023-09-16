@@ -17,5 +17,9 @@ module.exports = {
             db_database: 'my-money-lover'
         }
     },
+    redis: {
+        host: 'localhost',
+        port: 6379
+    },
     host: 'localhost'
 }

@@ -1,10 +1,9 @@
-import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/authentication/authentication.service';
 import { environment } from '@env/environment';
-import { LocalStorageService, getResponseErrorMessage } from '@shared';
+import { LocalStorageService } from '@shared';
 import { CONSTS } from 'app/consts';
 import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
@@ -25,7 +24,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  googleLoginUri: string = "";
+
   ngOnInit() { 
+    this.googleLoginUri = environment.GOOGLE_LOGIN_URI + '?redirect_fe_uri='+environment.MoneyLoverURL+'/redirect';
     this.localStorage.clear()
   }
 
