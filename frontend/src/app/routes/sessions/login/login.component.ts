@@ -8,6 +8,7 @@ import { CONSTS } from 'app/consts';
 import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil, Subject } from 'rxjs';
+import { isDevMode } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -41,9 +42,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   googleLoginUri: string = "";
   private destroy$ = new Subject();
 
-  ngOnInit() { 
-    
-    this.googleLoginUri = environment.GOOGLE_LOGIN_URI + '?redirect_fe_uri='+environment.MoneyLoverURL+'/redirect';
+  ngOnInit() {     
+    this.googleLoginUri = environment.GOOGLE_LOGIN_URI + '?redirect_fe_uri='+environment.MoneyLoverURL+'/redirect' + "&gatewayForward=true";
     this.localStorage.clear()
   }
 
