@@ -2,6 +2,7 @@
  * Created by thanhle on 4/16/2015.
  */
  const mongoose = require('mongoose');
+const winstonLogger = require('../libs/winston');
  const config = require(__config_path + '/config');
  
  // setup Data Database
@@ -37,12 +38,14 @@
  });
  db.on('error', function(err) {
      console.log('System DB: connection error %s', err);
+     winstonLogger.error('System DB: connection error: ' + JSON.stringify(err));
      if (err && err.message && err.message.match(/ECONNRESET|ECONNREFUSED|ECONNABORTED/)) {
          reconnect();
      }
  });
  db.on('disconnected', function() {
      console.log('System DB: disconnected');
+     winstonLogger.error('System DB: disconnected');
      reconnect();
  });
  

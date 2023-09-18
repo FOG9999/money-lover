@@ -5,6 +5,7 @@ const consts = require(__config_path + '/consts');
 const log = require(__libs_path + '/log');
 const util = require('util');
 const config = require('./config');
+const winstonLogger = require('../libs/winston');
 
 module.exports = function (app) {
     // fix for moment inValid date
@@ -88,6 +89,12 @@ function uncaughtException(err, res, params) {
         message: err.message,
         params: params || ''
     });
+    winstonLogger.error(JSON.stringify({
+        code: errorCode,
+        stack: err.stack,
+        message: err.message,
+        params: params || ''
+    }))
     // respond with 500 'Internal Server Error'.
     if (res && !res._headerSent) {
         res.send(500, {
