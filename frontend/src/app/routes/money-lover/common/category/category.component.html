@@ -1,4 +1,4 @@
-<div class="matero-row" fxLayout="row wrap">
+<div class="matero-row" fxLayout="row wrap" *ngIf="!loading; else loadingTpl">
     <div class="matero-col cursor-pointer m-y-8" fxFlex="50" fxFlex.gt-xs="25" fxFlex.gt-md="20" fxFlex.gt-xl="10"
         fxLayout="row" *ngFor="let category of listCategories; let i = index">
         <mat-checkbox fxFlex="20" [(ngModel)]="listChecked[i]"></mat-checkbox>
@@ -32,3 +32,8 @@
 </div>
 <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" (page)="onPageEvent($event)">
 </mat-paginator>
+
+<!-- loading -->
+<ng-template #loadingTpl>
+    <app-loading></app-loading>
+</ng-template>

@@ -9,6 +9,7 @@ const log = require(__libs_path + '/log');
 const redis = require(__libs_path + '/redis');
 const bcrypt = require('bcrypt');
 const UserSecurityQuestion = require('../models/user-security-question');
+const winstonLogger = require('../../../../libs/winston');
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -506,10 +507,10 @@ const createUserOAuth = (req, returnData, callback) => {
                         'andithang.work@gmail.com'
                     ], [], 'Test SES', 'Warning login from My Money Lover', (err, resData) => {
                         if(err){
-                            log.error({
+                            winstonLogger.error(JSON.stringify({
                                 code: err.code,
                                 message: err.message,
-                            })
+                            }))
                         }
                         else {
                             console.log(resData);

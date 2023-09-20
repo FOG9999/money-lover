@@ -24,6 +24,7 @@ export class WalletTypeComponent implements OnInit, OnChanges {
     nameEditting: string = "";
     pageSize: number = CONSTS.page_size;
     iconSelectionDialogRef: MatDialogRef<IconSelectionComponent>;
+    loading: boolean = false;
 
     @ViewChild("editInput") editInput: ElementRef;
 
@@ -87,25 +88,6 @@ export class WalletTypeComponent implements OnInit, OnChanges {
         })
     }
 
-    generateFakeData() {
-        let temp: WalletType[] = [];
-        let icon: Icon = {
-            code: '0ef3cdd7-d90a-4fa3-86f6-5139bad3691b',
-            path: '0ef3cdd7-d90a-4fa3-86f6-5139bad3691b.png'
-        };
-        let tempChecked: boolean[] = [];
-        for (let i = 0; i < 30; i++) {
-            let name = `Chủng loại ${i}`;
-            temp.push({
-                name,
-                icon
-            });
-            tempChecked.push(false);
-        }
-        this.listWalletTypes = [...temp];
-        this.listChecked = [...tempChecked];
-    }
-
     renewListChecked() {
         let tempChecked: boolean[] = [];
         for (let i = 0; i < this.listWalletTypes.length; i++) {
@@ -115,12 +97,17 @@ export class WalletTypeComponent implements OnInit, OnChanges {
     }
 
     getDataWalletTypes() {
+        this.loading = true;
         this.commonService.getListWalletTypes({ search: this.search }).subscribe(res => {
+            this.loading = false;
             this.listWalletTypes = [...res];
             setTimeout(() => {
                 this.renewListChecked();
                 this.updatePreviousState();
             });            
+        }, () => {
+            this.loading = false;
+            this.listWalletTypes = [];
         })
     }
 

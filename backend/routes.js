@@ -4,6 +4,7 @@
  const async = require('async');
  const consts = require(__config_path + "/consts");
  const validator = require('validator');
+const winstonLogger = require('./libs/winston');
  const log = require(__libs_path + '/log');
  
  module.exports = function(app) {
@@ -60,12 +61,12 @@
                              });
                          } else {
                              var errCode = Date.now();
-                             log.error({
+                             winstonLogger.error(JSON.stringify({
                                  code: errCode,
                                  stack: err.stack || err.toString(),
                                  message: err.message,
                                  params: req.params
-                             });
+                             }));
                              return res.send(500, {
                                  code: errCode,
                                  message: 'ERROR_SERVER'

@@ -1,0 +1,1 @@
+aws s3 cp backend/logs s3://money-lover-bucket/logs --resursive

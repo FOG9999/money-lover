@@ -20,17 +20,9 @@ import { User } from 'app/model/user.model';
         <mat-icon>account_circle</mat-icon>
         <span>{{ 'user.profile' | translate }}</span>
       </button>
-      <button routerLink="/profile/settings" mat-menu-item>
-        <mat-icon>settings</mat-icon>
-        <span>{{ 'user.settings' | translate }}</span>
-      </button>
       <button routerLink="/auth/login" mat-menu-item>
         <mat-icon>exit_to_app</mat-icon>
         <span>{{ 'user.logout' | translate }}</span>
-      </button>
-      <button routerLink="/auth/auth-question" mat-menu-item>
-        <mat-icon>exit_to_app</mat-icon>
-        <span>Câu hỏi bảo mật</span>
       </button>
     </mat-menu>
   `,

@@ -27,6 +27,7 @@ export class CategoryComponent implements OnInit, OnChanges {
     page: number = 0;
     total: number = 0;
     iconSelectionDialogRef: MatDialogRef<IconSelectionComponent>;
+    loading: boolean = false;
 
     @ViewChild("editInput") editInput: ElementRef;
 
@@ -100,13 +101,18 @@ export class CategoryComponent implements OnInit, OnChanges {
     }
 
     getDataCategories() {
+        this.loading = true;
         this.commonService.getListCategories(this.search, this.page, this.pageSize).subscribe(res => {
+            this.loading = false;
             this.listCategories = [...res.results];
             this.total = res.total;
             setTimeout(() => {
                 this.renewListChecked();
                 this.updatePreviousState();
             });            
+        }, () => {
+            this.loading = false;
+            this.listCategories = [];
         })
     }
 

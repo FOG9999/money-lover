@@ -83,12 +83,6 @@ module.exports = function (app) {
 function uncaughtException(err, res, params) {
     // log it
     var errorCode = Date.now();
-    log.error({
-        code: errorCode,
-        stack: err.stack,
-        message: err.message,
-        params: params || ''
-    });
     winstonLogger.error(JSON.stringify({
         code: errorCode,
         stack: err.stack,
