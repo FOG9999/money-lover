@@ -25,7 +25,8 @@ const winstonLogger = winston.createLogger({
         dirname: 'logs/combined',
         filename: `%DATE%.log`,
         datePattern: 'YYYY-MM-DD'
-    })
+    }),
+    new winston.transports.Console()
   ],
 });
 

@@ -34,7 +34,7 @@
     "nan": "^2.16.0",
     "node-fetch": "^2.6.7",
     "node-gcm": "^0.14.0",
-    "nodemailer": "latest",
+    "nodemailer": "^6.9.5",
     "nodemailer-smtp-transport": "latest",
     "numeral": "^1.5.3",
     "redis": "^2.6.2",

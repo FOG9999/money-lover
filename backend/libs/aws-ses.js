@@ -1,4 +1,3 @@
-require('dotenv').config();
 const AWS = require('aws-sdk');
 
 // Thông tin SES_AWS_ACCESS_KEY_ID, SES_AWS_SECRET_ACCESS_KEY nằm trong file credentials bạn đã download về ở trên nhé

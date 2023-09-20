@@ -1,6 +1,7 @@
 'use strict';
 
 require('./config/init')();
+require('dotenv').config();
 var config = require('./config/config');
 
 // Paths global
@@ -36,6 +37,8 @@ let ca = [];
 
 // khởi tạo Database MongoDB
 var mongoose = require('mongoose');
+const mailTransporter = require('./libs/mailer');
+const winstonLogger = require('./libs/winston');
 // require('./database/business-db');
 require('./database/system-db');
 // Use bluebird promises
@@ -50,6 +53,27 @@ app.on('error', function (err) {
         console.log(err);
     }
 });
+
+mailTransporter.verify((err, success) => {
+    if(err){
+        winstonLogger.error('Nodemailer verify error: ' + JSON.stringify(err));
+    }
+    else {
+        winstonLogger.info('Nodemailer verifies successfully');
+        mailTransporter.sendMail({
+            from: process.env.MAIL_USERNAME,
+            to: process.env.MAIL_ADMIN_GMAIL,
+            text: 'Sent with nodemailer',
+            // subject is required not to be marked as spam
+            subject: 'test'
+        }).then(() => {
+            winstonLogger.info('Email notify admin that server started')
+        })
+        .catch((err) => {
+            winstonLogger.error('Email sent to admin failed. Error: ' + JSON.stringify(err));
+        })
+    }
+})
 
 var port = config.port;
 app.listen(port, function () {
