@@ -21,7 +21,7 @@ import { User } from 'app/model/user.model';
         <a routerLink="/profile/settings" mat-icon-button>
           <mat-icon>settings</mat-icon>
         </a>
-        <a routerLink="/auth/login" mat-icon-button>
+        <a routerLink="/auth/login?reload=true" mat-icon-button>
           <mat-icon>exit_to_app</mat-icon>
         </a>
       </div>

@@ -17,24 +17,25 @@ export class ProfileLayoutComponent implements OnDestroy, OnInit {
     private authDataService: AuthDataService,
     private authService: AuthService
   ){
-    this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
-      if(params['k'] && params['endTime']){
-        this.isRedirecting = true;
-        this.authService.authKey(params['k'], Number(params['endTime']), window.location.pathname)
-        .subscribe(res => {
-          if(res.isValid){
-            this.isRedirecting = false;
-            this.showChangeQuestion = true;
-          }
-          else {
-            this.router.navigateByUrl('/profile/settings')
-          }
-        }, err => {
-          this.isRedirecting = false;
-          this.router.navigateByUrl('/profile/settings')
-        })
-      }
-    })
+    // NOTE: NO MORE USE security questions to authenticate user
+    // this.activatedRoute.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+    //   if(params['k'] && params['endTime']){
+    //     this.isRedirecting = true;
+    //     this.authService.authKey(params['k'], Number(params['endTime']), window.location.pathname)
+    //     .subscribe(res => {
+    //       if(res.isValid){
+    //         this.isRedirecting = false;
+    //         this.showChangeQuestion = true;
+    //       }
+    //       else {
+    //         this.router.navigateByUrl('/profile/settings')
+    //       }
+    //     }, err => {
+    //       this.isRedirecting = false;
+    //       this.router.navigateByUrl('/profile/settings')
+    //     })
+    //   }
+    // })
   }
 
   ngOnInit(): void {

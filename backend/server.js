@@ -60,24 +60,12 @@ mailTransporter.verify((err, success) => {
     }
     else {
         winstonLogger.info('Nodemailer verifies successfully');
-        mailTransporter.sendMail({
-            from: process.env.MAIL_USERNAME,
-            to: process.env.MAIL_ADMIN_GMAIL,
-            text: 'Sent with nodemailer',
-            // subject is required not to be marked as spam
-            subject: 'test'
-        }).then(() => {
-            winstonLogger.info('Email notify admin that server started')
-        })
-        .catch((err) => {
-            winstonLogger.error('Email sent to admin failed. Error: ' + JSON.stringify(err));
-        })
     }
 })
 
 var port = config.port;
 app.listen(port, function () {
-    console.log('App started on ' + config.host + ':' + port);
+    winstonLogger.info('App started on ' + config.host + ':' + port);
 });
 
 // config server, restify settings
