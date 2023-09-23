@@ -58,7 +58,8 @@ module.exports = {
     // redis consts
     redis_key: {
         user: "redis_user_key",
-        icon: "redis_icon_key"
+        icon: "redis_icon_key",
+        tfa: "redis_tfa_key"
     },
 
     user_roles: {
@@ -89,5 +90,10 @@ module.exports = {
         "Tháng 12",
     ],
     saltRounds: 10,
-    timeKeyExpired: 180000
+    timeKeyExpired: 180000,
+    maxCountOTP: 5,
+    /**
+     * expired time for keys saved for otp check (in sec)
+     */
+    otpExpiredTime: 3000
 }

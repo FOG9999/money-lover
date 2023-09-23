@@ -5,11 +5,12 @@ let mongoose = require('mongoose'),
     validator = require('validator'),
     consts = require(__config_path + '/consts');
 const { sendMailPromise } = require(__libs_path + '/aws-ses');
-const log = require(__libs_path + '/log');
 const redis = require(__libs_path + '/redis');
 const bcrypt = require('bcrypt');
 const UserSecurityQuestion = require('../models/user-security-question');
-const winstonLogger = require('../../../../libs/winston');
+const winstonLogger = require(__libs_path + '/winston');
+const speakesay = require('speakeasy');
+const mailTransporter = require(__libs_path + '/mailer');
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -111,28 +112,154 @@ const login = (req, returnData, callback) => {
                     return callback('ERROR_PASSWORD_INCORRECT')
                 }
                 else {
-                    if (validator.isNull(user.token)) {
-                        user.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
-                    }
-                    user.save((err, result) => {
-                        if (err) {
-                            return callback(err);
-                        }
-                        // set model để module khác dùng lại
-                        returnData.model = result;
-                        // convert từ model sang object
-                        var jsonData = result.toObject();
-                        setUserCache(jsonData, (err) => {
-                            if(err){
-                                return callback(err);
+                    switch (user.tfaMethod) {
+                        case 'email':
+                            if(user.email){
+                                const secret = speakesay.generateSecret().base32;
+                                winstonLogger.info('test secret: ' + secret);
+                                const token = speakesay.totp({secret, encoding: 'base32'});
+                                // save user with key = secret
+                                redis.SET(secret, JSON.stringify(user), (err) => {
+                                    if (err) {
+                                        winstonLogger.error('Redis saved tfa key failed: '+JSON.stringify(err));
+                                        return callback(err);
+                                    }
+                                    redis.EXPIRE(secret, consts.otpExpiredTime); // expire after 5min
+                                    // encrypt secret with token and save to redis
+                                    const salt = Number(process.env.SALT_ENCRYPT_SECRET_OTP);
+                                    const r = bcrypt.hashSync(secret, salt);
+                                    redis.SET(r, JSON.stringify({secret, count: consts.maxCountOTP}));
+                                    redis.EXPIRE(r, consts.otpExpiredTime); // expire after 5min
+                                    returnData.set({redirect: r});
+                                    // send token via email to user
+                                    mailTransporter.sendMail({
+                                        from: process.env.MAIL_USERNAME,
+                                        to: user.email,
+                                        text: `Mã xác thực tài khoản ${user.username} của bạn là: ${token}. Xin lưu ý: Mã sẽ hết hạn trong vòng 5 phút kể từ khi được gửi đi. Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
+                                        subject: '[My ML] - Xác thực 2 lớp đăng nhập'
+                                    }).then(() => {
+                                        winstonLogger.info(`TFA token sent to email: ${user.email}`);
+                                    })
+                                    .catch(errEmail => {
+                                        winstonLogger.error(`Sent tfa token failed: ${errEmail}`);
+                                        redis.DEL(consts.redis_key.tfa, secret);
+                                    })
+                                    callback();
+                                })
                             }
-                            returnData.data = jsonData;
-                            callback();
-                        })
-                    })
+                            else {
+                                winstonLogger.error(`User ${user.username} login tfa without an email`);
+                                callback('ERROR_LOGIN_TFA_EMAIL_EMPTY')
+                            }
+                            break;
+                    
+                        default:
+                            if (validator.isNull(user.token)) {
+                                user.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
+                            }
+                            user.save((err, result) => {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                // set model để module khác dùng lại
+                                returnData.model = result;
+                                // convert từ model sang object
+                                var jsonData = result.toObject();
+                                setUserCache(jsonData, (err) => {
+                                    if(err){
+                                        return callback(err);
+                                    }
+                                    returnData.data = jsonData;
+                                    callback();
+                                })
+                            })                    
+                            break;
+                    }
                 }
             }
         })
+}
+
+/**
+ * if user use two factor authentication, use this function to check otp sent from client
+ */
+const checkUserTFA = (req, returnData, callback) => {
+    const hashedSecret = req.params.r;
+    const token = req.params.t;
+    redis.GET(hashedSecret, (err, secretData) => {
+        if(err){
+            winstonLogger.error(`Redis error get key ${hashedSecret}: ${JSON.stringify(err)}`);
+            callback('ERROR_REDIS_GET_KEY');
+        }
+        else {
+            if(!secretData){
+                callback("ERROR_REDIS_KEY_NOT_EXIST");
+            }
+            else {
+                const {secret, count} = JSON.parse(secretData);
+                const hashedCheck = bcrypt.compareSync(secret, hashedSecret);
+                if(!hashedCheck){
+                    return callback("ERROR_OTP_INVALID");
+                }
+                const isValid = speakesay.totp.verify({
+                    secret, token, encoding: 'base32'
+                });
+                if(isValid){
+                    redis.GET(secret, (errUser, userStr) => {
+                        if(errUser){
+                            winstonLogger.error(`Redis error get key for user ${secret}: ${JSON.stringify(errUser)}`);
+                            callback('ERROR_REDIS_GET_KEY_USER');
+                        }
+                        else {
+                            const userId = JSON.parse(userStr)._id;
+                            User.findOne().where({_id: userId})
+                            .exec((errGetUser, dataUser) => {
+                                if (errGetUser) {
+                                    winstonLogger.error('Error get user: ' + JSON.stringify(errGetUser));
+                                    return callback(errGetUser);
+                                }
+                                if (validator.isNull(dataUser.token)) {
+                                    dataUser.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
+                                }
+                                dataUser.save((errSave, result) => {
+                                    if (errSave) {
+                                        winstonLogger.error('Error save user: ' + JSON.stringify(errSave));
+                                        return callback(errSave);
+                                    }
+                                    // set model để module khác dùng lại
+                                    returnData.model = result;
+                                    // convert từ model sang object
+                                    var jsonData = result.toObject();
+                                    redis.DEL(secret);
+                                    redis.DEL(hashedSecret);
+                                    setUserCache(jsonData, (err) => {
+                                        if(err){
+                                            return callback(err);
+                                        }
+                                        returnData.data = jsonData;
+                                        callback();
+                                    })
+                                })         
+                            })
+                        }
+                    })
+                }
+                else {
+                    winstonLogger.error(`Wrong OTP for user ${JSON.stringify({hashedSecret, token})}`);
+                    if(count == 0){
+                        redis.DEL(hashedSecret);
+                        redis.DEL(secret);
+                        winstonLogger.error(`Max count invalid OTP for user ${JSON.stringify({hashedSecret, token})}`);
+                        callback("ERROR_MAX_COUNT_INVALID_OTP");
+                    }
+                    else {
+                        redis.SET(hashedSecret, JSON.stringify({secret, count: count - 1}));
+                        callback("ERROR_OTP_INCORRECT");
+                    }
+                }
+            }
+        }
+    })
 }
 
 /**
@@ -611,3 +738,4 @@ exports.createUserOAuth = createUserOAuth;
 exports.updateUser = updateUser;
 exports.encryptSessionAndUrl = encryptSessionAndUrl;
 exports.authenticateKeyUrl = authenticateKeyUrl;
+exports.checkUserTFA = checkUserTFA;

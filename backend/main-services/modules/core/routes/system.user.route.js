@@ -19,4 +19,5 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.update', controller.updateUser, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.getkey', controller.encryptSessionAndUrl, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.authkey', controller.authenticateKeyUrl, { anyAuth: true });
+    consts.registerApi('api.v1.systemuser.checktfa', controller.checkUserTFA, { notAuth: true });
 };

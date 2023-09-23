@@ -92,6 +92,13 @@ var UserSchema = new Schema({
     authId: {
         type: String,
         default: null
+    },
+    /**
+     * two factor authentication method - email/sms/gg-authen
+     */
+    tfaMethod: {
+        type: String,
+        default: null
     }
 }, consts.schemaOptions);
 
