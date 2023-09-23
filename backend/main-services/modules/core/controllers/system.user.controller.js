@@ -117,7 +117,7 @@ const login = (req, returnData, callback) => {
                             if(user.email){
                                 const secret = speakesay.generateSecret().base32;
                                 winstonLogger.info('test secret: ' + secret);
-                                const token = speakesay.totp({secret, encoding: 'base32'});
+                                const token = speakesay.totp({secret, encoding: 'base32', window: 10});
                                 // save user with key = secret
                                 redis.SET(secret, JSON.stringify(user), (err) => {
                                     if (err) {
@@ -202,7 +202,7 @@ const checkUserTFA = (req, returnData, callback) => {
                     return callback("ERROR_OTP_INVALID");
                 }
                 const isValid = speakesay.totp.verify({
-                    secret, token, encoding: 'base32'
+                    secret, token, encoding: 'base32', window: 10
                 });
                 if(isValid){
                     redis.GET(secret, (errUser, userStr) => {
