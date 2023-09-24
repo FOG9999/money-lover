@@ -112,47 +112,19 @@ const login = (req, returnData, callback) => {
                     return callback('ERROR_PASSWORD_INCORRECT')
                 }
                 else {
+                    const randomKey = utils.randomstring(50) + ObjectId().toString().replace('-', '');
                     switch (user.tfaMethod) {
                         case 'email':
-                            if(user.email){
-                                const secret = speakesay.generateSecret().base32;
-                                winstonLogger.info('test secret: ' + secret);
-                                const token = speakesay.totp({secret, encoding: 'base32', window: 10});
-                                // save user with key = secret
-                                redis.SET(secret, JSON.stringify(user), (err) => {
-                                    if (err) {
-                                        winstonLogger.error('Redis saved tfa key failed: '+JSON.stringify(err));
-                                        return callback(err);
-                                    }
-                                    redis.EXPIRE(secret, consts.otpExpiredTime); // expire after 5min
-                                    // encrypt secret with token and save to redis
-                                    const salt = Number(process.env.SALT_ENCRYPT_SECRET_OTP);
-                                    const r = bcrypt.hashSync(secret, salt);
-                                    redis.SET(r, JSON.stringify({secret, count: consts.maxCountOTP}));
-                                    redis.EXPIRE(r, consts.otpExpiredTime); // expire after 5min
-                                    returnData.set({redirect: r});
-                                    // send token via email to user
-                                    mailTransporter.sendMail({
-                                        from: process.env.MAIL_USERNAME,
-                                        to: user.email,
-                                        text: `Mã xác thực tài khoản ${user.username} của bạn là: ${token}. Xin lưu ý: Mã sẽ hết hạn trong vòng 5 phút kể từ khi được gửi đi. Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
-                                        subject: '[My ML] - Xác thực 2 lớp đăng nhập'
-                                    }).then(() => {
-                                        winstonLogger.info(`TFA token sent to email: ${user.email}`);
-                                    })
-                                    .catch(errEmail => {
-                                        winstonLogger.error(`Sent tfa token failed: ${errEmail}`);
-                                        redis.DEL(consts.redis_key.tfa, secret);
-                                    })
-                                    callback();
-                                })
-                            }
-                            else {
-                                winstonLogger.error(`User ${user.username} login tfa without an email`);
-                                callback('ERROR_LOGIN_TFA_EMAIL_EMPTY')
-                            }
-                            break;
-                    
+                            redis.SET(randomKey, user.email, errSaveRedis => {
+                                if(errSaveRedis){
+                                    winstonLogger.error(`Error when saving random key when login with otp by email ${user.email}:` + JSON.stringify(errSaveRedis));
+                                    return callback('ERROR_SAVE_REDIS_RANDOM_KEY')
+                                }
+                                redis.EXPIRE(randomKey, consts.otpExpiredTime);
+                                returnData.set({email: user.email, rd: randomKey});
+                                callback();
+                            });
+                            break;                    
                         default:
                             if (validator.isNull(user.token)) {
                                 user.token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
@@ -178,6 +150,63 @@ const login = (req, returnData, callback) => {
                 }
             }
         })
+}
+
+/**
+ * generate otp
+ */
+const generateOTP = (req, returnData, callback) => {
+    const { email, rd } = req.params;
+    redis.GET(rd, (errorGetRandom, resultEmail) => {
+        if(errorGetRandom){
+            winstonLogger.error(`Error while getting random key from redis: ${JSON.stringify(errorGetRandom)}`);
+            return callback('ERROR_GET_RANDOM_KEY');
+        }
+        if(resultEmail != email){
+            return callback('ERROR_EMAIL_RD_NOT_PAIRED');
+        }
+        User.findOne().where({email: email}).exec((errFindUser, user) => {
+            if(errFindUser){
+                winstonLogger.error('Error find user with email: ' + JSON.stringify(errFindUser));
+                return callback('ERROR_FIND_USER_WITH_EMAIL');
+            }
+            if(!user){
+                winstonLogger.error('Error find user with email: User not found');
+                return callback('ERROR_USER_NOT_FOUND');
+            }
+            const secret = speakesay.generateSecret().base32;
+            winstonLogger.info('test secret: ' + secret);
+            const token = speakesay.totp({secret, encoding: 'base32', window: 10}); // otp is valid within +-10*30secs from now
+            // save user with key = secret
+            redis.SET(secret, JSON.stringify(user), (err) => {
+                if (err) {
+                    winstonLogger.error('Redis saved tfa key failed: '+JSON.stringify(err));
+                    return callback(err);
+                }
+                redis.EXPIRE(secret, consts.otpExpiredTime); // expire after 5min
+                // encrypt secret with token and save to redis
+                const salt = Number(process.env.SALT_ENCRYPT_SECRET_OTP);
+                const r = bcrypt.hashSync(secret, salt);
+                redis.SET(r, JSON.stringify({secret, count: consts.maxCountOTP}));
+                redis.EXPIRE(r, consts.otpExpiredTime); // expire after 5min
+                returnData.set({redirect: r});
+                // send token via email to user
+                mailTransporter.sendMail({
+                    from: process.env.MAIL_USERNAME,
+                    to: user.email,
+                    text: `Mã xác thực tài khoản ${user.username} của bạn là: ${token}. Xin lưu ý: Mã sẽ hết hạn trong vòng 5 phút kể từ khi được gửi đi. Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
+                    subject: '[My ML] - Xác thực 2 lớp đăng nhập'
+                }).then(() => {
+                    winstonLogger.info(`TFA token sent to email: ${user.email}`);
+                })
+                .catch(errEmail => {
+                    winstonLogger.error(`Sent tfa token failed: ${errEmail}`);
+                    redis.DEL(consts.redis_key.tfa, secret);
+                })
+                callback();
+            })
+        })
+    })
 }
 
 /**
@@ -739,3 +768,4 @@ exports.updateUser = updateUser;
 exports.encryptSessionAndUrl = encryptSessionAndUrl;
 exports.authenticateKeyUrl = authenticateKeyUrl;
 exports.checkUserTFA = checkUserTFA;
+exports.generateOTP = generateOTP;
