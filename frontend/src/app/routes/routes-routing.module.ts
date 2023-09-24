@@ -9,6 +9,7 @@ import { RegisterComponent } from './sessions/register/register.component';
 import { RedirectComponent } from './sysytem/redirect/redirect.component';
 import { AccountGuardService, AuthGuardService } from '@shared';
 import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component';
+import { TwoFactorAuthenComponent } from './sessions/two-factor-authen/two-factor-authen.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,10 @@ const routes: Routes = [
         component: AuthByQuestionComponent,
         canActivate: [AccountGuardService],
         data: { title: 'Auth by question', titleI18n: 'auth-question' },
+      },
+      {
+        path: 'two-factor-authen',
+        component: TwoFactorAuthenComponent,
       },
       { path: '**', redirectTo: 'login' }
     ],

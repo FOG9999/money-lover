@@ -41,6 +41,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   googleLoginUri: string = "";
   private destroy$ = new Subject();
+  /**
+   * email received from username and password correct
+   */
+  receivedEmail: string = "";
+  /**
+   * random key returned with receivedEmail
+   */
+  rd: string = "";
 
   ngOnInit() {     
     this.googleLoginUri = environment.GOOGLE_LOGIN_URI + '?redirect_fe_uri='+environment.MoneyLoverURL+'/redirect' + "&gatewayForward=true";
@@ -54,10 +62,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login() {
     let { username, password } = this.reactiveForm.value;
-    this.authService.login(username, password).subscribe((res: User) => {
-      if (res && res._id) {
+    this.authService.login(username, password).subscribe(res => {
+      if (res && Object.keys(res).includes('_id')) {
         this.localStorage.set('user', res);
-        if (res.level === CONSTS.auth.ADMIN || res.level === CONSTS.auth.SYSTEM) {
+        if ((<User>res).level === CONSTS.auth.ADMIN || (<User>res).level === CONSTS.auth.SYSTEM) {
           this.router.navigateByUrl('/money-lover/admin');
         }
         else {
@@ -65,7 +73,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       }
       else {
-        this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
+        if(Object.keys(res).includes('email') && Object.keys(res).includes('rd')){
+          this.receivedEmail = res.email;
+          this.rd = (<{email: String, rd: string}>res).rd;
+        }
+        else {
+          this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
+        }
       }
     }, err => {
       this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");

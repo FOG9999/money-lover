@@ -15,6 +15,10 @@ export interface User extends Base {
     dateUpdated: Date,
     token: string,
     /**
+     * user with two factor authentication
+     */
+    tfaMethod: 'email' | 'sms' | 'gg-authen',
+    /**
      * id of oauth when login with other system
      */
     authId: string | number

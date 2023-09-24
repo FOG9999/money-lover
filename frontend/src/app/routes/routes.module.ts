@@ -3,8 +3,9 @@ import { SharedModule } from '@shared/shared.module';
 import { RoutesRoutingModule } from './routes-routing.module';
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
+import { TwoFactorAuthenComponent } from './sessions/two-factor-authen/two-factor-authen.component';
 
-const COMPONENTS = [LoginComponent, RegisterComponent];
+const COMPONENTS = [LoginComponent, RegisterComponent, TwoFactorAuthenComponent];
 const COMPONENTS_DYNAMIC = [];
 
 @NgModule({

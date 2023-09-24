@@ -11,12 +11,12 @@ export const routes: Routes = [
         component: UsersListComponent,
         data: { title: 'Người dùng', titleI18n: 'user-list' },
     },
-    {
-        path: "security-question",
-        canActivate: [AdminAuthGuardService],
-        component: SecurityQuestionMngComponent,
-        data: { title: 'Câu hỏi bảo mật', titleI18n: 'security-question' },
-    }
+    // {
+    //     path: "security-question",
+    //     canActivate: [AdminAuthGuardService],
+    //     component: SecurityQuestionMngComponent,
+    //     data: { title: 'Câu hỏi bảo mật', titleI18n: 'security-question' },
+    // }
 ]
 
 @NgModule({

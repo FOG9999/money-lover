@@ -12,7 +12,7 @@ export class AuthService {
 
     login(username: string, password: string) {
         let api_name = "api.v1.systemuser.login";
-        return this.http.post<User>(environment.SERVER_URL, {username, password, api_name}, {observe: 'body'})
+        return this.http.post<{email: string, rd: string} | User>(environment.SERVER_URL, {username, password, api_name}, {observe: 'body'})
     }
 
     createUser(data: {
@@ -57,5 +57,21 @@ export class AuthService {
     authKey(k: string, endTime: number, url: string){
         const api_name: string = "api.v1.systemuser.authkey";
         return this.http.post<{isValid: boolean}>(environment.SERVER_URL, { api_name, k, endTime, url }, { observe: "body" });
+    }
+
+    /**
+     * generate otp for login
+     */
+    generateOTP(email: string, rd: string){
+        const api_name: string = "api.v1.systemuser.generateotp";
+        return this.http.post<{redirect: string}>(environment.SERVER_URL, { api_name, email, rd }, { observe: "body" });
+    }
+
+    /**
+     * verify OTP
+     */
+    verifyOTP(hashedSecret: string, otp: string){
+        const api_name: string = "api.v1.systemuser.checktfa";
+        return this.http.post<User>(environment.SERVER_URL, { api_name, r: hashedSecret, t: otp }, { observe: "body" });
     }
 }

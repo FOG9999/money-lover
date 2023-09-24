@@ -176,6 +176,7 @@ const generateOTP = (req, returnData, callback) => {
             }
             const secret = speakesay.generateSecret().base32;
             winstonLogger.info('test secret: ' + secret);
+            redis.DEL(rd);
             const token = speakesay.totp({secret, encoding: 'base32', window: 10}); // otp is valid within +-10*30secs from now
             // save user with key = secret
             redis.SET(secret, JSON.stringify(user), (err) => {

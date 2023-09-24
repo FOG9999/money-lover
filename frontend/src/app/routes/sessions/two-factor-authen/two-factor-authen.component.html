@@ -1,0 +1,48 @@
+<div class="two-factor-authen-container">
+    <div fxLayout="row wrap" class="tfa-content" fxLayoutAlign="center center">
+        <div fxLayout="row wrap" class="tfa-image" fxLayoutAlign="center center" fxLayoutGap="10px">
+            <img src="assets/images/envelope.png" alt="envelope" class="envelope-img">
+        </div>
+        <div class="tfa-verify">
+            <div class="tfa-title">
+                {{ !hashedSecret ? 'Xác thực 2 lớp': 'Xác minh tài khoản của bạn' }}                
+            </div>
+            <p class="tfa-description">
+                {{ !hashedSecret ? 'Nhập email của bạn để nhận mã xác thực': 'Một mã xác thực đã được gửi về email mà bạn vừa nhập. Vui lòng kiểm tra và điền vào chỗ trống dưới đây' }}                
+            </p>
+            <p class="tfa-note">
+                Lưu ý: Mã xác thực chỉ có hiệu lực trong vòng 5 phút kể từ khi được gửi đi.
+            </p>
+            <div class="tfa-code">
+                <form class="form-field-full" [formGroup]="formGroup" *ngIf="hashedSecret; else enterEmailTpl">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Mã xác thực</mat-label>
+                        <input matInput type="text" id="tfa-verify-code" formControlName="verifyCode" required />
+                        <mat-error *ngIf="formGroup.get('verifyCode').invalid">Mã xác thực phải là dãy số viết liền bao
+                            gồm 6 chữ số</mat-error>
+                    </mat-form-field>
+                </form>
+                <div class="btn-container">
+                    <button mat-button color="primary" *ngIf="hashedSecret" [attr.disabled]="formGroup.get('verifyCode').invalid || loading ? '': null" (click)="onVerify()">
+                        <mat-icon *ngIf="loading"><mat-spinner diameter="20">
+                        </mat-spinner></mat-icon>Kiểm tra
+                    </button>
+                    <button mat-button color="primary" *ngIf="!hashedSecret" [attr.disabled]="formGroupEmail.get('email').invalid || loading ? '': null" (click)="onSubmitEmail()">
+                        <mat-icon *ngIf="loading"><mat-spinner diameter="20">
+                        </mat-spinner></mat-icon>Gửi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #enterEmailTpl>
+    <form class="form-field-full" [formGroup]="formGroupEmail">
+        <mat-form-field appearance="outline">
+            <mat-label>Email của bạn</mat-label>
+            <input matInput type="text" id="tfa-verify-email" formControlName="email" required />
+            <mat-error *ngIf="formGroupEmail.get('email').invalid">Email không đúng định dạng</mat-error>
+        </mat-form-field>
+    </form>
+</ng-template>
