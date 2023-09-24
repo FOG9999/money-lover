@@ -20,7 +20,7 @@ import { User } from 'app/model/user.model';
         <mat-icon>account_circle</mat-icon>
         <span>{{ 'user.profile' | translate }}</span>
       </button>
-      <button routerLink="/auth/login" mat-menu-item>
+      <button (click)="navigateLogin()" mat-menu-item>
         <mat-icon>exit_to_app</mat-icon>
         <span>{{ 'user.logout' | translate }}</span>
       </button>
@@ -34,5 +34,9 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
       this.user = this.localStorageSv.get('user');
+  }
+
+  navigateLogin(){
+    window.location.href = '/auth/login?reload=true';
   }
 }

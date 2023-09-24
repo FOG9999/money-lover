@@ -57,6 +57,10 @@ export class RegisterComponent implements OnInit {
     this.showQuestion = true;
   }
 
+  navigateLogin(){
+    window.location.href = '/auth/login?reload=true';
+  }
+
   register = (questions: string[], answers: string[]) => {
     this.isSubmitted = true;
     this.authenService.createUser({
@@ -73,7 +77,7 @@ export class RegisterComponent implements OnInit {
       else {
         this.toast.success(CONSTS.messages.create_account_success);
         setTimeout(() => {
-          this.router.navigateByUrl('/auth/login')
+          window.location.href = '/auth/login?reload=true';
         }, 2000);                
       }
     }) 

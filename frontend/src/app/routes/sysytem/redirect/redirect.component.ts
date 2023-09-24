@@ -29,7 +29,7 @@ export class RedirectComponent implements OnInit, OnDestroy {
                     }
                     else {
                         this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
-                        this.router.navigateByUrl('/auth/login');
+                        window.location.href = '/auth/login?reload=true';
                     }
                     break;
                 case 'google': {
@@ -37,12 +37,12 @@ export class RedirectComponent implements OnInit, OnDestroy {
                         this.handleLoginGoogle(params);
                     } catch (error) {
                         this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
-                        this.router.navigateByUrl('/auth/login');
+                        window.location.href = '/auth/login?reload=true';
                     }
                     break;
                 }
                 default:
-                    this.router.navigateByUrl('/auth/login');
+                    window.location.href = '/auth/login?reload=true';
                     break;
             }
         })
@@ -128,7 +128,7 @@ export class RedirectComponent implements OnInit, OnDestroy {
             }
         }, err => {
             this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
-            this.router.navigateByUrl('/auth/login');
+            window.location.href = '/auth/login?reload=true';
         })
     }
 

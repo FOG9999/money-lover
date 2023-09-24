@@ -17,13 +17,13 @@ export class AdminAuthGuardService implements CanActivate {
                 return true;
             }
             else {
-                const url: UrlTree = this.router.parseUrl("/auth/login");
-                return url;
+                window.location.href = '/auth/login?reload=true';
+                return false;
             }
         }
         else {
-            const url: UrlTree = this.router.parseUrl("/auth/login");
-            return url;
+            window.location.href = '/auth/login?reload=true';
+            return false;
         };
     }
     

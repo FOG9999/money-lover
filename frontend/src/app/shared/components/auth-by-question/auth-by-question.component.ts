@@ -48,6 +48,6 @@ export class AuthByQuestionComponent implements OnInit, OnDestroy {
 
     failback = () => {
         this.toast.error("Xác thực người dùng thất bại. Vui lòng đăng nhập lại");
-        this.router.navigateByUrl('/auth/login');
+        window.location.href = '/auth/login?reload=true';
     }
 }

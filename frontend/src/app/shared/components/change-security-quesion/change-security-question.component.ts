@@ -44,7 +44,7 @@ export class ChangeSecurityQuestionComponent implements OnInit, OnDestroy {
     failback = () => {
         this.toast.error("Thay đổi câu hỏi bảo mật thất bại. Vui lòng thủ lại");
         if(this.numOfTry == 3){
-            this.router.navigateByUrl('/auth/login');
+            window.location.href = '/auth/login?reload=true';
         }
         else {
             this.numOfTry = this.numOfTry + 1;

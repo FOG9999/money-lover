@@ -21,7 +21,7 @@ import { User } from 'app/model/user.model';
         <a routerLink="/profile/settings" mat-icon-button>
           <mat-icon>settings</mat-icon>
         </a>
-        <a routerLink="/auth/login?reload=true" mat-icon-button>
+        <a class="cursor-pointer" (click)="navigateLogin()" mat-icon-button>
           <mat-icon>exit_to_app</mat-icon>
         </a>
       </div>
@@ -35,5 +35,9 @@ export class UserPanelComponent implements OnInit {
 
   ngOnInit(): void {
       this.user = this.localStorageSv.get('user');
+  }
+
+  navigateLogin(){
+    window.location.href = '/auth/login?reload=true';
   }
 }
