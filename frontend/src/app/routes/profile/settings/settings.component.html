@@ -49,6 +49,23 @@
             <mat-error *ngIf="reactiveForm.get('mobile').invalid">Số điện thoại không hợp lệ</mat-error>
           </mat-form-field>
         </div>
+        <div fxFlex="100" fxLayout="row wrap">
+          <div fxFlex="50">
+            <div fxFlex="1 1 auto">
+              Cấu hình xác thực 2 lớp
+            </div>
+            <div>
+              <mat-slide-toggle [(ngModel)]="hasTfa" [ngModelOptions]="{standalone: true}" (ngModelChange)="onChangeHasTfa($event)"></mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+        <div fxFlex="100" *ngIf="hasTfa">
+          <mat-radio-group formControlName="tfaMethod">
+            <mat-radio-button value="email">Email</mat-radio-button>
+            <mat-radio-button value="sms">SMS</mat-radio-button>
+            <mat-radio-button value="gg-authen">Google Authenticator</mat-radio-button>
+          </mat-radio-group>
+        </div>
 
         <!-- <div fxFlex="50" fxFlex.lt-md="100">
           <mat-form-field>

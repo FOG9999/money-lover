@@ -699,7 +699,7 @@ const createUserOAuth = (req, returnData, callback) => {
 }
 
 const updateUser = (req, returnData, callback) => {
-    const {username, email, firstname, lastname, mobile} = req.params;
+    const {username, email, firstname, lastname, mobile, tfaMethod} = req.params;
     const userId = req.user._id;
 
     User.findOne({ _id: userId })
@@ -716,7 +716,8 @@ const updateUser = (req, returnData, callback) => {
                     email: email,
                     firstname: firstname,
                     lastname: lastname,
-                    mobile
+                    mobile,
+                    tfaMethod
                 }
             })
                 .exec((errSave, dataSave) => {

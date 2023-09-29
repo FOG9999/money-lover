@@ -8,6 +8,13 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './settings.component.html',
+  styles: [
+    `
+      mat-radio-button {
+        margin-right: 15px;
+      }
+    `
+  ]
 })
 export class ProfileSettingsComponent implements OnInit {
   reactiveForm: FormGroup;
@@ -18,17 +25,22 @@ export class ProfileSettingsComponent implements OnInit {
   
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('user'));
+    if(this.user.tfaMethod){
+      this.hasTfa = true;
+    }
     this.reactiveForm = this.fb.group({
       username: [this.user.username, [Validators.required, validators.validateUsername]],
       firstname: [this.user.firstname, [Validators.required, validators.validateName]],
       lastname: [this.user.lastname, [Validators.required, validators.validateName]],
       email: [this.user.email, [Validators.required, validators.validateEmail]],
-      mobile: [this.user.mobile, [Validators.required, validators.validatePhoneNumber]]
+      mobile: [this.user.mobile, [Validators.required, validators.validatePhoneNumber]],
+      tfaMethod: [this.user.tfaMethod]
     });
   }
 
   user: Partial<User>;
   loading: boolean = false;
+  hasTfa: boolean = false;
 
   updateUser(){
     this.loading = true;
@@ -42,5 +54,11 @@ export class ProfileSettingsComponent implements OnInit {
     }, () => {
       this.loading = false;
     })
+  }
+
+  onChangeHasTfa(value: boolean){
+    if(!value){
+      this.reactiveForm.get('tfaMethod')?.setValue(null);
+    }
   }
 }
