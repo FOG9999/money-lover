@@ -699,7 +699,7 @@ const createUserOAuth = (req, returnData, callback) => {
 }
 
 const updateUser = (req, returnData, callback) => {
-    const {username, email, firstname, lastname} = req.params;
+    const {username, email, firstname, lastname, mobile} = req.params;
     const userId = req.user._id;
 
     User.findOne({ _id: userId })
@@ -710,19 +710,20 @@ const updateUser = (req, returnData, callback) => {
             if (!data) {
                 return callback("ERROR_USER_NOT_EXIST");
             }
-            User.update({ _id: userId }, {
+            User.findOneAndUpdate({ _id: userId }, {
                 $set: {
                     username: username,
                     email: email,
                     firstname: firstname,
-                    lastname: lastname
+                    lastname: lastname,
+                    mobile
                 }
             })
                 .exec((errSave, dataSave) => {
                     if (errSave) {
                         return callback("ERROR_CANNOT_UPDATE_USER");
                     }
-                    returnData.set({...dataSave})
+                    returnData.set({...dataSave._doc})
                     callback();
                 })
         })

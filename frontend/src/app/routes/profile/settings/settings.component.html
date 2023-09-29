@@ -40,6 +40,16 @@
           </mat-form-field>
         </div>
 
+        <div fxFlex="50" fxFlex.lt-md="100">
+          <mat-form-field>
+            <mat-label>Số điện thoại</mat-label>
+            <input matInput placeholder="Simple placeholder" type="text" OnlyNumber formControlName="mobile"
+                   required>
+            <mat-icon matSuffix>smartphone</mat-icon>
+            <mat-error *ngIf="reactiveForm.get('mobile').invalid">Số điện thoại không hợp lệ</mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- <div fxFlex="50" fxFlex.lt-md="100">
           <mat-form-field>
             <mat-label>Gender</mat-label>
@@ -76,15 +86,7 @@
           </mat-form-field>
         </div>
 
-        <div fxFlex="50" fxFlex.lt-md="100">
-          <mat-form-field>
-            <mat-label>Mobile</mat-label>
-            <input matInput placeholder="Simple placeholder" type="number" formControlName="mobile"
-                   required>
-            <mat-icon matSuffix>smartphone</mat-icon>
-            <mat-error *ngIf="reactiveForm.get('mobile').invalid">Please enter mobile</mat-error>
-          </mat-form-field>
-        </div>
+        
 
         <div fxFlex="50" fxFlex.lt-md="100">
           <mat-form-field>
@@ -117,7 +119,8 @@
       </div>
 
       <div fxLayout="row" fxLayoutAlign="end center">
-        <button mat-raised-button color="primary" class="m-t-8" [attr.disabled]="reactiveForm.invalid ? '': null" (click)="updateUser()">Cập nhật</button>
+        <mat-icon *ngIf="loading"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+        <button mat-raised-button color="primary" class="m-t-8" [attr.disabled]="reactiveForm.invalid || loading ? '': null" (click)="updateUser()">Cập nhật</button>
       </div>
 
     </form>

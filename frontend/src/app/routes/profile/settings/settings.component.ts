@@ -23,21 +23,24 @@ export class ProfileSettingsComponent implements OnInit {
       firstname: [this.user.firstname, [Validators.required, validators.validateName]],
       lastname: [this.user.lastname, [Validators.required, validators.validateName]],
       email: [this.user.email, [Validators.required, validators.validateEmail]],
+      mobile: [this.user.mobile, [Validators.required, validators.validatePhoneNumber]]
     });
   }
 
   user: Partial<User>;
+  loading: boolean = false;
 
   updateUser(){
+    this.loading = true;
     this.userService.updateUser({
       ...this.reactiveForm.value
     })
     .subscribe(res => {
+      this.loading = false;
       this.toast.success("Cập nhật người dùng thành công");
       localStorage.setItem('user', JSON.stringify(res));
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+    }, () => {
+      this.loading = false;
     })
   }
 }
