@@ -286,6 +286,43 @@ export function getResponseErrorMessage(message: string){
       return 'Đường dẫn không hợp lệ.'
     case 'ERROR_KEY_EXPIRED':
       return 'Khóa hết hạn. Vui lòng thử lại.'
+    case 'ERROR_EMAIL_MISSING':
+      return 'Email không hợp lệ. Vui lòng thử lại.'
+    case 'ERROR_USERNAME_MISSING':
+      return 'Tên đăng nhập không hợp lệ. Vui lòng thử lại.'
+    case 'ERROR_FIRSTNAME_MISSING':
+      return 'Tên họ không được để trống.'
+    case 'ERROR_LASTNAME_MISSING':
+      return 'Tên của bạn không được để trống.'
+    case 'ERROR_MOBILE_MISSING':
+      return 'Số điện thoại không hợp lệ.'
+    case 'ERROR_ERROR_FIND_USER_EMAIL_EXIST':
+      return 'Có lỗi xảy ra. Vui lòng thử lại'
+    case 'ERRROR_EMAIL_EXIST':
+      return 'Email đã được sử dụng. Vui lòng thử lại.'
+    case 'ERROR_REDIS_KEY_NOT_EXIST':
+      return 'Có lỗi xảy ra. Vui lòng thử lại.'
+    case 'ERROR_REDIS_GET_KEY':
+      return 'Có lỗi xảy ra. Vui lòng thử lại.'
+    case 'ERROR_OTP_INVALID':
+      return 'Mã OTP không hợp lệ. Vui lòng thử lại.'
+    case 'ERROR_REDIS_GET_KEY_USER':
+    case 'ERROR_REDIS':
+      return 'Có lỗi xảy ra. Vui lòng thử lại.'
+    case 'ERROR_MAX_COUNT_INVALID_OTP':
+      return 'Số lần nhập OTP đã hết. Đăng nhập thất bại'
+    case 'ERROR_OTP_INCORRECT':
+      return 'Mã OTP không hợp lệ. Vui lòng thử lại.'
+    case "ERROR_FIND_USER": 
+      return "Lỗi tìm kiếm user.";
+    case "ERROR_USER_BEING_CHANGE_PASSWORD": 
+      return "User đang được thay mật khẩu. Nếu đó không phải bạn, vui lòng liên hệ ngay quản trị viên để được hỗ trợ sớm nhất."
+    case "ERROR_TOKEN_NOT_MATCH": 
+      return "Token đổi mật khẩu không khớp."
+    case "ERROR_CONFIRM_PASS_NOT_MATCH": 
+      return "Vui lòng xác nhận lại mật khẩu.";
+    case "ERROR_SAVE_USER": 
+      return "Không thể lưu người dùng.";
     default:
       return 'Không tồn tại mesage';
   }

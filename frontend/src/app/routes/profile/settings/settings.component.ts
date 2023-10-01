@@ -43,17 +43,24 @@ export class ProfileSettingsComponent implements OnInit {
   hasTfa: boolean = false;
 
   updateUser(){
-    this.loading = true;
-    this.userService.updateUser({
-      ...this.reactiveForm.value
-    })
-    .subscribe(res => {
-      this.loading = false;
-      this.toast.success("Cập nhật người dùng thành công");
-      localStorage.setItem('user', JSON.stringify(res));
-    }, () => {
-      this.loading = false;
-    })
+    if(this.reactiveForm.valid){
+      if((this.hasTfa && this.reactiveForm.get('tfaMethod')?.value) || !this.hasTfa){
+        this.loading = true;
+        this.userService.updateUser({
+          ...this.reactiveForm.value
+        })
+        .subscribe(res => {
+          this.loading = false;
+          this.toast.success("Cập nhật người dùng thành công");
+          localStorage.setItem('user', JSON.stringify(res));
+        }, () => {
+          this.loading = false;
+        })
+      }
+      else {
+        this.toast.error("Chưa chọn phương thức xác thực 2 lớp");
+      }
+    }
   }
 
   onChangeHasTfa(value: boolean){
