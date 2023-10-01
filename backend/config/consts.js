@@ -59,7 +59,8 @@ module.exports = {
     redis_key: {
         user: "redis_user_key",
         icon: "redis_icon_key",
-        tfa: "redis_tfa_key"
+        tfa: "redis_tfa_key",
+        forgot_password: "redis_forgot_password"
     },
 
     user_roles: {
@@ -95,5 +96,9 @@ module.exports = {
     /**
      * expired time for keys saved for otp check (in sec)
      */
-    otpExpiredTime: 3000
+    otpExpiredTime: 3000,
+    /**
+     * expired time for change password token
+     */
+    changePassTokenTime: 3000
 }
