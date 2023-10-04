@@ -6,4 +6,4 @@ files:
 hooks:
    DownloadBundle:
      - location: scripts/bundle-install.sh
-     runas: root
+       runas: root
