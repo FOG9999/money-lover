@@ -4,6 +4,6 @@ files:
   - source: /
     destination: /home/ec2-user/money-lover/cicd
 hooks:
-   DownloadBundle:
+   AfterInstall:
      - location: scripts/bundle-install.sh
        runas: root
