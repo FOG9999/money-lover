@@ -10,4 +10,4 @@ permissions:
 hooks:
    AfterInstall:
      - location: scripts/after-install.sh
-       runas: root
+       runas: ec2-user
