@@ -3,7 +3,11 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/money-lover/cicd
+permissions:
+  - object: /home/ec2-user/money-lover/cicd/scripts
+    mode: 755
+    pattern: "**"
 hooks:
    AfterInstall:
-     - location: scripts/bundle-install.sh
+     - location: scripts/after-install.sh
        runas: root
