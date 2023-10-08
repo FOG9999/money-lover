@@ -31,11 +31,5 @@ unzip "cicd-fe-bk-$(date +"%Y-%m-%d").zip" -d /
 # overwrite backend scripts
 echo "overwrite backend scripts"
 yes | cp -r /home/ec2-user/money-lover/cicd/backend/* /home/ec2-user/money-lover/backend/
-
-# restart nginx
-echo "restart nginx"
-sudo service nginx restart
-
-# restart pm2
-echo "restart pm2"
-pm2 restart my-ml
+cd /home/ec2-user/money-lover/backend
+npm i
