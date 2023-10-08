@@ -17,18 +17,25 @@ aws s3 cp ./ s3://my-ml-cicd/backup/ --recursive
 
 # backup database
 echo "backup database"
+/home/ec2-user/money-lover/db-backup.sh
 
 # delete all files in html folder nginx
 echo "delete all files in html folder nginx"
+yes | rm -r /usr/share/nginx/html/*
 
 # copy new files from frontend built folder to html folder nginx
 echo "copy new files from frontend built folder to html folder nginx"
+cd /home/ec2-user/money-lover/cicd/backup
+unzip "cicd-fe-bk-$(date +"%Y-%m-%d").zip" -d /
 
 # overwrite backend scripts
 echo "overwrite backend scripts"
+yes | cp -r /home/ec2-user/money-lover/cicd/backend/* /home/ec2-user/money-lover/backend/
 
 # restart nginx
 echo "restart nginx"
+sudo service nginx restart
 
 # restart pm2
 echo "restart pm2"
+pm2 restart my-ml
