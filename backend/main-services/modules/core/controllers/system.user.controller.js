@@ -389,60 +389,98 @@ const changePassword = (req, returnData, callback) => {
         });
 };
 
-// const resetPassword = (req, returnData, callback) => {
-//     var email = req.params.email;
+const sendEmailToChangePass = (req, returnData, callback) => {
+    const { email } = req.params;
+    if(validator.isNull(email)){
+        return callback("ERROR_EMAIL_MISSING");
+    }
+    User.findOne({ email }).exec((err, user) => {
+        if(err){
+            return callback("ERROR_FIND_USER")
+        }
+        if(!user){
+            return callback("ERROR_CANNOT_FIND_USER")
+        }
+        redis.EXISTS(consts.redis_key.forgot_password, email, (err, isExist) => {
+            if(err){
+                return callback("ERROR_FIND_USER")
+            }
+            if(isExist){
+                return callback("ERROR_USER_BEING_CHANGE_PASSWORD");
+            }
+            else {
+                const token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
+                redis.SET(`${consts.redis_key.forgot_password}.${email}`, token, (err) => {
+                    if(err){
+                        return callback("ERROR_REDIS");
+                    }
+                    redis.EXPIRE(`${consts.redis_key.forgot_password}.${email}`, consts.changePassTokenTime)
+                    mailTransporter.sendMail({
+                        from: process.env.MAIL_USERNAME,
+                        to: email,
+                        text: `Đường link đổi mật khẩu cho tài khoản có email ${email} của bạn là: ${process.env.ML_MY_DOMAIN}/change-pass?email=${email}&t=${token}. Xin lưu ý: Đường link chỉ có hiệu lực trong vòng 5 phút kể từ khi được gửi đi. Vui lòng không chia sẻ đuòng link này cho bất cứ ai. Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
+                        subject: '[My ML] - Yêu cầu reset mật khẩu'
+                    }).then(() => {
+                        winstonLogger.info(`Change password token sent to email: ${email}`);
+                    })
+                    .catch(errEmail => {
+                        winstonLogger.error(`Sent change password token failed: ${errEmail}`);
+                    })
+                    returnData.set({ ok: true });
+                    callback();
+                })
+            }
+        })
+    })
+}
 
-//     if (validator.isNull(email))
-//         return callback('ERROR_EMAIL_MISSING');
-//     if (validator.isNull(store_code))
-//         return callback('ERROR_STORE_CODE_MISSING');
-
-//     User
-//         .findOne()
-//         .where({
-//             email: email.toLowerCase(),
-//             store: store_code,
-//             level: consts.user_level.shopkeeper
-//         })
-//         .populate('store', 'name')
-//         .exec(function (err, user) {
-//             if (err) return callback(err);
-//             if (user && user.store) {
-//                 var password = utils.randomstring(8);
-//                 user.password = password;
-//                 user.save(function (err) {
-//                     if (err) return callback(err);
-
-//                     // Gửi email và cập nhập lại trạng thái gửi email nếu thành công
-//                     OtherList
-//                         .findOne({
-//                             type: 'mail_template',
-//                             code: 'reset_password_cms'
-//                         })
-//                         .exec(function (err, temp) {
-//                             var mail_info = {
-//                                 email: email,
-//                                 fullname: user.fullname,
-//                                 store_code: store_code,
-//                                 store_link: utils.getBackendDomain(store_code),
-//                                 store_name: user.store.name,
-//                                 username: user.username,
-//                                 password: password
-//                             };
-//                             if (temp) {
-//                                 var mailOptions = JSON.parse(temp.extra_value);
-//                                 mailOptions.mail_info = mail_info;
-//                                 mailOptions.to = email;
-//                                 utils.sendMail2(mailOptions);
-//                             }
-//                         });
-//                     callback();
-//                 });
-//             } else {
-//                 return callback('ERROR_USER_NOT_EXISTS');
-//             }
-//         });
-// };
+const handleChangePassToken = (req, returnData, callback) => {
+    const { email, t, newPass, confirmNewPass } = req.params;
+    if (validator.isNull(email)) {
+        return callback('ERROR_EMAIL_MISSING');
+    }
+    if (validator.isNull(t)) {
+        return callback('ERROR_FIND_USER');
+    }
+    if (validator.isNull(newPass)) {
+        return callback('ERROR_NEWPASS_MISSING');
+    }
+    if (validator.isNull(confirmNewPass)) {
+        return callback('ERROR_CONFIRMPASS_MISSING');
+    }
+    if(newPass !== confirmNewPass){
+        return callback("ERROR_CONFIRM_PASS_NOT_MATCH")
+    }
+    redis.GET(`${consts.redis_key.forgot_password}.${email}`, (err, exist) => {
+        if(err){
+            return callback('ERROR_REDIS');
+        }
+        if(!exist){
+            return callback('ERROR_FIND_USER');
+        }
+        else {
+            if(exist != t){
+                return callback("ERROR_TOKEN_NOT_MATCH")
+            }
+            else {
+                redis.DEL(`${consts.redis_key.forgot_password}.${email}`);  
+                User.findOne({ email }).exec((err, user) => {
+                    if(err || !user){
+                        return callback("ERROR_FIND_USER");
+                    }
+                    user.password = newPass;
+                    user.save((errSave, newUser) => {
+                        if(errSave){
+                            return callback("ERROR_SAVE_USER");
+                        }
+                        returnData.set({ok: true});
+                        callback();
+                    })
+                })
+            }
+        }
+    })
+}
 
 const deactivateUsers = (req, returnData, callback) => {
     let { ids } = req.params;
@@ -699,8 +737,24 @@ const createUserOAuth = (req, returnData, callback) => {
 }
 
 const updateUser = (req, returnData, callback) => {
-    const {username, email, firstname, lastname} = req.params;
+    const {username, email, firstname, lastname, mobile, tfaMethod} = req.params;
     const userId = req.user._id;
+
+    if (validator.isNull(username)) {
+        return callback('ERROR_USERNAME_MISSING');
+    }
+    if (validator.isNull(email)) {
+        return callback('ERROR_EMAIL_MISSING');
+    }
+    if (validator.isNull(firstname)) {
+        return callback('ERROR_FIRSTNAME_MISSING');
+    }
+    if (validator.isNull(lastname)) {
+        return callback('ERROR_LASTNAME_MISSING');
+    }
+    if (validator.isNull(mobile)) {
+        return callback('ERROR_MOBILE_MISSING');
+    }
 
     User.findOne({ _id: userId })
         .exec((err, data) => {
@@ -710,21 +764,31 @@ const updateUser = (req, returnData, callback) => {
             if (!data) {
                 return callback("ERROR_USER_NOT_EXIST");
             }
-            User.update({ _id: userId }, {
-                $set: {
-                    username: username,
-                    email: email,
-                    firstname: firstname,
-                    lastname: lastname
+            User.findOne({ email }).exec((errExist, userExist) => {
+                if(errExist){
+                    return callback("ERROR_ERROR_FIND_USER_EMAIL_EXIST");
                 }
-            })
-                .exec((errSave, dataSave) => {
-                    if (errSave) {
-                        return callback("ERROR_CANNOT_UPDATE_USER");
+                if(userExist){
+                    return callback("ERRROR_EMAIL_EXIST");
+                }
+                User.findOneAndUpdate({ _id: userId }, {
+                    $set: {
+                        username: username,
+                        email: email,
+                        firstname: firstname,
+                        lastname: lastname,
+                        mobile,
+                        tfaMethod
                     }
-                    returnData.set({...dataSave})
-                    callback();
                 })
+                    .exec((errSave, dataSave) => {
+                        if (errSave) {
+                            return callback("ERROR_CANNOT_UPDATE_USER");
+                        }
+                        returnData.set({...dataSave._doc})
+                        callback();
+                    })
+            })
         })
 }
 
@@ -770,3 +834,5 @@ exports.encryptSessionAndUrl = encryptSessionAndUrl;
 exports.authenticateKeyUrl = authenticateKeyUrl;
 exports.checkUserTFA = checkUserTFA;
 exports.generateOTP = generateOTP;
+exports.sendEmailToChangePass = sendEmailToChangePass;
+exports.handleChangePassToken = handleChangePassToken;

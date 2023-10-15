@@ -12,7 +12,6 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.checkemailexist', controller.checkEmailExist, { systemApi: true });
     consts.registerApi('api.v1.systemuser.login', controller.login, { notAuth: true });
     consts.registerApi('api.v1.systemuser.get', controller.getUser, { systemApi: true });
-    consts.registerApi('api.v1.systemuser.changepassword', controller.changePassword, { systemApi: true });
     consts.registerApi('api.v1.systemuser.signup', controller.signUp, { notAuth: true });
     consts.registerApi('api.v1.systemuser.signupwithoauth', controller.createUserOAuth, { notAuth: true });
     consts.registerApi('api.v1.systemuser.delete', controller.deleteUsers, { systemApi: true });
@@ -21,4 +20,6 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.authkey', controller.authenticateKeyUrl, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.checktfa', controller.checkUserTFA, { notAuth: true });
     consts.registerApi('api.v1.systemuser.generateotp', controller.generateOTP, { notAuth: true });
+    consts.registerApi('api.v1.systemuser.sendemailchangepassword', controller.sendEmailToChangePass, { notAuth: true });
+    consts.registerApi('api.v1.systemuser.changepassword', controller.handleChangePassToken, { notAuth: true });
 };

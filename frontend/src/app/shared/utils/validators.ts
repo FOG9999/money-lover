@@ -40,6 +40,14 @@ let validators = {
             return { error: true, invalid: true };
         }
         return {};
+    },
+    validatePhoneNumber: (control: FormControl) => {
+        if (!control.value) {
+            return { error: true, required: true };
+        } else if (!/(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(control.value)) {
+            return { error: true, invalid: true };
+        }
+        return {};
     }
 }
 

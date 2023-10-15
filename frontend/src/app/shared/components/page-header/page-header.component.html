@@ -1,4 +1,4 @@
-<div class="matero-page-header-inner">
-  <h1 class="matero-page-title">{{title | translate}} <small>{{subtitle}}</small></h1>
+<div class="matero-page-header-inner">  
+  <h1 class="matero-page-title"><mat-icon class="cursor-pointer" (click)="goBack()">arrow_back</mat-icon>&nbsp;{{title | translate}} <small>{{subtitle}}</small></h1>
   <breadcrumb *ngIf="showBreadCrumb" [nav]="nav"></breadcrumb>
 </div>

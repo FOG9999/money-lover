@@ -34,4 +34,8 @@ export class PageHeaderComponent implements OnInit {
     this.nav = this.menuService.getMenuLevel(states);
     this.nav.unshift('home');
   }
+
+  goBack(){
+    history.back();
+  }
 }

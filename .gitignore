@@ -3,3 +3,5 @@ database/journal/WiredTigerLog.0000000035
 build/*
 database/diagnostic.data/*
 database/journal/*
+database/*
+database-backup/*

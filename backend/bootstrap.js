@@ -1,10 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const utils = require('./libs/utils');
 const chalk = require('chalk');
-const config = require('./config/config');
-const consts = require(__config_path + '/consts');
-const UniqueValidator = require('mongoose-unique-validator');
 
 module.exports = function (app) {
     let routeRegisters = [];

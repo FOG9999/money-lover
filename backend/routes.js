@@ -115,6 +115,15 @@ const winstonLogger = require('./libs/winston');
      app.post('/api/rest', function(req, res, next) {
          rest(req, res, next);
      });
+
+     /**
+      * health check
+      */
+     app.get('/api/health-check', (req, res, next) => {
+        res.send(200, {
+            ok: true
+        })
+     })
  
  };
  
