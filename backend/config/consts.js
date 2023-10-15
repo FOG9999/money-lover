@@ -100,5 +100,9 @@ module.exports = {
     /**
      * expired time for change password token
      */
-    changePassTokenTime: 3000
+    changePassTokenTime: 3000,
+    /**
+     * paths that ignore authorization checks
+     */
+    ignoreAuthorization: ['/api/health-check']
 }
