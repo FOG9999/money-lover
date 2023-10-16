@@ -1,1 +1,1 @@
-mongod --dbpath D:\Coding\my-money-lover\database
+mongod --dbpath D:\Coding\my-money-lover\database-local
