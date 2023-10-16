@@ -18,6 +18,10 @@ const winstonLogger = require('../libs/winston');
   * @param next method
   */
  exports.checkToken = function (req, res, next) {
+    // check for bypass apis
+    if(Array.isArray(consts.ignoreAuthorization) && consts.ignoreAuthorization.find(url => url == req.url)){        
+        return next();
+    }
      var api_name = req.params.api_name;
      winstonLogger.info(`${req.headers['origin']}: ${req.method}: ${JSON.stringify(req.params)}`);
      if (!api_name) {

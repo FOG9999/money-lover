@@ -1,0 +1,4 @@
+wget -O /tmp/epel.rpm –nv https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install -y /tmp/epel.rpm
+sudo yum update -y
+sudo yum install redis -y
