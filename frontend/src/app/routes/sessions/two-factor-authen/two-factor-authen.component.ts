@@ -24,7 +24,7 @@ export class TwoFactorAuthenComponent implements OnInit {
 
     ngOnInit() { 
         this.formGroupEmail = this.fb.group({
-            email: [this.receivedEmail, [Validators.required, validators.validateEmail]]
+            email: ['', [Validators.required, validators.validateEmail]]
         })
     }
 
@@ -42,6 +42,10 @@ export class TwoFactorAuthenComponent implements OnInit {
     @Output() onVerifySuccess = new EventEmitter();
 
     onSubmitEmail(){
+        if(this.formGroupEmail.get('email')?.value != this.receivedEmail){
+            this.toastService.error("Email không trùng khớp với thông tin đăng ký trên hệ thống. Vui lòng thử lại");
+            return;
+        }
         if(this.formGroupEmail.valid && this.formGroupEmail.get('email')?.value){
             this.loading = true;
             this.authService.generateOTP(this.formGroupEmail.get('email')?.value, this.rd).subscribe(res => {
