@@ -74,4 +74,12 @@ export class AuthService {
         const api_name: string = "api.v1.systemuser.checktfa";
         return this.http.post<User>(environment.SERVER_URL, { api_name, r: hashedSecret, t: otp }, { observe: "body" });
     }
+
+    /**
+     * send email to change password
+     */
+    sendEmailChangePass(email: string){
+        const api_name: string = "api.v1.systemuser.sendemailchangepassword";
+        return this.http.post<{ok: boolean}>(environment.SERVER_URL, { api_name, email }, { observe: "body" });
+    }
 }

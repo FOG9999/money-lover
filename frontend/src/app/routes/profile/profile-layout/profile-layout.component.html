@@ -20,9 +20,11 @@
             <!-- <p class="m-t-0 m-b-8">FE Developer, UE designer</p>
             <p class="m-t-0 text-grey-500">I like reading, writing and drawing.</p> -->
     
-            <a mat-raised-button color="primary" href="https://github.com/nzbin" target="_blank">Follow
-              Me</a>
-            <button mat-raised-button color="accent" class="m-l-8">Contact Me</button>
+            <a mat-raised-button color="primary" href="https://github.com/nzbin" target="_blank">Đổi avatar</a>
+            <button mat-raised-button color="accent" class="m-l-8" (click)="changePassword()">
+              <mat-icon *ngIf="loadingChangepass"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+              Đổi mật khẩu
+            </button>
           </div>
           <mat-nav-list class="m-x--16 m-b--16 m-t-16">
             <mat-divider inset></mat-divider>

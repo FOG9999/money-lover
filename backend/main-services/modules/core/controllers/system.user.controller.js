@@ -768,7 +768,7 @@ const updateUser = (req, returnData, callback) => {
                 if(errExist){
                     return callback("ERROR_ERROR_FIND_USER_EMAIL_EXIST");
                 }
-                if(userExist){
+                if(userExist && userExist._id.toString() != userId){
                     return callback("ERRROR_EMAIL_EXIST");
                 }
                 User.findOneAndUpdate({ _id: userId }, {

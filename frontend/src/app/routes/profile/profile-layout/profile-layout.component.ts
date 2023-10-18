@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '@core/authentication/authentication.service';
 import { AuthDataService } from '@shared';
+import { AppStorageService } from '@shared/services/app-storage.servce';
 import { User } from 'app/model/user.model';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-profile-layout',
@@ -12,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class ProfileLayoutComponent implements OnDestroy, OnInit {
 
   constructor(
-    private activatedRoute: ActivatedRoute,
+    private storage: AppStorageService,
     private router: Router,
     private authDataService: AuthDataService,
     private authService: AuthService
@@ -50,6 +51,8 @@ export class ProfileLayoutComponent implements OnDestroy, OnInit {
   showChangeQuestion: boolean = false;
   user: Partial<User>;
   isRedirecting: boolean = false;
+  loadingChangepass: boolean = false;
+
   private destroy$ = new Subject();
 
   changeQuestion(){
@@ -67,5 +70,15 @@ export class ProfileLayoutComponent implements OnDestroy, OnInit {
 
   goback = () => {
     this.showChangeQuestion = false;
+  }
+
+  changePassword(){
+    this.loadingChangepass = true;
+    this.authService.sendEmailChangePass(this.user.email).subscribe(res => {
+      if(res && res.ok){
+        this.storage.redirectFromProfile = true;
+        this.router.navigateByUrl('/auth/sent-email-change-pass')
+      }
+    })
   }
 }

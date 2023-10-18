@@ -10,6 +10,7 @@ import { RedirectComponent } from './sysytem/redirect/redirect.component';
 import { AccountGuardService, AuthGuardService } from '@shared';
 import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component';
 import { TwoFactorAuthenComponent } from './sessions/two-factor-authen/two-factor-authen.component';
+import { SentEmailChangePassComponent } from './sessions/change-password/sent-email-change-pass.component';
 
 const routes: Routes = [
   {
@@ -35,8 +36,9 @@ const routes: Routes = [
         data: { title: 'Auth by question', titleI18n: 'auth-question' },
       },
       {
-        path: 'two-factor-authen',
-        component: TwoFactorAuthenComponent,
+        path: 'sent-email-change-pass',
+        canActivate: [AccountGuardService],
+        component: SentEmailChangePassComponent,
       },
       { path: '**', redirectTo: 'login' }
     ],
@@ -51,7 +53,11 @@ const routes: Routes = [
     loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
     data: { title: 'Profile', titleI18n: 'profile' },
   },
-  { path: '**', redirectTo: 'money-lover' },
+  {
+    path: "error",
+    loadChildren: () => import('./sessions/sessions.module').then(m => m.SessionsModule)
+  },
+  { path: '**', redirectTo: 'error' },
 ];
 
 @NgModule({

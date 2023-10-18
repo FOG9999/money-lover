@@ -41,7 +41,7 @@
     <form class="form-field-full" [formGroup]="formGroupEmail">
         <mat-form-field appearance="outline">
             <mat-label>Email của bạn</mat-label>
-            <input matInput type="text" id="tfa-verify-email" formControlName="email" required />
+            <input matInput type="text" id="tfa-verify-email" formControlName="email" (keyup.enter)="onSubmitEmail()" required />
             <mat-error *ngIf="formGroupEmail.get('email').invalid">Email không đúng định dạng</mat-error>
         </mat-form-field>
     </form>

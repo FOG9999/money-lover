@@ -4,8 +4,9 @@ import { RoutesRoutingModule } from './routes-routing.module';
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { TwoFactorAuthenComponent } from './sessions/two-factor-authen/two-factor-authen.component';
+import { SentEmailChangePassComponent } from './sessions/change-password/sent-email-change-pass.component';
 
-const COMPONENTS = [LoginComponent, RegisterComponent, TwoFactorAuthenComponent];
+const COMPONENTS = [LoginComponent, RegisterComponent, TwoFactorAuthenComponent, SentEmailChangePassComponent];
 const COMPONENTS_DYNAMIC = [];
 
 @NgModule({

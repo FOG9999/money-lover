@@ -21,6 +21,10 @@ const routes: Routes = [
     component: Error500Component,
     data: { title: '500 Error', titleI18n: '500 Error' },
   },
+  {
+    path: "**",
+    redirectTo: "404"
+  }
 ];
 
 @NgModule({

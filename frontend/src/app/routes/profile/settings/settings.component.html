@@ -135,9 +135,11 @@
 
       </div>
 
-      <div fxLayout="row" fxLayoutAlign="end center">
-        <mat-icon *ngIf="loading"><mat-spinner diameter="20"></mat-spinner></mat-icon>
-        <button mat-raised-button color="primary" class="m-t-8" [attr.disabled]="reactiveForm.invalid || loading ? '': null" (click)="updateUser()">Cập nhật</button>
+      <div fxLayout="row" fxLayoutAlign="end center">        
+        <button mat-raised-button color="primary" class="m-t-8" [attr.disabled]="reactiveForm.invalid || loading ? '': null" (click)="updateUser()">
+          <mat-icon *ngIf="loading"><mat-spinner diameter="20"></mat-spinner></mat-icon>
+          Cập nhật
+        </button>
       </div>
 
     </form>
