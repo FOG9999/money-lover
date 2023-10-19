@@ -314,7 +314,7 @@ export function getResponseErrorMessage(message: string){
     case 'ERROR_OTP_INCORRECT':
       return 'Mã OTP không hợp lệ. Vui lòng thử lại.'
     case "ERROR_FIND_USER": 
-      return "Lỗi tìm kiếm user.";
+      return "Không tìm thấy người dùng.";
     case "ERROR_USER_BEING_CHANGE_PASSWORD": 
       return "User đang được thay mật khẩu. Nếu đó không phải bạn, vui lòng liên hệ ngay quản trị viên để được hỗ trợ sớm nhất."
     case "ERROR_TOKEN_NOT_MATCH": 
@@ -323,6 +323,8 @@ export function getResponseErrorMessage(message: string){
       return "Vui lòng xác nhận lại mật khẩu.";
     case "ERROR_SAVE_USER": 
       return "Không thể lưu người dùng.";
+    case "ERROR_OLDPASSWORD_INCORRECT": 
+      return "Mật khẩu cũ không đúng.";
     default:
       return 'Không tồn tại mesage';
   }

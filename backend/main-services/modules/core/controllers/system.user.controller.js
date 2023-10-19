@@ -401,7 +401,7 @@ const sendEmailToChangePass = (req, returnData, callback) => {
         if(!user){
             return callback("ERROR_CANNOT_FIND_USER")
         }
-        redis.EXISTS(consts.redis_key.forgot_password, email, (err, isExist) => {
+        redis.EXISTS(consts.redis_key.change_password, email, (err, isExist) => {
             if(err){
                 return callback("ERROR_FIND_USER")
             }
@@ -410,15 +410,15 @@ const sendEmailToChangePass = (req, returnData, callback) => {
             }
             else {
                 const token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
-                redis.SET(`${consts.redis_key.forgot_password}.${email}`, token, (err) => {
+                redis.SET(`${consts.redis_key.change_password}.${email}`, token, (err) => {
                     if(err){
                         return callback("ERROR_REDIS");
                     }
-                    redis.EXPIRE(`${consts.redis_key.forgot_password}.${email}`, consts.changePassTokenTime)
+                    redis.EXPIRE(`${consts.redis_key.change_password}.${email}`, consts.changePassTokenTime)
                     mailTransporter.sendMail({
                         from: process.env.MAIL_USERNAME,
                         to: email,
-                        text: `Đường link đổi mật khẩu cho tài khoản có email ${email} của bạn là: ${process.env.ML_MY_DOMAIN}/change-pass?email=${email}&t=${token}. Xin lưu ý: Đường link chỉ có hiệu lực trong vòng 5 phút kể từ khi được gửi đi. Vui lòng không chia sẻ đuòng link này cho bất cứ ai. Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
+                        text: `Đường link đổi mật khẩu cho tài khoản có email ${email} của bạn là: ${process.env.ML_MY_DOMAIN}/auth/change-password?email=${email}&t=${token}. Xin lưu ý: Đường link chỉ có hiệu lực trong vòng 5 phút kể từ khi được gửi đi. Vui lòng không chia sẻ đuòng link này cho bất cứ ai. Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
                         subject: '[My ML] - Yêu cầu reset mật khẩu'
                     }).then(() => {
                         winstonLogger.info(`Change password token sent to email: ${email}`);
@@ -435,7 +435,7 @@ const sendEmailToChangePass = (req, returnData, callback) => {
 }
 
 const handleChangePassToken = (req, returnData, callback) => {
-    const { email, t, newPass, confirmNewPass } = req.params;
+    const { email, t, newPass, confirmNewPass, oldPass } = req.params;
     if (validator.isNull(email)) {
         return callback('ERROR_EMAIL_MISSING');
     }
@@ -451,7 +451,7 @@ const handleChangePassToken = (req, returnData, callback) => {
     if(newPass !== confirmNewPass){
         return callback("ERROR_CONFIRM_PASS_NOT_MATCH")
     }
-    redis.GET(`${consts.redis_key.forgot_password}.${email}`, (err, exist) => {
+    redis.GET(`${consts.redis_key.change_password}.${email}`, (err, exist) => {
         if(err){
             return callback('ERROR_REDIS');
         }
@@ -463,10 +463,13 @@ const handleChangePassToken = (req, returnData, callback) => {
                 return callback("ERROR_TOKEN_NOT_MATCH")
             }
             else {
-                redis.DEL(`${consts.redis_key.forgot_password}.${email}`);  
+                redis.DEL(`${consts.redis_key.change_password}.${email}`);  
                 User.findOne({ email }).exec((err, user) => {
                     if(err || !user){
                         return callback("ERROR_FIND_USER");
+                    }
+                    else if (!user.authenticate(oldPass)) {
+                        return callback('ERROR_OLDPASSWORD_INCORRECT')
                     }
                     user.password = newPass;
                     user.save((errSave, newUser) => {

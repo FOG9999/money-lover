@@ -39,7 +39,7 @@
             <input matInput placeholder="Password" type="password" formControlName="password"
                    required>
             <mat-error *ngIf="reactiveForm.get('password').hasError('required')">{{errors.password_required}}</mat-error>
-            <mat-error *ngIf="reactiveForm.get('password').hasError('invalid')">{{errors.password_invalid}}</mat-error>
+            <mat-error *ngIf="reactiveForm.get('password').hasError('passwordInvalid')">{{errors.password_invalid}}</mat-error>
           </mat-form-field>
   
           <mat-form-field appearance="outline">

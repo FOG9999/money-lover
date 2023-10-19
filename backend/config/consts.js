@@ -60,7 +60,8 @@ module.exports = {
         user: "redis_user_key",
         icon: "redis_icon_key",
         tfa: "redis_tfa_key",
-        forgot_password: "redis_forgot_password"
+        forgot_password: "redis_forgot_password",
+        change_password: "redis_change_password",
     },
 
     user_roles: {

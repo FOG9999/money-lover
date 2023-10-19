@@ -82,4 +82,12 @@ export class AuthService {
         const api_name: string = "api.v1.systemuser.sendemailchangepassword";
         return this.http.post<{ok: boolean}>(environment.SERVER_URL, { api_name, email }, { observe: "body" });
     }
+
+    /**
+     * send form change password
+     */
+    changePassword(data: {email: string, t: string, oldPass: string, newPass: string, confirmNewPass: string}){
+        const api_name: string = "api.v1.systemuser.changepassword";
+        return this.http.post<{ok: boolean}>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
+    }
 }

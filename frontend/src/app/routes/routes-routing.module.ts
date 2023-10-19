@@ -7,10 +7,10 @@ import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component'
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { RedirectComponent } from './sysytem/redirect/redirect.component';
-import { AccountGuardService, AuthGuardService } from '@shared';
+import { AccountGuardService } from '@shared';
 import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component';
-import { TwoFactorAuthenComponent } from './sessions/two-factor-authen/two-factor-authen.component';
 import { SentEmailChangePassComponent } from './sessions/change-password/sent-email-change-pass.component';
+import { ChangePasswordComponent } from './sessions/change-password/change-password.component';
 
 const routes: Routes = [
   {
@@ -39,6 +39,11 @@ const routes: Routes = [
         path: 'sent-email-change-pass',
         canActivate: [AccountGuardService],
         component: SentEmailChangePassComponent,
+      },
+      {
+        path: 'change-password',
+        canActivate: [AccountGuardService],
+        component: ChangePasswordComponent,
       },
       { path: '**', redirectTo: 'login' }
     ],

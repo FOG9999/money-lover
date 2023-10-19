@@ -42,7 +42,12 @@ export const CONSTS = {
             confirm_password_inconsistent: "Mật khẩu xác nhận không trùng khớp",
             confirm_password_required: "Mật khẩu xác nhận không được để trống"
         },
-        create_account_success: "Đăng ký tài khoản thành công"
+        create_account_success: "Đăng ký tài khoản thành công",
+        changePassword: {
+            required: "Trường bắt buộc nhập.",
+            confirmPassNotMatch: "Vui lòng xác nhận lại mật khẩu.",
+            passwordInvalid: "Mật khẩu không đúng định dạng."
+        }
     },
     auth: {
         NONE: "NONE",
@@ -72,6 +77,6 @@ export const CONSTS = {
 
 export type Mode = "view" | "create" | "edit";
 export type FileExtension = "jpg" | "pdf" | "csv" | "doc" | "docx" | "svg" | "json" | "png" | "ppt" | "pptx" | "webm" | "webp" | "xls" | "xlsx"
-export type UploadTypeMIME = "application/msword" | "text/csv" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document"| "text/html" | "image/jpeg" | "application/json" | "application/vnd.ms-powerpoint" | "application/vnd.openxmlformats-officedocument.presentationml.presentation" | "image/svg+xml" | "video/webm" | "image/webp" | "application/vnd.ms-excel" | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" | "application/pdf" | 'image/png'
+export type UploadTypeMIME = "application/msword" | "text/csv" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document" | "text/html" | "image/jpeg" | "application/json" | "application/vnd.ms-powerpoint" | "application/vnd.openxmlformats-officedocument.presentationml.presentation" | "image/svg+xml" | "video/webm" | "image/webp" | "application/vnd.ms-excel" | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" | "application/pdf" | 'image/png'
 export type InvalidFile = "invalid-size" | "invalid-type" | "greater-than-min" | "smaller-than-max" | undefined
 export const Annonymous = "Annonymous"
