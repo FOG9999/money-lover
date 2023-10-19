@@ -13,7 +13,11 @@ export class SentEmailChangePassComponent implements OnInit {
         if(!this.storage.redirectFromProfile){
             this.router.navigateByUrl("/error/404");
         }
+        else {
+            this.show = true;
+        }
     }
 
+    show: boolean = false;
     ngOnInit() { }
 }
