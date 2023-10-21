@@ -4,8 +4,15 @@
             background-color: #e0e0e0;
             border-radius: 5px;
         }
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
         & > div:first-child {
-            height: 185px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
         }
     }
 

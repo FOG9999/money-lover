@@ -81,8 +81,6 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
         }
       }
-    }, err => {
-      this.toastService.error("Đăng nhập thất bại. Vui lòng thử lại");
     })
   }
 

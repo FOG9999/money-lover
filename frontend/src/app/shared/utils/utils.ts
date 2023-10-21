@@ -256,6 +256,8 @@ export function getResponseErrorMessage(message: string){
   switch (message) {
     case 'ERROR_USER_LOCK':
       return 'Người dùng đã bị khóa. Vui lòng thử lại.' 
+    case 'ERROR_PASSWORD_INCORRECT':
+      return 'Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại.' 
     case 'ERROR_QUESTION_NOT_FOUND':
       return 'Không tìm thấy câu hỏi.' 
     case 'ERROR_QUESTION_CONTENT_MISSING':

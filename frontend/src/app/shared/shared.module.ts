@@ -30,6 +30,7 @@ import { AuthByQuestionComponent } from './components/auth-by-question/auth-by-q
 import { ChangeSecurityQuestionComponent } from './components/change-security-quesion/change-security-question.component';
 import { SecurityQuestionComponent } from './components/security-question/security-question.component';
 import { FormErrorPipe } from './pipes/form-error.pipe';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -42,7 +43,7 @@ const THIRD_MODULES = [
   FormlyModule,
   FormlyMaterialModule,
   ToastrModule,
-  TranslateModule,
+  TranslateModule
 ];
 const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent, EmptyComponent, AuthByQuestionComponent, ChangeSecurityQuestionComponent, SecurityQuestionComponent];
 const COMPONENTS_DYNAMIC = [];
@@ -51,7 +52,7 @@ const PIPES = [FormatNumberPipe, LevelRolePipe, FormErrorPipe];
 
 @NgModule({
   declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, ...DIRECTIVES, ...PIPES],
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, ...THIRD_MODULES],
+  imports: [CommonModule, FormsModule, NgxSkeletonLoaderModule, RouterModule, ReactiveFormsModule, ...THIRD_MODULES],
   exports: [
     CommonModule,
     FormsModule,

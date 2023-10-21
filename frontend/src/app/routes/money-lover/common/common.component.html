@@ -3,7 +3,7 @@
 <mat-card>
     <mat-card-title></mat-card-title>
     <mat-card-content>
-        <mat-tab-group class="m--16 ml">
+        <mat-tab-group class="m--16 ml" (selectedIndexChange)="onChangeTabIndex($event)">
             <mat-tab label="Loại ví"> 
                 <mat-card class="card-inside-tab">
                     <mat-card-title>Loại ví các chi tiêu mặc định</mat-card-title>
@@ -53,7 +53,7 @@
                                 </button>
                             </mat-card-actions>
                         </div>
-                        <icon-mng #iconsMng [icons]="icons"></icon-mng>
+                        <icon-mng #iconsMng [icons]="icons" [startLoadAllIcons]="startLoadIcons"></icon-mng>
                     </mat-card-content>
                 </mat-card>
             </mat-tab>

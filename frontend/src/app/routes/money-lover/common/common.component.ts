@@ -251,4 +251,11 @@ export class MoneyCommonComponent implements OnInit {
             this.toast.warning(CONSTS.select_to_delete_icon);
         }
     }
+
+    startLoadIcons: boolean = false;
+    onChangeTabIndex(tabIndex: number){
+        if(tabIndex == 1 && !this.startLoadIcons){ //icons tab
+            this.startLoadIcons = true;
+        }
+    }
 }

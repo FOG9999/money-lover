@@ -1,9 +1,9 @@
 <div class="matero-row" fxLayout="row wrap">
     <div class="matero-col cursor-pointer m-y-8" fxFlex="25" fxFlex.gt-xs="20" fxFlex.gt-md="10" fxFlex.gt-xl="5"
-        fxLayout="row" *ngFor="let icon of icons; let i = index">
+        fxLayout="row" *ngFor="let icon of allIcons; let i = index">
         <mat-checkbox fxFlex="20" [(ngModel)]="listChecked[i]"></mat-checkbox>
         <div class="icon-container p-b-4 p-t-32 position-relative" fxFlex="80">
-            <ml-icon [path]="icon.path"></ml-icon>
+            <ml-icon [path]="icon.path" [loadingConfig]="{width: '85px', height: '85px'}"></ml-icon>
         </div>
     </div>
 </div>
