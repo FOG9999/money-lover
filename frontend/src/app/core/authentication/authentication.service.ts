@@ -90,4 +90,12 @@ export class AuthService {
         const api_name: string = "api.v1.systemuser.changepassword";
         return this.http.post<{ok: boolean}>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
+
+    /**
+     * check if user enter a random string for email and t (token) on the url to try to open the change-password page
+     */
+    checkChangepasswordUrl(data: {email: string, t: string}){
+        const api_name: string = "api.v1.systemuser.checkchangepasswordurl";
+        return this.http.post<{ok: boolean}>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
+    }
 }

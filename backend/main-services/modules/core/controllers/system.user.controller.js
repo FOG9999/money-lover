@@ -356,39 +356,6 @@ const getUser = (req, returnData, callback) => {
         });
 };
 
-const changePassword = (req, returnData, callback) => {
-    var user = req.user;
-    var old_pass = req.params.old_pass;
-    var new_pass = req.params.new_pass;
-
-    if (validator.isNull(old_pass))
-        return callback('ERROR_OLD_PASS_MISSING');
-    if (validator.isNull(new_pass))
-        return callback('ERROR_NEW_PASS_MISSING');
-
-    User.findOne()
-        .where({
-            _id: user._id
-        })
-        .exec(function (err, user) {
-            if (err) return callback(err);
-            if (user) {
-                if (!user.authenticate(old_pass)) { // check password is correct?
-                    return callback('ERROR_PASSWORD_NOT_CORRECT');
-                } else {
-                    // change password
-                    user.password = new_pass;
-                    user.save(function (err) {
-                        if (err) return callback(err);
-                        callback();
-                    });
-                }
-            } else {
-                return callback('ERROR_USER_NOT_EXISTS');
-            }
-        });
-};
-
 const sendEmailToChangePass = (req, returnData, callback) => {
     const { email } = req.params;
     if(validator.isNull(email)){
@@ -431,6 +398,29 @@ const sendEmailToChangePass = (req, returnData, callback) => {
                 })
             }
         })
+    })
+}
+
+/**
+ * check if user enter a random string for email and t (token) on the url to try to open the change-password page
+ */
+const checkChangepasswordUrl = (req, returnData, callback) => {
+    const { email, t } = req.params;
+    if (validator.isNull(email)) {
+        return callback('ERROR_EMAIL_MISSING');
+    }
+    if (validator.isNull(t)) {
+        return callback('ERROR_FIND_USER');
+    }
+    redis.GET(`${consts.redis_key.change_password}.${email}`, (err, exist) => {
+        if(err){
+            return callback('ERROR_REDIS');
+        }
+        if(!exist){
+            return callback('ERROR_FIND_USER');
+        }
+        returnData.set({ok: true});
+        return callback();
     })
 }
 
@@ -827,7 +817,6 @@ exports.list = list;
 exports.checkEmailExist = checkEmailExist;
 exports.login = login;
 exports.getUser = getUser;
-exports.changePassword = changePassword;
 exports.signUp = signUp;
 exports.deleteUsers = deleteUsers;
 exports.unlockUsers = unlockUsers;
@@ -839,3 +828,4 @@ exports.checkUserTFA = checkUserTFA;
 exports.generateOTP = generateOTP;
 exports.sendEmailToChangePass = sendEmailToChangePass;
 exports.handleChangePassToken = handleChangePassToken;
+exports.checkChangepasswordUrl = checkChangepasswordUrl;

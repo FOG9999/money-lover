@@ -1,10 +1,11 @@
 import { AbstractControl, FormControl } from "@angular/forms";
+import { REGEX } from "app/consts";
 
 let validators = {
     validateUsername: (control: AbstractControl) => {
         if (!control.value) {
             return { error: true, required: true };
-        } else if (!/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/.test(control.value)) {
+        } else if (!new RegExp(REGEX.USERNAME).test(control.value)) {
             return { error: true, invalid: true };
         }
         return {};
@@ -12,7 +13,7 @@ let validators = {
     validatePassword: (control: AbstractControl) => {
         if (!control.value) {
             return { required: true };
-        } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(control.value)) {
+        } else if (!new RegExp(REGEX.PASSWORD).test(control.value)) {
             return { passwordInvalid: true };
         }
         return {};
@@ -20,7 +21,7 @@ let validators = {
     validateName: (control: AbstractControl) => {
         if (!control.value || !control.value.trim()) {
             return { error: true, required: true };
-        } else if (!/^[a-z ,.'-]+$/i.test(control.value)) {
+        } else if (!new RegExp(REGEX.NAME, 'i').test(control.value)) {
             return { error: true, invalid: true };
         }
         return {};
@@ -28,7 +29,7 @@ let validators = {
     validateEmail: (control: AbstractControl) => {
         if (!control.value) {
             return { error: true, required: true };
-        } else if (!/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(control.value)) {
+        } else if (!new RegExp(REGEX.EMAIL, 'i').test(control.value)) {
             return { error: true, invalid: true };
         }
         return {};
@@ -36,7 +37,7 @@ let validators = {
     validateCurrency: (control: AbstractControl) => {
         if (!control.value) {
             return { error: true, required: true };
-        } else if (!/^\$?(([1-9]\d{0,2}(.\d{3})*)|0)?$/.test(control.value)) {
+        } else if (!new RegExp(REGEX.CURRENCY).test(control.value)) {
             return { error: true, invalid: true };
         }
         return {};
@@ -44,7 +45,7 @@ let validators = {
     validatePhoneNumber: (control: AbstractControl) => {
         if (!control.value) {
             return { error: true, required: true };
-        } else if (!/(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(control.value)) {
+        } else if (!new RegExp(REGEX.PHONE).test(control.value)) {
             return { error: true, invalid: true };
         }
         return {};

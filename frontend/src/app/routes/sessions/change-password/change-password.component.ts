@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core/authentication/authentication.service';
 import { validators } from '@shared/utils/validators';
-import { CONSTS } from 'app/consts';
+import { CONSTS, REGEX } from 'app/consts';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil, timer } from 'rxjs';
 
@@ -16,14 +16,25 @@ import { Subject, takeUntil, timer } from 'rxjs';
 export class ChangePasswordComponent implements OnInit, OnDestroy {
     constructor(private router: Router, private activedRouter: ActivatedRoute, private authService: AuthService, private toastService: ToastrService) { 
         this.activedRouter.queryParams.pipe(takeUntil(this.destroy$)).subscribe(res => {
-            this.token = res['t'];
-            this.email = res['email'];
+            if(res['t'] && res['email'] && new RegExp(REGEX.EMAIL, 'i').test(res['email'])){
+                this.authService.checkChangepasswordUrl({email: res['email'], t: res['t']}).subscribe(() => {
+                    this.token = res['t'];
+                    this.email = res['email'];
+                    this.loading = false;
+                }, err => {
+                    this.router.navigateByUrl('/error/403');    
+                })
+            }
+            else {
+                this.router.navigateByUrl('/error/403');
+            }
         })
     }
     errors = CONSTS.messages.changePassword;
     private token: string = "";
     private email: string = "";
     private destroy$ = new Subject<boolean>();
+    loading: boolean = true;
 
     ngOnInit() { }
 

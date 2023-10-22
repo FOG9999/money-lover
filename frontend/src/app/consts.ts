@@ -79,4 +79,12 @@ export type Mode = "view" | "create" | "edit";
 export type FileExtension = "jpg" | "pdf" | "csv" | "doc" | "docx" | "svg" | "json" | "png" | "ppt" | "pptx" | "webm" | "webp" | "xls" | "xlsx"
 export type UploadTypeMIME = "application/msword" | "text/csv" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document" | "text/html" | "image/jpeg" | "application/json" | "application/vnd.ms-powerpoint" | "application/vnd.openxmlformats-officedocument.presentationml.presentation" | "image/svg+xml" | "video/webm" | "image/webp" | "application/vnd.ms-excel" | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" | "application/pdf" | 'image/png'
 export type InvalidFile = "invalid-size" | "invalid-type" | "greater-than-min" | "smaller-than-max" | undefined
-export const Annonymous = "Annonymous"
+export const Annonymous = "Annonymous";
+export const REGEX = {
+    EMAIL: /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/,
+    CURRENCY: /^\$?(([1-9]\d{0,2}(.\d{3})*)|0)?$/,
+    PHONE: /(84|0[3|5|7|8|9])+([0-9]{8})\b/,
+    NAME: /^[a-z ,.'-]+$/,
+    USERNAME: /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+    PASSWORD: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+}
