@@ -13,7 +13,7 @@ zip -r "cicd-be-bk-$(date +"%Y-%m-%d").zip" ../../backend -x ../../backend/node_
 
 # upload backups to s3
 echo "upload backups to s3"
-aws s3 cp ./ s3://my-ml-cicd/backup/ --recursive
+aws s3 cp ./ s3://my-ml-dev-bucket/backup/ --recursive
 
 # backup database
 echo "backup database"
