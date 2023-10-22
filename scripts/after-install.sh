@@ -26,7 +26,7 @@ yes | rm -r /usr/share/nginx/html/*
 # copy new files from frontend built folder to html folder nginx
 echo "copy new files from frontend built folder to html folder nginx"
 cd /home/ec2-user/money-lover/cicd/
-cp -R frontend/dist /usr/share/nginx/html
+cp -R frontend/dist/application-core/* /usr/share/nginx/html
 
 # overwrite backend scripts
 echo "overwrite backend scripts"
