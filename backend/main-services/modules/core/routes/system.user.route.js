@@ -23,4 +23,6 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.sendemailchangepassword', controller.sendEmailToChangePass, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.changepassword', controller.handleChangePassToken, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.checkchangepasswordurl', controller.checkChangepasswordUrl, { anyAuth: true });
+    consts.registerApi('api.v1.systemuser.sendforgotpasswordrequest', controller.sentForgotPasswordRequest, { notAuth: true });
+    consts.registerApi('api.v1.systemuser.handleforgotpasswordrequest', controller.handleForgotPasswordRequest, { notAuth: true });
 };

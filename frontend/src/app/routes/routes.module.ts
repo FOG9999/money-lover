@@ -6,8 +6,10 @@ import { RegisterComponent } from './sessions/register/register.component';
 import { TwoFactorAuthenComponent } from './sessions/two-factor-authen/two-factor-authen.component';
 import { SentEmailChangePassComponent } from './sessions/change-password/sent-email-change-pass.component';
 import { ChangePasswordComponent } from './sessions/change-password/change-password.component';
+import { SentEmailResetPasswordComponent } from './sessions/forgot-password/sent-email-reset-password.component';
+import { ForgotPasswordComponent } from './sessions/forgot-password/forgot-password.component';
 
-const COMPONENTS = [LoginComponent, RegisterComponent, TwoFactorAuthenComponent, SentEmailChangePassComponent, ChangePasswordComponent];
+const COMPONENTS = [LoginComponent, RegisterComponent, TwoFactorAuthenComponent, SentEmailChangePassComponent, ChangePasswordComponent, SentEmailResetPasswordComponent, ForgotPasswordComponent];
 const COMPONENTS_DYNAMIC = [];
 
 @NgModule({

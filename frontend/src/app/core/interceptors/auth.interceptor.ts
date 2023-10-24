@@ -32,6 +32,9 @@ export class AuthInterceptor implements HttpInterceptor {
         if(event.status == 400){
             this.toastService.error(getResponseErrorMessage(event.error.message))
         }
+        if(event.status == 500){
+            this.toastService.error("Lỗi hệ thống")
+        }
         return throwError(event);
     }
 }

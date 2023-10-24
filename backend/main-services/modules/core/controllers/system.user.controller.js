@@ -462,6 +462,7 @@ const handleChangePassToken = (req, returnData, callback) => {
                         return callback('ERROR_OLDPASSWORD_INCORRECT')
                     }
                     user.password = newPass;
+                    user.defaultPassword = false;
                     user.save((errSave, newUser) => {
                         if(errSave){
                             return callback("ERROR_SAVE_USER");
@@ -812,6 +813,68 @@ const authenticateKeyUrl = (req, returnData, callback) => {
     callback();
 }
 
+const sentForgotPasswordRequest = (req, returnData, callback) => {
+    const { email } = req.params;
+    if (validator.isNull(email)) {
+        return callback('ERROR_EMAIL_MISSING');
+    }
+    User.findOne({ email }).exec((errFindUser, user) => {
+        if(errFindUser || !user){
+            return callback("ERROR_FIND_USER");
+        }
+        const newPassword = utils.randomstring(10), token = utils.randomstring(10) + ObjectId().toString().replace('-', '');
+        // temporary set new password, wait until user click the link sent to email then discard it
+        redis.SET(`${consts.redis_key.forgot_password}.${token}`, newPassword,  errSaveRedis => {
+            if(errSaveRedis){
+                winstonLogger.error(`Error when saving new password when forgot by email ${user.email}:` + JSON.stringify(errSaveRedis));
+                return callback('ERROR_SAVE_REDIS_FORGOT_PASSWORD');
+            }
+            redis.EXPIRE(`${consts.redis_key.forgot_password}.${token}`, consts.changePassTokenTime);
+            // send token via email to user
+            mailTransporter.sendMail({
+                from: process.env.MAIL_USERNAME,
+                to: user.email,
+                text: `Bạn đã yêu cầu reset mật khẩu của tài khoản có email: ${user.email}. Sử dụng đường link sau đây để lấy mật khẩu mới: ${process.env.ML_MY_DOMAIN}/auth/forgot-password?email=${user.email}&t=${token}. Xin lưu ý: Đường link sẽ bị vô hiệu trong vòng 5 phút kể từ khi được gửi đi. Nếu đó không phải là bạn, vui lòng liên hệ quản trị viên để được hỗ trợ kịp thời.`,
+                subject: '[My ML] - Quên mật khẩu'
+            }).then(() => {
+                winstonLogger.info(`Forgot password request sent to email: ${user.email}`);
+                returnData.set({ email: user.email, t: token});
+                return callback();
+            })
+            .catch(errEmail => {
+                winstonLogger.error(`Forgot password request sent failed: ${errEmail}`);
+                redis.DEL(`${consts.redis_key.forgot_password}.${token}`);
+                return callback('ERROR_SENT_MAIL_FORGOT_PASSWORD');
+            })
+        })
+    })
+}
+
+const handleForgotPasswordRequest = (req, returnData, callback) => {
+    const { t, email } = req.params;
+    redis.GET(`${consts.redis_key.forgot_password}.${t}`, (errRedis, newPassword) => {
+        if(errRedis || !newPassword){
+            return callback('ERROR_FIND_USER');
+        }
+        User.findOne({ email }).exec((errFindUser, user) => {
+            if(errFindUser || !user){
+                return callback("ERROR_FIND_USER");
+            }
+            user.password = newPassword;
+            user.defaultPassword = true;
+            user.save((errSave, _) => {
+                if (errSave) {
+                    winstonLogger.error('Error save user: ' + JSON.stringify(errSave));
+                    return callback(errSave);
+                }
+                returnData.set({np: newPassword});
+                redis.DEL(`${consts.redis_key.forgot_password}.${t}`);
+                callback();
+            })
+        })
+    })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -829,3 +892,5 @@ exports.generateOTP = generateOTP;
 exports.sendEmailToChangePass = sendEmailToChangePass;
 exports.handleChangePassToken = handleChangePassToken;
 exports.checkChangepasswordUrl = checkChangepasswordUrl;
+exports.sentForgotPasswordRequest = sentForgotPasswordRequest;
+exports.handleForgotPasswordRequest = handleForgotPasswordRequest;

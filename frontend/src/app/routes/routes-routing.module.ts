@@ -11,6 +11,8 @@ import { AccountGuardService } from '@shared';
 import { AuthByQuestionComponent } from '@shared/components/auth-by-question/auth-by-question.component';
 import { SentEmailChangePassComponent } from './sessions/change-password/sent-email-change-pass.component';
 import { ChangePasswordComponent } from './sessions/change-password/change-password.component';
+import { SentEmailResetPasswordComponent } from './sessions/forgot-password/sent-email-reset-password.component';
+import { ForgotPasswordComponent } from './sessions/forgot-password/forgot-password.component';
 
 const routes: Routes = [
   {
@@ -44,6 +46,14 @@ const routes: Routes = [
         path: 'change-password',
         canActivate: [AccountGuardService],
         component: ChangePasswordComponent,
+      },
+      {
+        path: "request-reset-password",
+        component: SentEmailResetPasswordComponent
+      },
+      {
+        path: "forgot-password",
+        component: ForgotPasswordComponent
       },
       { path: '**', redirectTo: 'login' }
     ],

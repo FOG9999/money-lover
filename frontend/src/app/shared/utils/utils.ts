@@ -327,6 +327,10 @@ export function getResponseErrorMessage(message: string){
       return "Không thể lưu người dùng.";
     case "ERROR_OLDPASSWORD_INCORRECT": 
       return "Mật khẩu cũ không đúng.";
+    case "ERROR_SAVE_REDIS_FORGOT_PASSWORD": 
+      return "Hệ thống xảy ra lỗi. Vui lòng thử lại sau ít phút.";
+    case "ERROR_SENT_MAIL_FORGOT_PASSWORD": 
+      return "Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau ít phút.";
     default:
       return 'Không tồn tại mesage';
   }

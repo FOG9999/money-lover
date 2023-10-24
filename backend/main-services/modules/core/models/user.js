@@ -99,6 +99,13 @@ var UserSchema = new Schema({
     tfaMethod: {
         type: String,
         default: null
+    },
+    /**
+     * check if user having default passwords, generated when forgot password
+     */
+    defaultPassword: {
+        type: Boolean,
+        default: false
     }
 }, consts.schemaOptions);
 

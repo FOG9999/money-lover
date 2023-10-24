@@ -98,4 +98,20 @@ export class AuthService {
         const api_name: string = "api.v1.systemuser.checkchangepasswordurl";
         return this.http.post<{ok: boolean}>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
     }
+
+    /**
+     * validate forgot password request
+     */
+    validatePForgotPassRequest(data: {email: string, t: string}){
+        const api_name: string = "api.v1.systemuser.handleforgotpasswordrequest";
+        return this.http.post<{np: string}>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
+    }
+
+    /**
+     * send request to reset password when forgot
+     */
+    sendReqResetPassword(data: {email: string}){
+        const api_name: string = "api.v1.systemuser.sendforgotpasswordrequest";
+        return this.http.post<{email: string, t: string}>(environment.SERVER_URL, { api_name, ...data }, { observe: "body" });
+    }
 }
