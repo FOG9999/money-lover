@@ -58,6 +58,7 @@ module.exports = {
     // redis consts
     redis_key: {
         user: "redis_user_key",
+        server: "redis_server",
         icon: "redis_icon_key",
         tfa: "redis_tfa_key",
         forgot_password: "redis_forgot_password",

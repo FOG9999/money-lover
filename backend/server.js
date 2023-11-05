@@ -41,6 +41,7 @@ const mailTransporter = require('./libs/mailer');
 const winstonLogger = require('./libs/winston');
 // require('./database/business-db');
 require('./database/system-db');
+require('./socket/ws-lambda-client');
 // Use bluebird promises
 mongoose.Promise = require("bluebird");
 

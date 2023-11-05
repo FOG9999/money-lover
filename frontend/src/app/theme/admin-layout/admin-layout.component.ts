@@ -19,6 +19,7 @@ import { StartupService } from '@core';
 
 import { SettingsService, AppSettings } from '@core';
 import { AppDirectionality, LocalStorageService } from '@shared';
+import { WSLambdaService } from '@shared/services/money-lover/ws-lambda.service';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
@@ -65,6 +66,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     private overlay: OverlayContainer,
     private element: ElementRef,
     private settings: SettingsService,
+    private wsLambda: WSLambdaService,
     @Optional() @Inject(DOCUMENT) private _document: Document,
     @Inject(Directionality) public dir: AppDirectionality, 
     private startUpService: StartupService,
@@ -95,6 +97,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if(this.localStorage.get("user") && this.localStorage.get("user").token){
       this.startUpService.load();
+      this.wsLambda.initClient();
     }    
     setTimeout(() => (this.contentWidthFix = this.collapsedWidthFix = false));
   }

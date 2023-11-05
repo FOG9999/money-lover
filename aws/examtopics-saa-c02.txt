@@ -1,0 +1,13 @@
+12. B - ebs and instance need to be in the same az
+13.C
+14.c/b
+15.D (cloudfront)
+16.a,b lambda (event-based, only run when triggered, code size and runtime execution is limited ) vs ec2 / bc
+17.c (route 53, global accelerator)
+18.b
+19.c
+20.c/a (s3 gateway endpoint)
+---------------
+21.d/a
+22.a,d
+23.b,d

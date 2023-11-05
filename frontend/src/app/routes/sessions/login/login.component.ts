@@ -9,6 +9,7 @@ import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil, Subject } from 'rxjs';
 import { isDevMode } from '@angular/core';
+import { WSLambdaService } from '@shared/services/money-lover/ws-lambda.service';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService, 
     private localStorage: LocalStorageService, 
     private route: ActivatedRoute,
+    private wsLambda: WSLambdaService,
     private toastService: ToastrService) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
       if(!params['reload']){
@@ -53,6 +55,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit() {     
     this.googleLoginUri = environment.GOOGLE_LOGIN_URI + '?redirect_fe_uri='+environment.MoneyLoverURL+'/redirect' + "&gatewayForward=true";
     this.localStorage.clear()
+    this.wsLambda.endConnection();
   }
 
   ngOnDestroy(): void {
@@ -65,6 +68,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authService.login(username, password).subscribe(res => {
       if (res && Object.keys(res).includes('_id')) {
         this.localStorage.set('user', res);
+        this.wsLambda.initClient();
         if ((<User>res).level === CONSTS.auth.ADMIN || (<User>res).level === CONSTS.auth.SYSTEM) {
           this.router.navigateByUrl('/money-lover/admin');
         }

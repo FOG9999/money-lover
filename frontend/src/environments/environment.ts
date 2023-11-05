@@ -10,7 +10,8 @@ export const environment = {
   production: false,
   useHash: false,
   hmr: false,
-  GOOGLE_LOGIN_URI: "http://localhost:9000/gg-cloud/verify-token"
+  GOOGLE_LOGIN_URI: "http://localhost:9000/gg-cloud/verify-token",
+  WS_LAMBDA_URL: "ws://localhost:5000"
 };
 
 /*
