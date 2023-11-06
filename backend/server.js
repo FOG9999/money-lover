@@ -10,6 +10,7 @@ global.__db_path = config.root + '/database';
 global._modules_path = config.root + '/main-services/modules';
 global.__libs_path = config.root + '/libs';
 global.__icons_path = config.root + '/public/icons';
+global.__socket_path = config.root + '/socket';
 
 // Load các thư viện
 var fs = require('fs');
@@ -41,7 +42,7 @@ const mailTransporter = require('./libs/mailer');
 const winstonLogger = require('./libs/winston');
 // require('./database/business-db');
 require('./database/system-db');
-require('./socket/ws-lambda-client');
+require('./socket/ws-lambda-client').initClient();
 // Use bluebird promises
 mongoose.Promise = require("bluebird");
 
