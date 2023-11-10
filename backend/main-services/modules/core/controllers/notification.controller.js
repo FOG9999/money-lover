@@ -12,19 +12,19 @@ const mailTransporter = require(__libs_path + '/mailer');
 const create = (data, callback) => {
     const { user, type, repeat, priority, title, description, link } = data;
     if(!user){
-        return callback('ERROR_MISSING_USER');
+        return winstonLogger.error('Notification creation failed: ERROR_MISSING_USER');
     }
     if(!type){
-        return callback('ERROR_MISSING_TYPE');
+        return winstonLogger.error('Notification creation failed: ERROR_MISSING_TYPE');
     }
-    if(!priority){
-        return callback('ERROR_MISSING_PRIORITY');
+    if(!priority && typeof priority != 'number'){
+        return winstonLogger.error('Notification creation failed: ERROR_MISSING_PRIORITY');
     }
     if(!title){
-        return callback('ERROR_MISSING_TITLE');
+        return winstonLogger.error('Notification creation failed: ERROR_MISSING_TITLE');
     }
     if(!link){
-        return callback('ERROR_MISSING_LINK');
+        return winstonLogger.error('Notification creation failed: ERROR_MISSING_LINK');
     }
     let notification = new Notification({
         user, type, priority, title, link
@@ -40,10 +40,10 @@ const create = (data, callback) => {
             winstonLogger.error(`Save notification failed: ${JSON.stringify(err)}`);
             return callback(err);
         }
-        return callback(null);
+        return callback(null, res);
     })
 }
 
 module.exports = {
-    create
+    createNotification: create
 }

@@ -7,6 +7,11 @@ import { validators } from '@shared/utils/validators';
 import { CONSTS } from 'app/consts';
 import { ToastrService } from 'ngx-toastr';
 
+/**
+ * information about browser and os
+ */
+declare var platform: any;
+
 @Component({
     selector: 'two-factor-authen',
     templateUrl: 'two-factor-authen.component.html',
@@ -74,7 +79,7 @@ export class TwoFactorAuthenComponent implements OnInit {
     onVerify(){
         if(this.formGroup.valid && this.formGroup.get('verifyCode')?.value){            
             this.loading = true;
-            this.authService.verifyOTP(this.hashedSecret, this.formGroup.get('verifyCode')?.value).subscribe(res => {
+            this.authService.verifyOTP(this.hashedSecret, this.formGroup.get('verifyCode')?.value, platform).subscribe(res => {
                 this.loading = false;
                 if (res && res._id) {
                     if(this.onVerifySuccess){

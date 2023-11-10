@@ -28,7 +28,7 @@ const initClient = () => {
     })
 }
 
-const sendJSON = (message, data) => {
+const wsSendJSON = (message, data) => {
     if(global.wsClient){
         global.wsClient.send(JSON.stringify({message, data}));
     }
@@ -36,5 +36,5 @@ const sendJSON = (message, data) => {
 
 module.exports = {
     initClient,
-    send: sendJSON
+    wsSendJSON: wsSendJSON
 }

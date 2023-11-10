@@ -10,8 +10,10 @@ const bcrypt = require('bcrypt');
 const UserSecurityQuestion = require('../models/user-security-question');
 const winstonLogger = require(__libs_path + '/winston');
 const speakesay = require('speakeasy');
+const { wsSendJSON } = require('../../../../socket/ws-lambda-client');
+const { saveLoginHistory } = require('./login-history.controller');
+const { createNotification } = require('./notification.controller');
 const mailTransporter = require(__libs_path + '/mailer');
-const wsClient = require(__socket_path + "/ws-lambda-client");
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -114,11 +116,7 @@ const login = (req, returnData, callback) => {
                 }
                 else {
                     const randomKey = utils.randomstring(50) + ObjectId().toString().replace('-', '');
-                    winstonLogger.info(`User ${username} logged in with platform: ${JSON.stringify(platform)}`);
-                    wsClient.send("test", {
-                        user,
-                        platform
-                    })
+                    winstonLogger.info(`User ${username} logged in with platform: ${JSON.stringify(platform)}`);                    
                     switch (user.tfaMethod) {
                         case 'email':
                             redis.SET(randomKey, user.email, errSaveRedis => {
@@ -148,6 +146,21 @@ const login = (req, returnData, callback) => {
                                         return callback(err);
                                     }
                                     returnData.data = jsonData;
+                                    saveLoginHistory(user._id, platform);
+                                    createNotification({
+                                        user: user._id,
+                                        type: "user",
+                                        priority: 0,
+                                        title: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
+                                        link: `${process.env.ML_MY_DOMAIN}/auth/session-management`
+                                    }, (errNoti, dataNoti) => {
+                                        if(errNoti){
+                                            winstonLogger.error("Save notification failed");
+                                        }
+                                        else {
+                                            wsSendJSON("user", {...dataNoti.toObject()})
+                                        }
+                                    })
                                     callback();
                                 })
                             })                    
@@ -220,8 +233,7 @@ const generateOTP = (req, returnData, callback) => {
  * if user use two factor authentication, use this function to check otp sent from client
  */
 const checkUserTFA = (req, returnData, callback) => {
-    const hashedSecret = req.params.r;
-    const token = req.params.t;
+    const {hashedSecret, token, platform} = req.params;
     redis.GET(hashedSecret, (err, secretData) => {
         if(err){
             winstonLogger.error(`Redis error get key ${hashedSecret}: ${JSON.stringify(err)}`);
@@ -272,6 +284,7 @@ const checkUserTFA = (req, returnData, callback) => {
                                         if(err){
                                             return callback(err);
                                         }
+                                        saveLoginHistory(userId, platform);
                                         returnData.data = jsonData;
                                         callback();
                                     })

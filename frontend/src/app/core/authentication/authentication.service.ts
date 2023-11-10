@@ -70,9 +70,9 @@ export class AuthService {
     /**
      * verify OTP
      */
-    verifyOTP(hashedSecret: string, otp: string){
+    verifyOTP(hashedSecret: string, otp: string, platform: Object){
         const api_name: string = "api.v1.systemuser.checktfa";
-        return this.http.post<User>(environment.SERVER_URL, { api_name, r: hashedSecret, t: otp }, { observe: "body" });
+        return this.http.post<User>(environment.SERVER_URL, { api_name, r: hashedSecret, t: otp, platform }, { observe: "body" });
     }
 
     /**
