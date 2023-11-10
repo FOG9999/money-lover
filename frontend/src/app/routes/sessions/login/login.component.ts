@@ -8,8 +8,12 @@ import { CONSTS } from 'app/consts';
 import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil, Subject } from 'rxjs';
-import { isDevMode } from '@angular/core';
 import { WSLambdaService } from '@shared/services/money-lover/ws-lambda.service';
+
+/**
+ * information about browser and os
+ */
+declare var platform: any;
 
 @Component({
   selector: 'app-login',
@@ -65,7 +69,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login() {
     let { username, password } = this.reactiveForm.value;
-    this.authService.login(username, password).subscribe(res => {
+    this.authService.login(username, password, platform).subscribe(res => {
       if (res && Object.keys(res).includes('_id')) {
         this.localStorage.set('user', res);
         this.wsLambda.initClient();

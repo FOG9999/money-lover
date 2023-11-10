@@ -10,9 +10,9 @@ export class AuthService {
 
     constructor(private http: HttpClient) {}
 
-    login(username: string, password: string) {
+    login(username: string, password: string, platform: any) {
         let api_name = "api.v1.systemuser.login";
-        return this.http.post<{email: string, rd: string} | User>(environment.SERVER_URL, {username, password, api_name}, {observe: 'body'})
+        return this.http.post<{email: string, rd: string} | User>(environment.SERVER_URL, {username, password, api_name, platform}, {observe: 'body'})
     }
 
     createUser(data: {

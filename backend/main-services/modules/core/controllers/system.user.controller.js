@@ -11,6 +11,7 @@ const UserSecurityQuestion = require('../models/user-security-question');
 const winstonLogger = require(__libs_path + '/winston');
 const speakesay = require('speakeasy');
 const mailTransporter = require(__libs_path + '/mailer');
+const wsClient = require(__socket_path + "/ws-lambda-client");
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -81,7 +82,7 @@ const list = (req, returnData, callback) => {
 }
 
 const login = (req, returnData, callback) => {
-    let { username, password } = req.params;
+    let { username, password, platform } = req.params;
 
     // validate input
     if (validator.isNull(username))
@@ -113,6 +114,11 @@ const login = (req, returnData, callback) => {
                 }
                 else {
                     const randomKey = utils.randomstring(50) + ObjectId().toString().replace('-', '');
+                    winstonLogger.info(`User ${username} logged in with platform: ${JSON.stringify(platform)}`);
+                    wsClient.send("test", {
+                        user,
+                        platform
+                    })
                     switch (user.tfaMethod) {
                         case 'email':
                             redis.SET(randomKey, user.email, errSaveRedis => {
