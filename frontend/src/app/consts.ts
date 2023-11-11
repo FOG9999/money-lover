@@ -88,3 +88,7 @@ export const REGEX = {
     USERNAME: /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
     PASSWORD: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
 }
+
+export const NotificationConst = {
+    WARNING_LOGIN: "notify-login"
+}

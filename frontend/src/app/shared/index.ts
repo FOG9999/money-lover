@@ -11,6 +11,7 @@ export * from './services/money-lover/account-guard.service';
 export * from './services/passport-login.service'
 export * from './services/security-question.service'
 export * from './services/auth-data.service'
+export * from './services/notification.service'
 
 // Utils
 export * from './utils/colors';

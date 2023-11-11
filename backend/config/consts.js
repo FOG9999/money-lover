@@ -106,5 +106,8 @@ module.exports = {
     /**
      * paths that ignore authorization checks
      */
-    ignoreAuthorization: ['/api/health-check']
+    ignoreAuthorization: ['/api/health-check'],
+    wsRoute: {
+        notification: "notification"
+    }
 }

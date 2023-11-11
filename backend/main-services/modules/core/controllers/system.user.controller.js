@@ -158,7 +158,7 @@ const login = (req, returnData, callback) => {
                                             winstonLogger.error("Save notification failed");
                                         }
                                         else {
-                                            wsSendJSON("user", {...dataNoti.toObject()})
+                                            wsSendJSON(consts.wsRoute.notification, {...dataNoti.toObject()})
                                         }
                                     })
                                     callback();

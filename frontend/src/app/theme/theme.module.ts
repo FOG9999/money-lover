@@ -22,6 +22,7 @@ import { TranslateComponent } from './header/translate.component';
 import { UserComponent } from './header/user.component';
 
 import { CustomizerComponent } from './customizer/customizer.component';
+import { PriorityDialogComponent } from './notification/priority-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { CustomizerComponent } from './customizer/customizer.component';
     TranslateComponent,
     UserComponent,
     CustomizerComponent,
+    PriorityDialogComponent
   ],
   imports: [SharedModule],
 })

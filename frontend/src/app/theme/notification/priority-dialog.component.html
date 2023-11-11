@@ -1,0 +1,13 @@
+<div class="priority-dialog-container">
+  <h1 mat-dialog-title [class]="'warning-priority-'+data.priority">Cảnh báo cấp độ {{data.priority}}</h1>
+  <div mat-dialog-content>
+    <p>{{data.title}}</p>
+    <ng-container *ngIf="data.link">
+      <a [href]="data.link" target="_blank" rel="noopener noreferrer">Đi tới</a>
+    </ng-container>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="noRepeat()">Không nhắc lại</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Đã hiểu</button>
+  </div>
+</div>
