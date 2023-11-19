@@ -11,3 +11,52 @@
 21.d/a
 22.a,d
 23.b,d
+--------------------
+***11/11/23***
+
+24?. d,b/ a,b (interface endpoint and gateway endpoint - only s3 and dynamoDB support gateway endpoint?? - only uses aws network, gw endpoint is free)
+25. d / c (d is wrong - new data will be encrypted but old data isnt)
+26. a (kinesis data stream, data firehose (differ with data stream is to have an ability to analyse and tranform data; sqs - is for message queue )
+27. a
+28. c
+29?. d 
+30. c,e
+31*. b / c
+32. c (route 53 - geolocation (based on location of users) vs geoproximity policy (based on location of resources, to optional switch from one to another else where)
+33. a,b
+-------------------
+****12/11/23*****
+34. b
+(
+- S3 Standard offers high durability, availability, and performance object storage for frequently accessed data.
+- S3 Intelligent-Tiering - utomatically reduces your storage costs on a granular object level by automatically moving data to the most cost-effective access tier based on access frequency, without performance impact, retrieval fees, or operational overhead.
+- S3 Standard-IA is for data that is accessed less frequently, but requires rapid access when needed.
+- S3 One Zone-IA is for data that is accessed less frequently, but requires rapid access when needed. Unlike other S3 Storage Classes which store data in a minimum of three Availability Zones (AZs), S3 One Zone-IA stores data in a single AZ and costs 20% less than S3 Standard-IA.
+- Amazon S3 Glacier Instant Retrieval is an archive storage class that delivers the lowest-cost storage for long-lived data that is rarely accessed and requires retrieval in milliseconds.
+- S3 Glacier Flexible Retrieval delivers low-cost storage, up to 10% lower cost (than S3 Glacier Instant Retrieval), for archive data that is accessed 1—2 times per year and is retrieved asynchronously. For archive data that does not require immediate access but needs the flexibility to retrieve large sets of data at no cost, such as backup or disaster recovery use cases, S3 Glacier Flexible Retrieval (formerly S3 Glacier) is the ideal storage class.
+- S3 Glacier Deep Archive is Amazon S3’s lowest-cost storage class and supports long-term retention, designed for customers—particularly those in highly-regulated industries, such as financial services, healthcare, and public sectors—that retain data sets for 7—10 years or longer.
+- Amazon S3 on Outposts delivers object storage to your on-premises AWS Outposts environment.
+)
+35. a/b (network ACL not works with cloudFront because cloudfront doesnt sit in a subnet)
+36?. c?a (sqs - standard: occasionally delivered more than once, may not in the order they are sent; FIFO - delivered once, in exact order)
+37. c (elb includes classic, application, network, gateway lb)
+38. d
+39. b (auto scaling group ec2 - target tracking policy: based on cloudwatch metrics (especially for CPU utilization), step scaling: based on set of scaling adjustment, simple scaling: based on single adjustment)
+40?. c?a (The main issue with simple scaling is that after a scaling activity is started, the policy must wait for the scaling activity or health check replacement to complete and the cooldown period to end before responding to additional alarms. 
+with step scaling the policy can continue to respond to additional alarms, even while a scaling activity or health check replacement is in progress)
+41. a/d (multi az not multi regions)
+42. b
+43. b
+44. c/a (microsoft active directory (AD) - manage users, accounts on the network for others can access)
+45. d/a (s3 versioning - if deleted, still can be restored)
+46. c/b (RDS is a managed service and AWS handles the scaling part. You don't get to choose an ASG)
+47*. c/b
+48. c (An instance store provides "temporary" block-level storage for your instance, that changes frequently, such as buffers, caches, scratch data, and other temporary content)
+49. d
+50. d /b (The S3 Standard-IA and S3 One Zone-IA storage classes are suitable for objects larger than 128 KB that you plan to store for at least 30 days)
+51. c
+52. d
+53. d
+------------------------------
+Continue at:
+https://docs.google.com/document/d/1rSmEqXY9mgr3u-KL6io6bH6xo5Pnne5VnLx5Wyp44j4/edit

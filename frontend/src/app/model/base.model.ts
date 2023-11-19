@@ -6,3 +6,9 @@ export interface Base {
     isDelete?: boolean,
     dateUpdated?: Date,
 }
+
+export interface BaseSearch {
+    search: string;
+    page: number;
+    size: number;
+}

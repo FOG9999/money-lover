@@ -44,6 +44,69 @@ const create = (data, callback) => {
     })
 }
 
+const list = (req, returnData, callback) => {
+    let { search, isRead, type, page, size } = req.params;
+    let user = req.user._id;
+    let query = {};
+    if (!validator.isNull(isRead)) {
+        query['isRead'] = isRead;
+    }
+    if (!validator.isNull(type)) {
+        query['type'] = type;
+    }
+    if (validator.isNull(page)) {
+        page = 0;
+    }
+    if (validator.isNull(size)) {
+        size = consts.page_size;
+    }
+
+    query = {
+        ...query,
+        user: ObjectId(user),
+        $and: [
+            {
+                $or: [
+                    {
+                        description: new RegExp(search, 'i')
+                    },
+                    {
+                        link: new RegExp(search, 'i')
+                    }
+                ]
+            }
+        ]
+    }
+
+    Notification
+    .find()
+    .where(query)
+    .sort({ dateCreated: -1 })
+    .skip(page*size)
+    .limit(size)
+    .exec((err, results) => {
+        if (err) {
+            winstonLogger.error(`Error searching notification: ${JSON.stringify(err)}`)
+            return callback(err);
+        }
+        // calculate count
+        Notification.aggregate([{
+            $match: query
+        }, {
+            $count: "total"
+        }])
+        .exec((errCount, result) => {
+            if(errCount || !result[0]){
+                winstonLogger.error(`Error searching notification with total: ${errCount ? JSON.stringify(errCount) : 'result with total empty'}`)
+                return callback(errCount);
+            }
+            returnData.set({results, total: result[0].total});
+            callback();
+        })
+    })
+}
+
 module.exports = {
-    createNotification: create
+    createNotification: create,
+    list
 }

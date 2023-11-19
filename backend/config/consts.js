@@ -108,6 +108,7 @@ module.exports = {
      */
     ignoreAuthorization: ['/api/health-check'],
     wsRoute: {
-        notification: "notification"
+        notification: "notification",
+        loginWarningTopic: "notify-login"
     }
 }

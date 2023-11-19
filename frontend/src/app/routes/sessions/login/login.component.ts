@@ -8,7 +8,7 @@ import { CONSTS } from 'app/consts';
 import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil, Subject } from 'rxjs';
-import { WSLambdaService } from '@shared/services/money-lover/ws-lambda.service';
+import { WSLambdaService } from '@shared/services/ws-lambda.service';
 
 /**
  * information about browser and os

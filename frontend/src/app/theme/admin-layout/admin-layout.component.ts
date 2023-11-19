@@ -19,7 +19,7 @@ import { StartupService } from '@core';
 
 import { SettingsService, AppSettings } from '@core';
 import { AppDirectionality, LocalStorageService } from '@shared';
-import { WSLambdaService } from '@shared/services/money-lover/ws-lambda.service';
+import { WSLambdaService } from '@shared/services/ws-lambda.service';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';

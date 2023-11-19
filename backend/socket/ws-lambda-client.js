@@ -28,9 +28,9 @@ const initClient = () => {
     })
 }
 
-const wsSendJSON = (message, data) => {
+const wsSendJSON = (message, topic, data) => {
     if(global.wsClient){
-        global.wsClient.send(JSON.stringify({message, data}));
+        global.wsClient.send(JSON.stringify({message, data, topic}));
     }
 }
 

@@ -66,7 +66,10 @@ const list = (req, returnData, callback) => {
         .skip(page*size)
         .limit(size)
         .exec((err, results) => {
-            if (err) return callback(err);
+            if (err) {
+                winstonLogger.error(`Error searching users: ${JSON.stringify(err)}`)
+                return callback(err);
+            }
             // calculate count
             User.aggregate([{
                 $match: query
@@ -75,6 +78,7 @@ const list = (req, returnData, callback) => {
             }])
             .exec((errCount, result) => {
                 if(errCount || !result[0]){
+                    winstonLogger.error(`Error searching users when arregate total: ${errCount ? JSON.stringify(errCount) : 'result with total empty'}`)
                     return callback(errCount);
                 }
                 returnData.set({results, total: result[0].total});
@@ -150,7 +154,7 @@ const login = (req, returnData, callback) => {
                                     createNotification({
                                         user: user._id,
                                         type: "user",
-                                        priority: 0,
+                                        priority: 1,
                                         title: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
                                         link: `${process.env.ML_MY_DOMAIN}/auth/session-management`
                                     }, (errNoti, dataNoti) => {
@@ -158,7 +162,7 @@ const login = (req, returnData, callback) => {
                                             winstonLogger.error("Save notification failed");
                                         }
                                         else {
-                                            wsSendJSON(consts.wsRoute.notification, {...dataNoti.toObject()})
+                                            wsSendJSON(consts.wsRoute.notification, consts.wsRoute.loginWarningTopic, {...dataNoti.toObject()})
                                         }
                                     })
                                     callback();
