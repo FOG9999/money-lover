@@ -151,20 +151,7 @@ const login = (req, returnData, callback) => {
                                     }
                                     returnData.data = jsonData;
                                     saveLoginHistory(user._id, platform);
-                                    createNotification({
-                                        user: user._id,
-                                        type: "user",
-                                        priority: 1,
-                                        title: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
-                                        link: `${process.env.ML_MY_DOMAIN}/auth/session-management`
-                                    }, (errNoti, dataNoti) => {
-                                        if(errNoti){
-                                            winstonLogger.error("Save notification failed");
-                                        }
-                                        else {
-                                            wsSendJSON(consts.wsRoute.notification, consts.wsRoute.loginWarningTopic, {...dataNoti.toObject()})
-                                        }
-                                    })
+                                    notifyLogin(user, platform);
                                     callback();
                                 })
                             })                    
@@ -173,6 +160,27 @@ const login = (req, returnData, callback) => {
                 }
             }
         })
+}
+
+/**
+ * save notification to DB and notify login to sessions with the same user
+ */
+const notifyLogin = (user, platform) => {
+    createNotification({
+        user: user._id,
+        type: "user",
+        priority: 1,
+        description: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
+        title: "Phát hiện đăng nhập",
+        link: `${process.env.ML_MY_DOMAIN}/auth/session-management`
+    }, (errNoti, dataNoti) => {
+        if(errNoti){
+            winstonLogger.error("Save notification failed");
+        }
+        else {
+            wsSendJSON(consts.wsRoute.notification, consts.wsRoute.loginWarningTopic, {...dataNoti.toObject()})
+        }
+    })
 }
 
 /**
@@ -289,6 +297,7 @@ const checkUserTFA = (req, returnData, callback) => {
                                             return callback(err);
                                         }
                                         saveLoginHistory(userId, platform);
+                                        notifyLogin(user, platform);
                                         returnData.data = jsonData;
                                         callback();
                                     })

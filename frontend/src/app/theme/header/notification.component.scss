@@ -1,0 +1,9 @@
+::ng-deep .list-notification-container {
+    width: 300px;
+    .notify-icon-highlight {
+        color: red;
+    }
+    .date-create {
+        font-style: italic;
+    }
+}

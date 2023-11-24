@@ -5,33 +5,49 @@ import { environment } from '@env/environment';
 import { PriorityDialogComponent } from '@theme/notification/priority-dialog.component';
 import { BaseSearch } from 'app/model/base.model';
 import { Notification } from 'app/model/notification.model';
-import { Subject } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Subject, take } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class NotificationService {
-    constructor(private dialogService: MatDialog, private http: HttpClient) { }
+    constructor(private dialogService: MatDialog, private http: HttpClient, private toastService: ToastrService) { }
 
     private notificationCount: number = 0;
-    notificationsChange$ = new Subject<number>();
+    notificationsChange$ = new Subject<Partial<Notification>>();
     
-    warningLogin(notification: Partial<Notification>){
-        this.dialogService.open(PriorityDialogComponent, {
-            width: '300px',
-            data: {...notification}
-        })
+    notify(notification: Partial<Notification>){
+        if(notification.priority <= 1){
+            this.openNotifyDetail(notification);
+        }
+        else {
+            this.toastService.warning(notification.description, notification.title).onTap.pipe(take(1)).subscribe(() => {
+                this.openNotifyDetail(notification);
+            })
+        }
     }
 
-    setNotificationCount(count: number){
-        this.notificationCount = count;
-        this.notificationsChange$.next(count);
+    putNotification(notification: Partial<Notification>){
+        this.notificationCount += 1;
+        this.notificationsChange$.next(notification);
     }
 
     getNotificationCount(){
         return this.notificationCount;
     }
 
+    setNotificationCount(count: number){
+        this.notificationCount = count;
+    }
+
     getListNotification(params: Partial<Notification & BaseSearch>){
         const api_name: string = "api.v1.notification.list";
         return this.http.post<{results: Partial<Notification>[], total: number}>(environment.SERVER_URL, { api_name, ...params }, { observe: "body" });
+    }
+
+    openNotifyDetail(notification: Partial<Notification>){
+        this.dialogService.open(PriorityDialogComponent, {
+            width: '400px',
+            data: {...notification}
+        })
     }
 }

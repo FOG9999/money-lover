@@ -17,12 +17,10 @@ export class WSLambdaService {
         if (this.localStorage.get("user") && this.localStorage.get("user").token && this.localStorage.get("user")._id && !this.wsClient) {
             this.wsClient = createWSClient(this.localStorage.get("user").token, this.localStorage.get("user")._id);
             this.wsClient.onmessage = ({ data }) => { // MessageEvent type has 'data' prop, not the object was sent from websocket
-                this.notifyService.setNotificationCount(this.notifyService.getNotificationCount() + 1);
                 console.log(`receive message: ${JSON.stringify(data)}`);
                 data = JSON.parse(data);
-                if (data.topic == NotificationConst.WARNING_LOGIN) {
-                    this.notifyService.warningLogin(data.notification);
-                }
+                this.notifyService.putNotification(data.notification);
+                this.notifyService.notify(data.notification);
             }
         }
     }

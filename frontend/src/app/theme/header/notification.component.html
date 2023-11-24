@@ -1,0 +1,23 @@
+<ng-container *ngIf="messages.length; else emptyListTpl">
+    <button mat-icon-button class="matero-toolbar-button" [matMenuTriggerFor]="menu" (menuOpened)=onOpenMenu()>
+        <mat-icon>notifications</mat-icon>
+        <span class="badge bg-red-500">{{count}}</span>
+    </button>
+    
+    <mat-menu #menu="matMenu" class="list-notification-container">
+        <mat-nav-list>
+            <div mat-subheader>Thông báo</div>
+            <mat-list-item *ngFor="let message of messages">
+                <mat-icon mat-list-icon [ngClass]="{'notify-icon-highlight': message.priority <= 1}">{{ message.priority <= 1 ? "warning": "info"}}</mat-icon>
+                <div mat-line>{{message.title}}</div>
+                <div mat-line class="notification-description">{{message.description}}</div>
+                <div mat-line class="date-create">{{message.dateCreated | date:"dd/MM/yyyy HH:mm"}}</div>
+            </mat-list-item>
+        </mat-nav-list>
+    </mat-menu>
+</ng-container>
+<ng-template #emptyListTpl>
+    <button mat-icon-button class="matero-toolbar-button">
+        <mat-icon>notifications</mat-icon>
+    </button>
+</ng-template>

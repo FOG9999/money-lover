@@ -1,27 +1,13 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NotificationService } from '@shared';
 import { ComponentDestroy } from '@shared/components/component-destroy/component-destroy';
+import { Notification } from 'app/model/notification.model';
 import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
-  template: `
-    <button mat-icon-button class="matero-toolbar-button" [matMenuTriggerFor]="menu">
-      <mat-icon>notifications</mat-icon>
-      <span class="badge bg-red-500">{{count}}</span>
-    </button>
-
-    <mat-menu #menu="matMenu" (menuOpened)=onOpenMenu($event)>
-      <mat-nav-list>
-        <mat-list-item *ngFor="let message of messages">
-          <a matLine href="#">{{ message.title }}</a>
-          <button mat-icon-button>
-            <mat-icon>info</mat-icon>
-          </button>
-        </mat-list-item>
-      </mat-nav-list>
-    </mat-menu>
-  `,
+  templateUrl: 'notification.component.html',
+  styleUrls: ['notification.component.scss']
 })
 export class NotificationComponent extends ComponentDestroy implements OnInit, OnDestroy {
 
@@ -35,8 +21,9 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
 
   ngOnInit(): void {
     this.getListNotify();
-    this.notifyService.notificationsChange$.pipe(takeUntil(this.destroy$)).subscribe(notiCount => {
-      this.count = notiCount;
+    this.notifyService.notificationsChange$.pipe(takeUntil(this.destroy$)).subscribe(newNotification => {
+      this.count = this.count + 1;
+      this.cdr.detectChanges();
     })
   }
 
@@ -44,15 +31,15 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
   count: number = 0;
 
   getListNotify(){
-    this.notifyService.getListNotification({isRead: false, size: 1000}).subscribe(res => {
+    this.notifyService.getListNotification({isRead: false, size: 5}).subscribe(res => {
       this.messages = res.results;
       this.count = res.total;
+      this.notifyService.setNotificationCount(res.total);
       this.cdr.detectChanges()
     })
   }
 
-  onOpenMenu(evt: Event){
-    console.log(evt);
+  onOpenMenu(){
     this.getListNotify();
   }
 }
