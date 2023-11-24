@@ -23,6 +23,7 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
     this.getListNotify();
     this.notifyService.notificationsChange$.pipe(takeUntil(this.destroy$)).subscribe(newNotification => {
       this.count = this.count + 1;
+      this.messages = [newNotification, ...this.messages];
       this.cdr.detectChanges();
     })
   }
@@ -41,5 +42,9 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
 
   onOpenMenu(){
     this.getListNotify();
+  }
+
+  openDetailNotification(message: Partial<Notification>){
+    this.notifyService.openNotifyDetail(message);
   }
 }

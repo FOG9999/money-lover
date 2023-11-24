@@ -166,20 +166,13 @@ const login = (req, returnData, callback) => {
  * save notification to DB and notify login to sessions with the same user
  */
 const notifyLogin = (user, platform) => {
-    createNotification({
+    wsSendJSON(consts.wsRoute.notification, consts.wsRoute.loginWarningTopic, {
         user: user._id,
         type: "user",
         priority: 1,
         description: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
         title: "Phát hiện đăng nhập",
         link: `${process.env.ML_MY_DOMAIN}/auth/session-management`
-    }, (errNoti, dataNoti) => {
-        if(errNoti){
-            winstonLogger.error("Save notification failed");
-        }
-        else {
-            wsSendJSON(consts.wsRoute.notification, consts.wsRoute.loginWarningTopic, {...dataNoti.toObject()})
-        }
     })
 }
 
