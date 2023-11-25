@@ -92,3 +92,5 @@ export const REGEX = {
 export const NotificationConst = {
     WARNING_LOGIN: "notify-login"
 }
+
+export const CloudFrontIconsOrigin = "https://dml40u9hsdq8f.cloudfront.net/icons/"

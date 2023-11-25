@@ -17,7 +17,6 @@ export class IconManagementComponent implements OnInit, OnChanges {
 
     @Input() startLoadAllIcons: boolean = false;
     @Input() icons: Icon[];
-    allIcons: Icon[] = [];
 
     ngOnInit() { }
 
@@ -28,11 +27,6 @@ export class IconManagementComponent implements OnInit, OnChanges {
         if(changes.startLoadAllIcons){
             if(changes.startLoadAllIcons.currentValue){
                 console.log('start loading all icons ...');
-                this.allIcons = this.icons.map(i => ({...i, path: ''}));
-                setTimeout(() => { // wait till tab's switching animation finished         
-                    console.log('processing images ...');
-                    this.processImages(this.icons);
-                }, 2000);
             }
         }
     }
@@ -46,19 +40,4 @@ export class IconManagementComponent implements OnInit, OnChanges {
     }
 
     currentRenderLength: number = 0;
-
-    processImages(restIcons: Icon[]){
-        if(!restIcons.length) return;
-        let clone = [...this.allIcons];
-        let index = this.currentRenderLength;
-        for (; index < this.icons.length && index < this.currentRenderLength + 15; index++) {
-            clone[index].path = this.icons[index].path;
-        }
-        this.currentRenderLength = index;
-        this.allIcons = [...clone];
-        console.log(`${Math.round(this.currentRenderLength / this.icons.length * 100)}%`)
-        timer(1000).subscribe(() => {
-            this.processImages(this.icons.filter((_, ind) => ind >= this.currentRenderLength));
-        })
-    }
 }

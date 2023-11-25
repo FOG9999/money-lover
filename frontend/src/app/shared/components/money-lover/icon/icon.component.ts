@@ -13,7 +13,7 @@ export class MLIconComponent implements OnInit, OnChanges {
 
     @Input()
     path: string;
-    @Input() loadingConfig: {[k: string]: any} = {
+    @Input() loadingConfig: { [k: string]: any } = {
         width: '150px',
         height: '150px'
     }
@@ -31,17 +31,12 @@ export class MLIconComponent implements OnInit, OnChanges {
 
     getIcon(path: string) {
         this.loading = true;
-        if(!path){
+        if (!path) {
             return;
         }
-        if(sessionStorage.getItem(path)){
-            this.data = sessionStorage.getItem(path);
-            this.loading = false;
-        }
-        else this.iconService.getBase64Icon(path).subscribe(res => {
+        this.iconService.getBase64Icon(path).subscribe(res => {
             this.data = res;
             this.loading = false;
-            sessionStorage.setItem(path, res);
         });
     }
 }

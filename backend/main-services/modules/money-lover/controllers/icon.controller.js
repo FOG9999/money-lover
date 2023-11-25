@@ -3,6 +3,7 @@ const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
 const { v4: uuid } = require('uuid');
+const { putIconsToBucket } = require('../../../../libs/aws-s3');
 const redis = require(__libs_path + '/redis');
 const consts = require('../../../../config/consts'),
 mongoose = require('mongoose'),
@@ -205,42 +206,47 @@ const uploadIcon = (req, returnData, callback) => {
         file = file.replace(/^data:image\/png;base64,/, "");
         let code = uuid().toString(), path = code + consts.icon_type;
         let filePath = __icons_path + '/' + code + consts.icon_type;
-        fs.writeFileSync(filePath, file, 'base64');
-        const creator = req.user;
-        async.series([
-            function (cb) {
-                Icon
-                    .findOne()
-                    .where({ code: code, path: path })
-                    .exec((err, data) => {
-                        if (err) {
-                            cb(err);
-                        }
-                        if (data) {
-                            cb('ERROR_ICON_EXIST');
-                        }
-                        else cb();
-                    })
-            },
-            function (cb) {
-                let newIcon = new Icon({
-                    code,
-                    path,
-                    creator: creator._id,
-                    dateCreated: new Date()
-                })
-                newIcon.save((err, result) => {
-                    if (err) cb(err);
-                    else {
-                        cb(null, result);
-                    }
-                })
-            }
-        ], (err, data) => {
-            if (err) return callback(err);
-            returnData.set(data);
+        putIconsToBucket(code + consts.icon_type, file, (errS3, outputS3) => {
+            if (errS3) return callback(errS3);
+            returnData.set(outputS3);
             callback();
         })
+        // fs.writeFileSync(filePath, file, 'base64');
+        // const creator = req.user;
+        // async.series([
+        //     function (cb) {
+        //         Icon
+        //             .findOne()
+        //             .where({ code: code, path: path })
+        //             .exec((err, data) => {
+        //                 if (err) {
+        //                     cb(err);
+        //                 }
+        //                 if (data) {
+        //                     cb('ERROR_ICON_EXIST');
+        //                 }
+        //                 else cb();
+        //             })
+        //     },
+        //     function (cb) {
+        //         let newIcon = new Icon({
+        //             code,
+        //             path,
+        //             creator: creator._id,
+        //             dateCreated: new Date()
+        //         })
+        //         newIcon.save((err, result) => {
+        //             if (err) cb(err);
+        //             else {
+        //                 cb(null, result);
+        //             }
+        //         })
+        //     }
+        // ], (err, data) => {
+        //     if (err) return callback(err);
+        //     returnData.set(data);
+        //     callback();
+        // })
     } catch (error) {
         callback(error);
     }
