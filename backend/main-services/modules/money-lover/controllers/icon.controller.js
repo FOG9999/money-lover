@@ -63,88 +63,6 @@ const getIconByPath = (req, returnData, callback) => {
         })
 }
 
-const addIcon = (req, returnData, callback) => {
-    const { code, path } = req.params;
-    const creator = req.user;
-
-    if (validator.isNull(code)) {
-        return callback('ERROR_CODE_MISSING');
-    }
-    if (validator.isNull(path)) {
-        return callback('ERROR_PATH_MISSING');
-    }
-
-    async.series([
-        function (cb) {
-            Icon
-                .findOne()
-                .where({ code: code, path: path })
-                .exec((err, data) => {
-                    if (err) {
-                        cb(err);
-                    }
-                    if (data) {
-                        cb('ERROR_ICON_EXIST');
-                    }
-                    else cb();
-                })
-        },
-        function (cb) {
-            let newIcon = new Icon({
-                code,
-                path,
-                creator: creator._id,
-                dateCreated: new Date()
-            })
-            newIcon.save((err, result) => {
-                if (err) cb(err);
-                else {
-                    cb(null, result);
-                }
-            })
-        }
-    ], (err, data) => {
-        if (err) return callback(err);
-        returnData.set(data);
-        callback();
-    })
-
-}
-
-const updateIcon = (req, returnData, callback) => {
-    let { code, path, id } = req.params;
-
-    if (validator.isNull(code)) {
-        return callback('ERROR_CODE_MISSING');
-    }
-    if (validator.isNull(path)) {
-        return callback('ERROR_PATH_MISSING');
-    }
-    if (!validator.isMongoId(id)) {
-        return callback('ERROR_ID_MISSING');
-    }
-
-    Icon
-        .findOne()
-        .where({ _id: id })
-        .exec((err, result) => {
-            if (err) {
-                return callback(err);
-            }
-            if (!result) {
-                return callback('ERROR_ICON_NOT_FOUND');
-            }
-            else {
-                utils.merge(result, { code, path });
-                result.save(function (error, data) {
-                    if (error) return callback(error);
-                    returnData.set(data);
-                    callback();
-                });
-            }
-        })
-}
-
 const deleteIcon = (req, returnData, callback) => {
     let { ids, paths } = req.params;
 
@@ -164,19 +82,6 @@ const deleteIcon = (req, returnData, callback) => {
             }
         }, (err, data) => {
             if (err) return callback(err);
-            // remove icons in cache storage
-            paths.forEach(path => {
-                redis.HEXISTS(consts.redis_key.icon, path, (err, exists) => {
-                    if(err){
-                        console.error(err);
-                    }
-                    else {
-                        if(exists == 1){
-                            redis.DEL(consts.redis_key.icon, path);
-                        }
-                    }
-                })
-            })
             callback();            
         })
 }
@@ -205,48 +110,22 @@ const uploadIcon = (req, returnData, callback) => {
         let { file } = req.body;
         file = file.replace(/^data:image\/png;base64,/, "");
         let code = uuid().toString(), path = code + consts.icon_type;
-        let filePath = __icons_path + '/' + code + consts.icon_type;
-        putIconsToBucket(code + consts.icon_type, file, (errS3, outputS3) => {
-            if (errS3) return callback(errS3);
-            returnData.set(outputS3);
-            callback();
+        let newIcon = new Icon({
+            code,
+            path,
+            creator: creator._id,
+            dateCreated: new Date()
         })
-        // fs.writeFileSync(filePath, file, 'base64');
-        // const creator = req.user;
-        // async.series([
-        //     function (cb) {
-        //         Icon
-        //             .findOne()
-        //             .where({ code: code, path: path })
-        //             .exec((err, data) => {
-        //                 if (err) {
-        //                     cb(err);
-        //                 }
-        //                 if (data) {
-        //                     cb('ERROR_ICON_EXIST');
-        //                 }
-        //                 else cb();
-        //             })
-        //     },
-        //     function (cb) {
-        //         let newIcon = new Icon({
-        //             code,
-        //             path,
-        //             creator: creator._id,
-        //             dateCreated: new Date()
-        //         })
-        //         newIcon.save((err, result) => {
-        //             if (err) cb(err);
-        //             else {
-        //                 cb(null, result);
-        //             }
-        //         })
-        //     }
-        // ], (err, data) => {
-        //     if (err) return callback(err);
-        //     returnData.set(data);
-        //     callback();
-        // })
+        newIcon.save((err, result) => {
+            if (err) cb(err);
+            else {
+                putIconsToBucket(code + consts.icon_type, file, (errS3, outputS3) => {
+                    if (errS3) return callback(errS3);
+                    returnData.set(outputS3);
+                    callback(null, result);
+                })
+            }
+        })
     } catch (error) {
         callback(error);
     }
@@ -254,9 +133,7 @@ const uploadIcon = (req, returnData, callback) => {
 
 exports.deleteIcon = deleteIcon;
 exports.listIcons = listIcons;
-exports.addIcon = addIcon;
 exports.getIcon = getIcon;
-exports.updateIcon = updateIcon;
 exports.insertAllIcons = insertAllIcons;
 exports.getIconByPath = getIconByPath;
 exports.uploadIcon = uploadIcon;
