@@ -5,7 +5,7 @@
         <div class="wallet-type-container p-b-4 p-t-32 position-relative" fxFlex="80" (mouseenter)="onMouseEnterEdit(i)"
             (mouseleave)="onMouseLeaveEdit()">
             <div (click)="editWalletTypeIcon(i)">
-                <ml-icon [path]="walletType.icon.path" matLine></ml-icon>
+                <ml-icon [path]="walletType.icon.path" [loadingConfig]="{width: '200px', height: '200px'}" matLine></ml-icon>
             </div>
             <div class="text-center" matLine *ngIf="indexEditting != i; else editting">
                 {{walletType.name}}

@@ -41,7 +41,7 @@ export class NotificationService {
 
     getListNotification(params: Partial<Notification & BaseSearch>){
         const api_name: string = "api.v1.notification.list";
-        return this.http.post<{results: Partial<Notification>[], totalUnread: number}>(environment.SERVER_URL, { api_name, ...params }, { observe: "body" });
+        return this.http.post<{results: Partial<Notification>[], totalUnread: number, totalAll: number}>(environment.SERVER_URL, { api_name, ...params }, { observe: "body" });
     }
 
     openNotifyDetail(notification: Partial<Notification>){

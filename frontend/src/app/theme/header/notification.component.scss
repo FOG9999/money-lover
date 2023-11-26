@@ -1,5 +1,5 @@
-::ng-deep .list-notification-container {
-    width: 300px;
+::ng-deep div.list-notification-container {
+    max-width: 400px;
     .notify-icon-highlight {
         color: red;
     }
@@ -26,5 +26,13 @@
     }
     mat-list-item.unread-message {
         background: rgba(0, 0, 0, 0.1);
+    }
+    .list-content {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .loading-more-container {
+        display: flex;
+        justify-content: center;
     }
 }

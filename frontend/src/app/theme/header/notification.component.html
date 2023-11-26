@@ -13,15 +13,20 @@
                 </span>
             </div>
         </div>
-        <mat-list-item *ngFor="let message of messages" (click)="openDetailNotification(message)" [ngClass]="{'unread-message': message.isRead == false}">
-            <mat-icon mat-list-icon [ngClass]="{'notify-icon-highlight': message.priority <= 1}">{{ message.priority <= 1 ? "warning": "info"}}</mat-icon>
-            <div mat-line>{{message.title}}</div>
-            <div mat-line class="notification-description">{{message.description}}</div>
-            <div mat-line class="date-create">{{message.dateCreated | date:"dd/MM/yyyy HH:mm"}}</div>
-        </mat-list-item>
+        <div class="list-content" (wheel)="onScrollList()">
+            <mat-list-item *ngFor="let message of messages" (click)="openDetailNotification(message)" [ngClass]="{'unread-message': message.isRead == false}">
+                <mat-icon mat-list-icon [ngClass]="{'notify-icon-highlight': message.priority <= 1}">{{ message.priority <= 1 ? "warning": "info"}}</mat-icon>
+                <div mat-line>{{message.title}}</div>
+                <div mat-line class="notification-description">{{message.description}}</div>
+                <div mat-line class="date-create">{{message.dateCreated | date:"dd/MM/yyyy HH:mm"}}</div>
+            </mat-list-item>
+            <div class="loading-more-container" *ngIf="loadingMore">
+                <mat-spinner [strokeWidth]="1" [diameter]="20"></mat-spinner>
+            </div>
+            <div class="scroll-down-container" *ngIf="totalAll > messages.length">
+                <mat-icon>keyboard_arrow_down</mat-icon> 
+                <div style="display: flex; align-items: center;"></div>Lăn chuột xuống để xem thêm
+            </div>
+        </div>
     </mat-nav-list>
-    <div class="scroll-down-container">
-        <mat-icon>keyboard_arrow_down</mat-icon> 
-        <div style="display: flex; align-items: center;"></div>Lăn chuột xuống để xem thêm
-    </div>
 </mat-menu>

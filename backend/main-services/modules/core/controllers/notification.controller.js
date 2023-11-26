@@ -7,7 +7,7 @@ let mongoose = require('mongoose'),
 const redis = require(__libs_path + '/redis');
 const Notification = require('../models/notification');
 const winstonLogger = require(__libs_path + '/winston');
-const mailTransporter = require(__libs_path + '/mailer');
+const async = require('async');
 
 const list = (req, returnData, callback) => {
     let { search, isRead, type, page, size } = req.params;
@@ -54,20 +54,48 @@ const list = (req, returnData, callback) => {
                 winstonLogger.error(`Error searching notification: ${JSON.stringify(err)}`)
                 return callback(err);
             }
-            // calculate count
-            Notification.aggregate([{
-                $match: {...query, isRead: false}
-            }, {
-                $count: "totalUnread"
-            }])
-                .exec((errCount, result) => {
-                    if (errCount) {
-                        winstonLogger.error(`Error searching notification with total: ${JSON.stringify(errCount)}`)
-                        return callback(errCount);
-                    }
-                    returnData.set({ results, total: result[0] ? result[0].totalUnread: 0 });
-                    callback();
+            async.parallel([
+                function(cb){
+                    // calculate count
+                    Notification.aggregate([{
+                        $match: {user: ObjectId(user), isRead: false}
+                    }, {
+                        $count: "totalUnread"
+                    }])
+                    .exec((errCount, result) => {
+                        if (errCount) {
+                            winstonLogger.error(`Error searching notification with total: ${JSON.stringify(errCount)}`)
+                            cb(errCount);
+                        }
+                        cb(null, { totalUnread: result[0] ? result[0].totalUnread: 0 });
+                    })
+                },
+                function(cb){
+                    // calculate all
+                    Notification.aggregate([{
+                        $match: {user: ObjectId(user)}
+                    }, {
+                        $count: "totalAll"
+                    }])
+                    .exec((errCount, result) => {
+                        if (errCount) {
+                            winstonLogger.error(`Error searching notification with total: ${JSON.stringify(errCount)}`)
+                            cb(errCount);
+                        }
+                        cb(null, { totalAll: result[0] ? result[0].totalAll: 0 });
+                    })
+                }
+            ], (errAll, dataAll) => {
+                if(errAll){
+                    return callback(errAll);
+                }
+                returnData.set({
+                    results, 
+                    totalUnread: dataAll[0].totalUnread,
+                    totalAll: dataAll[1].totalAll
                 })
+                callback();
+            })
         })
 }
 

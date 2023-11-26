@@ -40,12 +40,20 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
   messages: Partial<Notification>[] = [];
   count: number = 0;
   isMenuOpened: boolean = false;
+  totalAll: number = 0;
+  loadingMore: boolean = false;
+  menuListEle: Element; 
+  size: number = 5;
 
   getListNotify(){
-    this.notifyService.getListNotification({size: 5}).subscribe(res => {
+    this.notifyService.getListNotification({size: this.size}).subscribe(res => {
       this.messages = res.results;
       this.count = res.totalUnread;
+      this.totalAll = res.totalAll;
       this.notifyService.setNotificationCount(res.totalUnread);
+      if(this.loadingMore){
+        this.loadingMore = false;
+      }
       this.cdr.detectChanges()
     })
   }
@@ -53,10 +61,14 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
   onOpenMenu(){
     this.isMenuOpened = true;
     this.getListNotify();
+    setTimeout(() => {
+      this.menuListEle = document.querySelector('mat-nav-list .list-content')
+    });
   }
 
   onCloseMenu(){
     this.isMenuOpened = false;
+    this.messages = [];
     this.markAllRead();
   }
 
@@ -72,5 +84,16 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
 
   openDetailNotification(message: Partial<Notification>){
     this.notifyService.openNotifyDetail(message);
+  }
+
+  onScrollList(){
+    if(this.loadingMore || this.totalAll == this.messages.length){
+      return;
+    }
+    if(this.menuListEle.scrollTop + this.menuListEle.clientHeight >= this.menuListEle.scrollHeight && this.totalAll > this.messages.length){
+      this.loadingMore = true;
+      this.size = this.size + 5;
+      this.getListNotify();
+    }
   }
 }
