@@ -68,7 +68,6 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
 
   onCloseMenu(){
     this.isMenuOpened = false;
-    this.messages = [];
     this.markAllRead();
   }
 
@@ -76,6 +75,9 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
     let readMessages = this.messages.filter(m => !m.isRead).map(m => m._id);
     if(readMessages.length){
       this.notifyService.markRead(readMessages).subscribe(() => {
+        // recalculate count
+        this.count = this.count - readMessages.length ? this.count - readMessages.length: 0
+        // refresh list if is opening
         this.messages = this.messages.map(m => ({...m, isRead: true}))
         this.cdr.detectChanges()
       })
@@ -90,7 +92,7 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
     if(this.loadingMore || this.totalAll == this.messages.length){
       return;
     }
-    if(this.menuListEle.scrollTop + this.menuListEle.clientHeight >= this.menuListEle.scrollHeight && this.totalAll > this.messages.length){
+    if(this.menuListEle.scrollTop + this.menuListEle.clientHeight + 10 >= this.menuListEle.scrollHeight && this.totalAll > this.messages.length){
       this.loadingMore = true;
       this.size = this.size + 5;
       this.getListNotify();
