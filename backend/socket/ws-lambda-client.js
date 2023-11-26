@@ -12,19 +12,26 @@ const initClient = () => {
         if(err){
             winstonLogger.error(`write redis server token for ws failed: ${JSON.stringify(err)}`);
         }
-        global.wsClient = new ws.WebSocket(`${process.env.WS_LAMBDA_URL}?user=my-ml-be&t=${serverTokenForWS}`);
-        
-        global.wsClient.on('open', () => {
-            winstonLogger.info('websocket opened.');
-        })
-        
-        global.wsClient.on('error', (err) => {
-            winstonLogger.error('websocket error: ' + JSON.stringify(err));
-        })
-        
-        global.wsClient.on('close', () => {
-            winstonLogger.info("websocket closed");
-        })
+        connectWebsocket(serverTokenForWS);
+    })
+}
+
+const connectWebsocket = (serverTokenForWS) => {    
+    global.wsClient = new ws.WebSocket(`${process.env.WS_LAMBDA_URL}?user=my-ml-be&t=${serverTokenForWS}`);
+    
+    global.wsClient.on('open', () => {
+        winstonLogger.info('websocket opened.');
+    })
+    
+    global.wsClient.on('error', (err) => {
+        winstonLogger.error('websocket error: ' + JSON.stringify(err));
+    })
+    
+    global.wsClient.on('close', () => {
+        winstonLogger.info(`websocket closed. Trying to reconnect in ${consts.reconnectWS/1000}s`);
+        setTimeout(() => {
+            connectWebsocket(serverTokenForWS);
+        }, consts.reconnectWS);
     })
 }
 

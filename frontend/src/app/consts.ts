@@ -93,4 +93,5 @@ export const NotificationConst = {
     WARNING_LOGIN: "notify-login"
 }
 
-export const CloudFrontIconsOrigin = "https://dml40u9hsdq8f.cloudfront.net/icons/"
+export const CloudFrontIconsOrigin = "https://dml40u9hsdq8f.cloudfront.net/icons/";
+export const ReconnectWS = 5000; // 5s

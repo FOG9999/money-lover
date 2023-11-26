@@ -110,5 +110,6 @@ module.exports = {
     wsRoute: {
         notification: "notification",
         loginWarningTopic: "notify-login"
-    }
+    },
+    reconnectWS: 5000 // reconnect after 5s
 }
