@@ -1,27 +1,27 @@
-<ng-container *ngIf="messages.length; else emptyListTpl">
-    <button mat-icon-button class="matero-toolbar-button" [matMenuTriggerFor]="menu" (menuOpened)=onOpenMenu()>
-        <mat-icon>notifications</mat-icon>
-        <span class="badge bg-red-500">{{count}}</span>
-    </button>
-    
-    <mat-menu #menu="matMenu" class="list-notification-container">
-        <mat-nav-list>
-            <div mat-subheader>Thông báo</div>
-            <mat-list-item *ngFor="let message of messages" (click)="openDetailNotification(message)">
-                <mat-icon mat-list-icon [ngClass]="{'notify-icon-highlight': message.priority <= 1}">{{ message.priority <= 1 ? "warning": "info"}}</mat-icon>
-                <div mat-line>{{message.title}}</div>
-                <div mat-line class="notification-description">{{message.description}}</div>
-                <div mat-line class="date-create">{{message.dateCreated | date:"dd/MM/yyyy HH:mm"}}</div>
-            </mat-list-item>
-        </mat-nav-list>
-        <div class="scroll-down-container">
-            <mat-icon>keyboard_arrow_down</mat-icon> 
-            <div style="display: flex; align-items: center;"></div>Lăn chuột xuống để xem thêm
+<button mat-icon-button class="matero-toolbar-button" [matMenuTriggerFor]="menu" (menuOpened)="onOpenMenu()" (menuClosed)="onCloseMenu()">
+    <mat-icon>notifications</mat-icon>
+    <span class="badge bg-red-500" *ngIf="count">{{count}}</span>
+</button>
+
+<mat-menu #menu="matMenu" class="list-notification-container">
+    <mat-nav-list>
+        <div mat-subheader (click)="onClickHeader($event)">
+            <div class="list-notification-header">
+                <span>Thông báo</span>
+                <span>
+                    <a href="javascript:void(0)" (click)="markAllRead()">Đánh dấu đã đọc</a>
+                </span>
+            </div>
         </div>
-    </mat-menu>
-</ng-container>
-<ng-template #emptyListTpl>
-    <button mat-icon-button class="matero-toolbar-button">
-        <mat-icon>notifications</mat-icon>
-    </button>
-</ng-template>
+        <mat-list-item *ngFor="let message of messages" (click)="openDetailNotification(message)" [ngClass]="{'unread-message': message.isRead == false}">
+            <mat-icon mat-list-icon [ngClass]="{'notify-icon-highlight': message.priority <= 1}">{{ message.priority <= 1 ? "warning": "info"}}</mat-icon>
+            <div mat-line>{{message.title}}</div>
+            <div mat-line class="notification-description">{{message.description}}</div>
+            <div mat-line class="date-create">{{message.dateCreated | date:"dd/MM/yyyy HH:mm"}}</div>
+        </mat-list-item>
+    </mat-nav-list>
+    <div class="scroll-down-container">
+        <mat-icon>keyboard_arrow_down</mat-icon> 
+        <div style="display: flex; align-items: center;"></div>Lăn chuột xuống để xem thêm
+    </div>
+</mat-menu>

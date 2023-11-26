@@ -44,40 +44,70 @@ const list = (req, returnData, callback) => {
     }
 
     Notification
-    .find()
-    .where(query)
-    .sort({ dateCreated: -1 })
-    .skip(page*size)
-    .limit(size)
-    .exec((err, results) => {
-        if (err) {
-            winstonLogger.error(`Error searching notification: ${JSON.stringify(err)}`)
-            return callback(err);
-        }
-        // calculate count
-        Notification.aggregate([{
-            $match: query
-        }, {
-            $count: "total"
-        }])
-        .exec((errCount, result) => {
-            if(errCount || !result[0]){
-                winstonLogger.error(`Error searching notification with total: ${errCount ? JSON.stringify(errCount) : 'result with total empty'}`)
-                return callback(errCount);
+        .find()
+        .where(query)
+        .sort({ dateCreated: -1 })
+        .skip(page * size)
+        .limit(size)
+        .exec((err, results) => {
+            if (err) {
+                winstonLogger.error(`Error searching notification: ${JSON.stringify(err)}`)
+                return callback(err);
             }
-            returnData.set({results, total: result[0].total});
-            callback();
+            // calculate count
+            Notification.aggregate([{
+                $match: {...query, isRead: false}
+            }, {
+                $count: "totalUnread"
+            }])
+                .exec((errCount, result) => {
+                    if (errCount) {
+                        winstonLogger.error(`Error searching notification with total: ${JSON.stringify(errCount)}`)
+                        return callback(errCount);
+                    }
+                    returnData.set({ results, total: result[0] ? result[0].totalUnread: 0 });
+                    callback();
+                })
         })
+}
+
+const markNoRepeat = (req, returnData, callback) => {
+    const { id } = req.params;
+    const user = req.user._id;
+    Notification.findOneAndUpdate({
+        _id: id,
+        user
+    }, {
+        $set: { repeat: false }
+    }, (err, data) => {
+        if (err) return callback(err);
+        returnData.set({ ...data._doc });
+        callback();
     })
 }
 
-// const update = (req, params, callback) => {
-//     const { isRead, repeat } = params;
-//     if(typeof isRead == "boolean"){
-//         query.isRead = isRead;
-//     }
-// }
+const markReadList = (req, returnData, callback) => {
+    const { ids } = req.params;
+    const user = req.user._id;
+    
+    if (validator.isNull(ids) || !Array.isArray(ids)) {
+        return callback('ERROR_IDs_MISSING');
+    }
+
+    Notification.updateMany({
+        _id: {
+            $in: ids.map(i => ObjectId(i))
+        },
+        user
+    }, { $set: { isRead: true } }, (err, data) => {
+        if (err) return callback(err);
+        returnData.set({ ...data });
+        callback();
+    })
+}
 
 module.exports = {
-    list
+    list,
+    markNoRepeat,
+    markReadList
 }

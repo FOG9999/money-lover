@@ -41,7 +41,7 @@ export class NotificationService {
 
     getListNotification(params: Partial<Notification & BaseSearch>){
         const api_name: string = "api.v1.notification.list";
-        return this.http.post<{results: Partial<Notification>[], total: number}>(environment.SERVER_URL, { api_name, ...params }, { observe: "body" });
+        return this.http.post<{results: Partial<Notification>[], totalUnread: number}>(environment.SERVER_URL, { api_name, ...params }, { observe: "body" });
     }
 
     openNotifyDetail(notification: Partial<Notification>){
@@ -49,5 +49,15 @@ export class NotificationService {
             width: '400px',
             data: {...notification}
         })
+    }
+
+    markRead(ids: string[]){
+        const api_name: string = "api.v1.notification.markread";
+        return this.http.post(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
+    }
+
+    markNoRepeat(id: string){
+        const api_name: string = "api.v1.notification.norepeat";
+        return this.http.post(environment.SERVER_URL, { api_name, id }, { observe: "body" });
     }
 }

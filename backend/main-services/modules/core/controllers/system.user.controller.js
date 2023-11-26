@@ -77,11 +77,11 @@ const list = (req, returnData, callback) => {
                 $count: "total"
             }])
             .exec((errCount, result) => {
-                if(errCount || !result[0]){
+                if(errCount){
                     winstonLogger.error(`Error searching users when arregate total: ${errCount ? JSON.stringify(errCount) : 'result with total empty'}`)
                     return callback(errCount);
                 }
-                returnData.set({results, total: result[0].total});
+                returnData.set({results, total: result[0] ? result[0].total: 0});
                 callback();
             })
         })

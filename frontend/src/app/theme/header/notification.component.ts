@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatMenu } from '@angular/material/menu';
 import { NotificationService } from '@shared';
 import { ComponentDestroy } from '@shared/components/component-destroy/component-destroy';
 import { Notification } from 'app/model/notification.model';
@@ -19,29 +20,54 @@ export class NotificationComponent extends ComponentDestroy implements OnInit, O
     this.destroy();
   }
 
+  @ViewChild('menu') menuNotify: MatMenu;
+
   ngOnInit(): void {
     this.getListNotify();
     this.notifyService.notificationsChange$.pipe(takeUntil(this.destroy$)).subscribe(newNotification => {
       this.count = this.count + 1;
-      this.messages = [newNotification, ...this.messages];
+      if(this.isMenuOpened){
+        this.messages = [newNotification, ...this.messages];
+      }
       this.cdr.detectChanges();
     })
   }
 
+  onClickHeader(e: Event){
+    e.stopPropagation();
+  }
+
   messages: Partial<Notification>[] = [];
   count: number = 0;
+  isMenuOpened: boolean = false;
 
   getListNotify(){
-    this.notifyService.getListNotification({isRead: false, size: 5}).subscribe(res => {
+    this.notifyService.getListNotification({size: 5}).subscribe(res => {
       this.messages = res.results;
-      this.count = res.total;
-      this.notifyService.setNotificationCount(res.total);
+      this.count = res.totalUnread;
+      this.notifyService.setNotificationCount(res.totalUnread);
       this.cdr.detectChanges()
     })
   }
 
   onOpenMenu(){
+    this.isMenuOpened = true;
     this.getListNotify();
+  }
+
+  onCloseMenu(){
+    this.isMenuOpened = false;
+    this.markAllRead();
+  }
+
+  markAllRead(){
+    let readMessages = this.messages.filter(m => !m.isRead).map(m => m._id);
+    if(readMessages.length){
+      this.notifyService.markRead(readMessages).subscribe(() => {
+        this.messages = this.messages.map(m => ({...m, isRead: true}))
+        this.cdr.detectChanges()
+      })
+    }
   }
 
   openDetailNotification(message: Partial<Notification>){

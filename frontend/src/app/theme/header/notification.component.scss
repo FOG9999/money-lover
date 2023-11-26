@@ -7,11 +7,24 @@
         font-style: italic;
     }
     .scroll-down-container {
-        color: #3944bc;
+        color: #2979ff;
         justify-content: center;
         font-style: italic;
         font-size: small;
         display: flex;
         align-items: center;
+    }
+    .list-notification-header {
+        display: flex;
+        width: 100%;
+        span:first-child {
+            flex-grow: 1;
+        }
+        a {
+            color: #2979ff;
+        }
+    }
+    mat-list-item.unread-message {
+        background: rgba(0, 0, 0, 0.1);
     }
 }

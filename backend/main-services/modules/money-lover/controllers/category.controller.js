@@ -67,10 +67,10 @@ const listCategorys = (req, returnData, callback) => {
                 $count: "total"
             }])
             .exec((errCount, result) => {
-                if(errCount || !result[0]){
+                if(errCount){
                     return callback(errCount);
                 }
-                returnData.set({results, total: result[0].total});
+                returnData.set({results, total: result[0] ? result[0].total: 0});
                 callback();
             })
         })
