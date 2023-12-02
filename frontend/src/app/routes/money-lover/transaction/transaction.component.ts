@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { TransactionViewComponent } from './transaction-view/transaction-view.component';
+import { INCOME_COLOR, OUTCOME_COLOR } from 'app/my-ml-consts';
 
 interface MonthTab {
     from: Date,
@@ -62,7 +63,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         chart: {
             type: "pie"
         },
-        colors: ["#039be5", "#e51c23"],
+        colors: [INCOME_COLOR, OUTCOME_COLOR],
         tooltip: {
             y: {
                 formatter: (val) => {

@@ -122,4 +122,8 @@ export class UserWalletComponent implements OnInit {
             })
         }
     }
+
+    showDeleteBtn(){
+        return !!this.listChecked.find(checked => checked);
+    }
 }

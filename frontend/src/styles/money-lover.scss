@@ -1,3 +1,5 @@
+@import "styles/variables";
+
 .ml {
     .card-inside-tab {
         margin-bottom: 0px;
@@ -59,4 +61,12 @@ button .mat-icon {
     font-style: italic;
     font-size: small;
     padding: 0 16px;
+}
+
+.income-category-name {
+    color: $income-color;
+}
+
+.outcome-category-name {
+    color: $outcome-color;
 }

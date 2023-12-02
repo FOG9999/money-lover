@@ -218,4 +218,8 @@ export class UserCategoryComponent implements OnInit {
         this.listCategoriesSaved = [...temp];
     }
     /* #endregion */
+
+    showDeleteBtn(){
+        return !!this.listChecked.find(checked => checked);
+    }
 }

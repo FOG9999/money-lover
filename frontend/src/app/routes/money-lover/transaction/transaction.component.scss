@@ -1,3 +1,5 @@
+@import "styles/variables";
+
 .icon {
     width: 35px;
     height: 35px;
@@ -29,7 +31,7 @@
 }
 
 .outcome {
-    color: #e51c23;
+    color: $outcome-color;
 }
 
 .title {

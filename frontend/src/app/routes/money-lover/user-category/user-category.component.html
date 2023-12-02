@@ -14,11 +14,11 @@
                     </button>
                 </mat-form-field>
                 <div>
-                    <button mat-raised-button color="primary" class="m-r-16" (click)="openAddCategoryDialog()">
+                    <button mat-button color="primary" class="m-r-16" (click)="openAddCategoryDialog()">
                         <mat-icon>add</mat-icon>
                         Thêm mới
                     </button>
-                    <button mat-raised-button color="accent" (click)="deleteCategories()">
+                    <button mat-button color="accent" (click)="deleteCategories()" *ngIf="showDeleteBtn()">
                         <mat-icon>delete</mat-icon>
                         Xóa
                     </button>
@@ -35,7 +35,7 @@
                         <div (click)="editCategoryIcon(i)">
                             <ml-icon [path]="category.icon.path" matLine></ml-icon>
                         </div>
-                        <div class="text-center" matLine *ngIf="indexEditting != i; else editting">
+                        <div class="text-center" matLine *ngIf="indexEditting != i; else editting" [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
                             {{category.name}}
                         </div>
                         <ng-template #editting>
@@ -62,7 +62,7 @@
                             <div>
                                 <ml-icon [path]="category.icon.path" matLine></ml-icon>
                             </div>
-                            <div class="text-center" matLine>
+                            <div class="text-center" matLine [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
                                 {{category.name}}
                             </div>
                         </div>
