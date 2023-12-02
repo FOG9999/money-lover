@@ -7,7 +7,7 @@ import { takeUntil, Subject, timer } from 'rxjs';
 import { Transaction } from 'app/model/transaction.model';
 import { formatNumber, randomString } from '@shared';
 import { ChartComponent } from 'ng-apexcharts';
-import { ChartOptions } from 'app/model/chart-option';
+import { ChartOptions, NoDataChart } from 'app/model/chart-option';
 import { TransactionService } from './transaction.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TransactionDialogComponent } from './transaction-dialog/transaction-dialog.component';
@@ -56,8 +56,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     listWallets: Wallet[] = [];
     listTransactions: Transaction[] = [];
     loading: boolean = false;
+    inOutcomeChartLabels: string[] = ["Thu nhập", "Tiêu thụ"]
     inOutcomeChartOptions: Partial<ChartOptions> = {
-        labels: ["Thu nhập", "Tiêu thụ"],
+        labels: [],
         chart: {
             type: "pie"
         },
@@ -68,30 +69,27 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                     return formatNumber(val.toString())
                 }
             }
+        },
+        noData: {
+            ...NoDataChart
         }
     };
+    totalOutcome: number = 0;
     outcomeChartOptions: Partial<ChartOptions> = {
         chart: {
             type: "pie"
         },
-        tooltip: {
-            y: {
-                formatter: (val) => {
-                    return val + '%'
-                }
-            }
+        noData: {
+            ...NoDataChart
         }
     }
+    totalIncome: number = 0;
     incomeChartOptions: Partial<ChartOptions> = {
         chart: {
             type: "pie"
         },
-        tooltip: {
-            y: {
-                formatter: (val) => {
-                    return val + '%'
-                }
-            }
+        noData: {
+            ...NoDataChart
         }
     }
 
@@ -229,9 +227,15 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 .filter(tran =>
                     tran.category.transactionType == 0
                 ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
+        let series = [], labels = [];
+        if(income != 0 || outcome != 0){
+            series = [income, outcome];
+            labels = [...this.inOutcomeChartLabels]
+        }
         this.inOutcomeChartOptions = {
             ...this.inOutcomeChartOptions,
-            series: [income, outcome]
+            labels,
+            series
         }
     }
 
@@ -253,12 +257,19 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         let series = [];
         labels.forEach((label, ind) => {
             let amount = outcomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount}), {amount: 0}).amount;
-            series.push(parseFloat((amount/totalOutcome*100).toFixed(2)));
+            series.push(amount);
         });
         this.outcomeChartOptions = {
             ...this.outcomeChartOptions,
             labels,
-            series
+            series,
+            tooltip: {
+                y: {
+                    formatter: (val, { series, seriesIndex, dataPointIndex, w }) => {
+                        return `${formatNumber(val.toString())} (${(val/totalOutcome*100).toFixed(2) + '%'})`
+                    }
+                }
+            }
         }
     }
 
@@ -282,10 +293,18 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             let amount = incomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount}), {amount: 0}).amount;
             series.push(parseFloat((amount/totalIncome*100).toFixed(2)));
         });
+        this.totalIncome = totalIncome;
         this.incomeChartOptions = {
             ...this.outcomeChartOptions,
             labels,
-            series
+            series,
+            tooltip: {
+                y: {
+                    formatter: (val, { series, seriesIndex, dataPointIndex, w }) => {
+                        return `${formatNumber(val.toString())} (${(val/totalIncome*100).toFixed(2) + '%'})`
+                    }
+                }
+            }
         }
     }
 

@@ -16,7 +16,7 @@
                 </span>
                 <div mat-line>
                     <div fxLayout="row">
-                        <div fxFlex="90" fxLayout="row" fxLayoutAlign="start center">
+                        <div fxFlex="90" fxLayout="row" fxLayoutAlign="start center" [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
                             {{category.name}}
                         </div>
                         <div fxFlex="10" fxLayout="row" fxLayoutAlign="center center" *ngIf="category._id == selectedCategory._id">
@@ -29,8 +29,8 @@
     </ng-container>
 </div>
 <div mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
     <button mat-button color="primary" (click)="save()">Lưu</button>
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
 </div>
 
 <!-- loading -->

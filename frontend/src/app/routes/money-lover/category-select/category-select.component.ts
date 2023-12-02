@@ -9,7 +9,17 @@ interface SelectedCategory {
 
 @Component({
     selector: 'category-select',
-    templateUrl: 'category-select.component.html'
+    templateUrl: 'category-select.component.html',
+    styles: [
+        `
+            ::ng-deep .income-category-name {
+                color: #039be5
+            }
+            ::ng-deep .outcome-category-name {
+                color: #e51c23
+            }
+        `
+    ]
 })
 
 export class CategorySelectComponent implements OnInit {

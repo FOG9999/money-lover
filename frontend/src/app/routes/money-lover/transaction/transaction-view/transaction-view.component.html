@@ -9,7 +9,7 @@
                     <ml-icon [path]="transaction.wallet.walletType.icon.path"></ml-icon>
                 </span>
                 <div mat-line>{{transaction.wallet.walletType.name}}</div>
-                <div mat-line> {{transaction.wallet.amount}} </div>
+                <div mat-line> {{transaction.wallet.amount | foramtNumber}} </div>
             </mat-list-item>
     
             <!-- Chủng loại giao dịch -->

@@ -14,7 +14,14 @@
                     <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
                         <ng-template matTabContent>
                             <ng-container *ngIf="!loading; else loadingTpl">
-                                <ng-container *ngTemplateOutlet="displayList"></ng-container>
+                                <ng-container *ngIf="listTransactions.length; else emptyListTranTpl">
+                                    <ng-container *ngTemplateOutlet="displayList"></ng-container>
+                                </ng-container>
+                                <ng-template #emptyListTranTpl>
+                                    <div class="empty-list-transactions-container">
+                                        Không có dữ liệu
+                                    </div>
+                                </ng-template>
                             </ng-container>
                         </ng-template>
                     </mat-tab>
@@ -28,7 +35,7 @@
             <mat-card-content>
                 <div id="income-outcome-chart">
                     <apx-chart [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels"
-                        [chart]="inOutcomeChartOptions.chart" [colors]="inOutcomeChartOptions.colors"
+                        [chart]="inOutcomeChartOptions.chart" [colors]="inOutcomeChartOptions.colors" [noData]="inOutcomeChartOptions.noData"
                         [tooltip]="inOutcomeChartOptions.tooltip"></apx-chart>
                 </div>
             </mat-card-content>
@@ -38,7 +45,7 @@
             <mat-card-content>
                 <div class="outcome-category-based-chart">
                     <apx-chart [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels"
-                        [chart]="outcomeChartOptions.chart" [tooltip]="outcomeChartOptions.tooltip"></apx-chart>
+                        [chart]="outcomeChartOptions.chart" [tooltip]="outcomeChartOptions.tooltip" [noData]="inOutcomeChartOptions.noData"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>
@@ -47,7 +54,7 @@
             <mat-card-content>
                 <div class="income-category-based-chart">
                     <apx-chart [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels"
-                        [chart]="incomeChartOptions.chart" [tooltip]="incomeChartOptions.tooltip"></apx-chart>
+                        [chart]="incomeChartOptions.chart" [tooltip]="incomeChartOptions.tooltip" [noData]="inOutcomeChartOptions.noData"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>

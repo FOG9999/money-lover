@@ -10,7 +10,8 @@ import {
     ApexStroke,
     ApexXAxis,
     ApexYAxis,
-    ApexAxisChartSeries
+    ApexAxisChartSeries,
+    ApexNoData
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -27,4 +28,12 @@ export type ChartOptions = {
     tooltip: ApexTooltip;
     stroke: ApexStroke;
     legend: ApexLegend;
+    noData: ApexNoData
 };
+
+export const NoDataChart = {
+    text: "Không có dữ liệu",
+    style: {
+        fontSize: "16px"
+    }
+}
