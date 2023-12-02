@@ -8,6 +8,17 @@
             <mat-icon>search</mat-icon>
         </button>
     </mat-form-field>
+    <mat-form-field class="w-full">
+        <mat-label>Loại chi tiêu</mat-label>
+        <mat-select [(ngModel)]="selectedFilter" (ngModelChange)="filterCategories()">
+            <mat-option [value]="0">
+              Khoản chi
+            </mat-option>
+            <mat-option [value]="1">
+                Khoản thu
+              </mat-option>
+        </mat-select>
+    </mat-form-field>
     <ng-container *ngIf="!loading; else loadingTpl">
         <mat-list>
             <mat-list-item class="hover-item" *ngFor="let category of categories" (click)="select(category)">

@@ -350,7 +350,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             if(typeof res == 'string'){
                 this.toastService.error(res);
             }
-            if(res.isEditted){
+            if(res && res.isEditted){
                 this.getListTransaction();
             }
         })

@@ -36,8 +36,10 @@ export class CategorySelectComponent implements OnInit {
     title: string = "Chọn chủng loại";
     search: string = "";
     categories: Category[] = [];
+    allCategories: Category[] = [];
     selectedCategory: Partial<Category>;
     loading: boolean = false;
+    selectedFilter: 0 | 1 = 0;
 
     select(category: Category){
         this.selectedCategory = category;
@@ -54,7 +56,8 @@ export class CategorySelectComponent implements OnInit {
     getDataCategories() {
         this.loading = true;
         this.commonService.getListCategories(this.search).subscribe(res => {
-            this.categories = [...res.results];
+            this.allCategories = [...res.results];
+            this.filterCategories();
             if(this.data && this.data.categoryId){
                 this.selectedCategory = res.results.find(x => x._id == this.data.categoryId) ? res.results.find(x => x._id == this.data.categoryId): {_id: ''}
             }
@@ -67,5 +70,9 @@ export class CategorySelectComponent implements OnInit {
         }, (err) => {
             this.loading = false;
         })
+    }
+
+    filterCategories(){
+        this.categories = this.allCategories.filter(c => c.transactionType == this.selectedFilter)
     }
 }
