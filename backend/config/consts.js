@@ -60,7 +60,7 @@ module.exports = {
         user: "redis_user_key",
         server: "redis_server",
         icon: "redis_icon_key",
-        tfa: "redis_tfa_key",
+        tfa: "redis_tfa_key", // two factor authentication
         forgot_password: "redis_forgot_password",
         change_password: "redis_change_password",
     },
