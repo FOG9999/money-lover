@@ -145,13 +145,14 @@ const login = (req, returnData, callback) => {
                                 returnData.model = result;
                                 // convert từ model sang object
                                 var jsonData = result.toObject();
+                                generateConnectionKey(jsonData);
                                 setUserCache(jsonData, (err) => {
                                     if(err){
                                         return callback(err);
                                     }
                                     returnData.data = jsonData;
                                     saveLoginHistory(user._id, platform);
-                                    notifyLogin(user, platform);
+                                    notifyLogin(user, platform, jsonData.cKey);
                                     callback();
                                 })
                             })                    
@@ -163,16 +164,25 @@ const login = (req, returnData, callback) => {
 }
 
 /**
+ * - generate a connection key for current logged in user
+ * - used when a user just login will not receive warning-login notification
+ */
+const generateConnectionKey = (jsonData) => {
+    jsonData.cKey = utils.randomstring(50);
+}
+
+/**
  * save notification to DB and notify login to sessions with the same user
  */
-const notifyLogin = (user, platform) => {
+const notifyLogin = (user, platform, connectionKey) => {
     wsSendJSON(consts.wsRoute.notification, consts.wsRoute.loginWarningTopic, {
         user: user._id,
         type: "user",
         priority: 1,
         description: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
         title: "Phát hiện đăng nhập",
-        link: `${process.env.ML_MY_DOMAIN}/auth/session-management`
+        link: `${process.env.ML_MY_DOMAIN}/auth/session-management`,
+        connectionKey
     })
 }
 
@@ -283,6 +293,7 @@ const checkUserTFA = (req, returnData, callback) => {
                                     returnData.model = result;
                                     // convert từ model sang object
                                     var jsonData = result.toObject();
+                                    generateConnectionKey(jsonData);
                                     redis.DEL(secret);
                                     redis.DEL(hashedSecret);
                                     setUserCache(jsonData, (err) => {
@@ -290,7 +301,7 @@ const checkUserTFA = (req, returnData, callback) => {
                                             return callback(err);
                                         }
                                         saveLoginHistory(userId, platform);
-                                        notifyLogin(user, platform);
+                                        notifyLogin(user, platform, jsonData.cKey);
                                         returnData.data = jsonData;
                                         callback();
                                     })
