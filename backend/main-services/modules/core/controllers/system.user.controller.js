@@ -301,7 +301,7 @@ const checkUserTFA = (req, returnData, callback) => {
                                             return callback(err);
                                         }
                                         saveLoginHistory(userId, platform);
-                                        notifyLogin(user, platform, jsonData.cKey);
+                                        notifyLogin(dataUser, platform, jsonData.cKey);
                                         returnData.data = jsonData;
                                         callback();
                                     })
