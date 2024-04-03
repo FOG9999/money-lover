@@ -1,10 +1,11 @@
 import { environment } from "@env/environment";
 import { NotificationConst, ReconnectWS } from "app/consts";
 
-export const createWSClient = (token: string, user: string) => {
+export const createWSClient = (token: string, user: string, onSuccess: (wsClient: WebSocket) => void) => {
     const client = new WebSocket(`${environment.WS_LAMBDA_URL}?user=${user}&t=${token}`);
     client.onopen = () => {
         console.log('websocket opened.');
+        onSuccess(client);
         updateConnectionKey(client);
     }
     
@@ -15,11 +16,9 @@ export const createWSClient = (token: string, user: string) => {
     client.onclose = () => {
         console.log(`websocket closed. Trying to reconnect in ${ReconnectWS/1000}s`);
         setTimeout(() => {        
-            createWSClient(token, user);
+            createWSClient(token, user, onSuccess);
         }, ReconnectWS);
     }
-
-    return client;
 }
 
 const updateConnectionKey = (wsClient: WebSocket) => {

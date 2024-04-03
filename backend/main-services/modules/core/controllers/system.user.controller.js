@@ -248,7 +248,7 @@ const generateOTP = (req, returnData, callback) => {
  * if user use two factor authentication, use this function to check otp sent from client
  */
 const checkUserTFA = (req, returnData, callback) => {
-    const {hashedSecret, token, platform} = req.params;
+    const { r: hashedSecret, t: token, platform} = req.params;
     redis.GET(hashedSecret, (err, secretData) => {
         if(err){
             winstonLogger.error(`Redis error get key ${hashedSecret}: ${JSON.stringify(err)}`);
