@@ -111,5 +111,6 @@ module.exports = {
         notification: "notification",
         loginWarningTopic: "notify-login"
     },
-    reconnectWS: 5000 // reconnect after 5s
+    reconnectWS: 5000, // reconnect after 5s
+    NOTTIFY_LOGIN: "notify-login"
 }

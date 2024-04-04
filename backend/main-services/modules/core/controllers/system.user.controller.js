@@ -14,6 +14,7 @@ const { wsSendJSON } = require('../../../../socket/ws-lambda-client');
 const { saveLoginHistory } = require('./login-history.controller');
 const { createNotification } = require('./notification.controller');
 const mailTransporter = require(__libs_path + '/mailer');
+const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require("@aws-sdk/client-apigatewaymanagementapi");
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -911,6 +912,39 @@ const handleForgotPasswordRequest = (req, returnData, callback) => {
     })
 }
 
+const postToConnectionLambda = (req, returnData, callback) => {
+    const { connId, notification, endpoint } = req.params;
+    // let the asynchronous process happen, the lambda function should receive {statusCode: 200} for not wasting resources
+    handlePostToConnectionFromLambda(connId, notification, endpoint);
+    returnData.set({statusCode: 200});
+    callback();
+}
+
+/**
+ * - receive a request from lambda function in the VPC
+ * - do the request outside to the Internet, cause the lambda cannot
+ * @param {*} connId connectionId
+ * @param {*} notification object notification that is saved to the DB
+ * @param {*} endpoint WS Api Gateway endpoint
+ */
+const handlePostToConnectionFromLambda = async (connId, notification, endpoint) => {
+    const client = new ApiGatewayManagementApiClient({
+        endpoint,
+        region: "us-east-1"
+    });
+    const input = { // PostToConnectionRequest
+        Data: JSON.stringify({ topic: consts.NOTTIFY_LOGIN, notification }),
+        ConnectionId: connId, 
+    };
+    const command = new PostToConnectionCommand(input);
+    try {
+        const response = await client.send(command);        
+        console.log(`PostToConnection succedded with response: `, response);
+    } catch (error) {
+        console.error(`Error PostToConnection: `, error);
+    }
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -930,3 +964,4 @@ exports.handleChangePassToken = handleChangePassToken;
 exports.checkChangepasswordUrl = checkChangepasswordUrl;
 exports.sentForgotPasswordRequest = sentForgotPasswordRequest;
 exports.handleForgotPasswordRequest = handleForgotPasswordRequest;
+exports.postToConnectionLambda = postToConnectionLambda;
