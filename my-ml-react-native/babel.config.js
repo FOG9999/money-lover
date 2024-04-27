@@ -1,3 +1,4 @@
+// these variables are used by expo-router library
 process.env.EXPO_ROUTER_APP_ROOT = "./app";
 process.env.EXPO_ROUTER_ABS_APP_ROOT = "./app";
 process.env.EXPO_ROUTER_IMPORT_MODE = "sync";
