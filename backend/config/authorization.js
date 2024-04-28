@@ -25,10 +25,10 @@ const winstonLogger = require('../libs/winston');
      var api_name = req.params.api_name;
      winstonLogger.info(`${req.headers['origin']}: ${req.method}: ${JSON.stringify(req.params)}`);
      if (!api_name) {
-        winstonLogger.error(`${req.headers['origin']}: ERROR_API_NAME_MISSING`);
+        winstonLogger.error(`${req.headers['origin']}: ${consts.ERRORS.ERROR_API_NAME_MISSING}`);
          return res.send(400, {
              code: 400,
-             message: 'ERROR_API_NAME_MISSING'
+             message: consts.ERRORS.ERROR_API_NAME_MISSING
          });
      }
      api_name = api_name.toLowerCase();

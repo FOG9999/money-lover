@@ -109,7 +109,7 @@ const login = (req, returnData, callback) => {
                 return callback(err);
             }
             if (!user) {
-                return callback('ERROR_USERNAME_PASSWORD_INCORRECT');
+                return callback(consts.ERRORS.ERROR_USERNAME_PASSWORD_INCORRECT);
             }
             else {
                 if (user.status === 0) {
