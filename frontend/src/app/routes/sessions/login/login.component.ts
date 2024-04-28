@@ -72,7 +72,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authService.login(username, password, platform).subscribe(res => {
       if (res && Object.keys(res).includes('_id')) {
         this.localStorage.set('user', res);
-        this.wsLambda.initClient();
         if ((<User>res).level === CONSTS.auth.ADMIN || (<User>res).level === CONSTS.auth.SYSTEM) {
           this.router.navigateByUrl('/money-lover/admin');
         }
