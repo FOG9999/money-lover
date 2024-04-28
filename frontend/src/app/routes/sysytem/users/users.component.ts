@@ -229,7 +229,7 @@ export class UsersListComponent implements OnInit {
     restoreUser(user?: Partial<User>){
         this.dialogService.open(ConfirmDeletionComponent, {
             data: {
-                title: user ? `Xác nhận khôi phục tài khoản '${user.username}'?`: `Xác nhận khôi phục ${this.listChecked.size} tài khoản?`,
+                title: `Xác nhận khôi phục tài khoản`,
                 message: user ? `Khôi phục tài khoản với username '${user.username}'?`: `Khôi phục ${this.listChecked.size} tài khoản?`
             }
         })
@@ -250,7 +250,7 @@ export class UsersListComponent implements OnInit {
     deletePermanently(user?: Partial<User>){
         this.dialogService.open(ConfirmDeletionComponent, {
             data: {
-                title: user ? `Xác nhận xóa vĩnh viễn tài khoản '${user.username}'?`: `Xác nhận xóa vĩnh viễn ${this.listChecked.size} tài khoản?`,
+                title: `Xác nhận xóa vĩnh viễn`,
                 message: user ? `Hành động này không thể hoàn tác. Xóa vĩnh viễn tài khoản '${user.username}'?`: `Hành động này không thể hoàn tác. Xóa vĩnh viễn ${this.listChecked.size} tài khoản?`
             }
         })
@@ -263,6 +263,26 @@ export class UsersListComponent implements OnInit {
                     this.searchUsers();
                     if(user && this.listChecked.has(user._id)) this.listChecked.delete(user._id);
                     else if(!user) this.listChecked.clear();
+                }, () => this.loading = false)
+            }
+        })
+    }
+
+    resetPassword(user: Partial<User>){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: `Cài lại mật khẩu`,
+                message: `Cài lại mật khẩu cho tài khoản '${user.username}'? Mật khẩu mới sẽ được gửi về email '${user.email}'`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed?: boolean) => {
+            if(isConfirmed){
+                this.loading = true;
+                this.usersService.resetPassword(user._id).subscribe(() => {
+                    this.toast.success(`Cài lại mật khẩu cho tài khoản thành công`);
+                    this.loading = false;
+                    this.searchUsers();
+                    if(this.listChecked.has(user._id)) this.listChecked.delete(user._id);
                 }, () => this.loading = false)
             }
         })

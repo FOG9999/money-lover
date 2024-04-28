@@ -85,6 +85,7 @@
                                 <div *ngSwitchCase="'actions'">
                                     <button mat-icon-button [matMenuTriggerFor]="menuActions"><mat-icon>more_vert</mat-icon></button>
                                     <mat-menu #menuActions="matMenu">
+                                        <button mat-menu-item *ngIf="element.status" (click)="resetPassword(element)"><mat-icon>repeat</mat-icon>Cài lại mật khẩu</button>
                                         <button mat-menu-item *ngIf="element.is_delete" (click)="restoreUser(element)"><mat-icon>refresh</mat-icon> Khôi phục</button>
                                         <button mat-menu-item *ngIf="!element.is_delete" class="dropdown-item dropdown-item-accent" (click)="deleteSingleUser(element)"><mat-icon color="accent">delete</mat-icon>Xóa</button>
                                         <button mat-menu-item *ngIf="element.is_delete" class="dropdown-item dropdown-item-warn" (click)="deletePermanently(element)"><mat-icon color="warn">delete_forever</mat-icon>Xóa vĩnh viễn</button>

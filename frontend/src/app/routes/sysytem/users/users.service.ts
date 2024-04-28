@@ -53,4 +53,9 @@ export class UsersService {
         let api: string = "api.v1.systemuser.deletepermanently";
         return this.http.post<User>(environment.SERVER_URL, {api_name: api, ids}, {observe: 'body'});
     }
+
+    resetPassword(id: string){
+        let api: string = "api.v1.systemuser.resetpassword";
+        return this.http.post<User>(environment.SERVER_URL, {api_name: api, i: id}, {observe: 'body'});
+    }
 }
