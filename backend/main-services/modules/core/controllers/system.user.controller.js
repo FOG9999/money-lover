@@ -985,6 +985,25 @@ const resetPassword = (req, returnData, callback) => {
         })
 }
 
+const deleteSingleUser = (req, returnData, callback) => {
+    const {i: userId} = req.params;
+    const currUserId = req.user._id;
+    if(userId == currUserId){
+        return callback(consts.ERRORS.ERROR_DEL_CURR_USER);
+    }
+    User.findOne({_id: userId}).exec((err, data) => {
+        if(err) return callback(consts.ERRORS.ERROR_FIND_USER);
+        data.is_delete = true;
+        data.status = 0;
+        data.dateDeleted = new Date();
+        data.save((errSave, result) => {
+            if(errSave) return callback(consts.ERRORS.ERROR_SAVE_USER);
+            returnData.set({ok: true, result});
+            callback();
+        })
+    })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -1006,3 +1025,4 @@ exports.sentForgotPasswordRequest = sentForgotPasswordRequest;
 exports.handleForgotPasswordRequest = handleForgotPasswordRequest;
 exports.postToConnectionLambda = postToConnectionLambda;
 exports.resetPassword = resetPassword;
+exports.deleteSingleUser = deleteSingleUser;

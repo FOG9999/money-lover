@@ -106,6 +106,10 @@ var UserSchema = new Schema({
     defaultPassword: {
         type: Boolean,
         default: false
+    },
+    dateDeleted: {
+        type: Date,
+        default: null
     }
 }, consts.schemaOptions);
 
