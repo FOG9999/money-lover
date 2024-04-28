@@ -558,7 +558,9 @@ const deleteUsers = (req, returnData, callback) => {
             }
         }, {
             $set: {
-                is_delete: true
+                is_delete: true,
+                dateDeleted: new Date(),
+                status: 0
             }
         }, (err, data) => {
             if (err) return callback(err);
@@ -1004,6 +1006,26 @@ const deleteSingleUser = (req, returnData, callback) => {
     })
 }
 
+const restoreUsers =  (req, returnData, callback) => {
+    const { ids } = req.params;
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY);
+    }
+    User.updateMany({_id: {
+        $in: ids
+    }}, {
+        $set: {
+            status: 1,
+            is_delete: false,
+            dateDeleted: null
+        }
+    }).exec((err, data) => {
+        if(err) return callback(consts.ERRORS.ERROR_FIND_USER);
+        returnData.set({ok: true, data});
+        callback();
+    })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -1026,3 +1048,4 @@ exports.handleForgotPasswordRequest = handleForgotPasswordRequest;
 exports.postToConnectionLambda = postToConnectionLambda;
 exports.resetPassword = resetPassword;
 exports.deleteSingleUser = deleteSingleUser;
+exports.restoreUsers = restoreUsers;
