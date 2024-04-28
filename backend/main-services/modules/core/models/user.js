@@ -14,7 +14,7 @@ var UserSchema = new Schema({
     username: {
         type: String,
         trim: true,
-        required: 'ERROR_USERNAME_MISSING',
+        required: consts.ERRORS.ERROR_USERNAME_MISSING,
         lowercase: true
     },
     avatar: {
@@ -26,13 +26,13 @@ var UserSchema = new Schema({
         type: String,
         trim: true,
         default: null,
-        required: 'ERROR_FIRSTNAME_MISSING'
+        required: consts.ERRORS.ERROR_FIRSTNAME_MISSING
     },
     lastname: {
         type: String,
         trim: true,
         default: null,
-        required: 'ERROR_LASTNAME_MISSING'
+        required: consts.ERRORS.ERROR_LASTNAME_MISSING
     },
     address: {
         type: String,

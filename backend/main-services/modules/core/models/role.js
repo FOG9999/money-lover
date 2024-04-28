@@ -1,20 +1,18 @@
 let Schema = require('mongoose').Schema,
 ObjectId = Schema.ObjectId,
 systemDb = require(__db_path + '/system-db'),
-crypto = require('crypto'),
-consts = require(__config_path + '/consts'),
-utils = require(__libs_path + '/utils');
+consts = require(__config_path + '/consts');
 
 let RoleSchema = new Schema({
     title: {
         type: String,
         trim: true,
-        required: 'ERROR_ROLE_TITLE_MISSING'
+        required: consts.ERRORS.ERROR_ROLE_TITLE_MISSING
     },
     description: {
         type: String,
         max: 2000,
-        required: 'ERROR_ROLE_DESCRIPTION_MISSING'
+        required: consts.ERRORS.ERROR_ROLE_DESCRIPTION_MISSING
     },
     dateCreated: {
         type: Date,

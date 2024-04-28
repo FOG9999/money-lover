@@ -331,6 +331,10 @@ export function getResponseErrorMessage(message: string){
       return "Hệ thống xảy ra lỗi. Vui lòng thử lại sau ít phút.";
     case "ERROR_SENT_MAIL_FORGOT_PASSWORD": 
       return "Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau ít phút.";
+    case "ERROR_SELF_RESET_PASSWORD": 
+      return "Bạn không thể tự reset password của chính mình.";
+    case "ERROR_DEL_CURR_USER": 
+      return "Bạn không thể tự xóa tài khoản của chính mình.";
     default:
       return 'Không tồn tại mesage';
   }

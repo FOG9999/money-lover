@@ -1,9 +1,7 @@
 let mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId,
     User = require('../models/user'),
-    utils = require(__libs_path + '/utils'),
-    validator = require('validator'),
-    consts = require(__config_path + '/consts');
+    validator = require('validator');
 const { sendMailPromise } = require(__libs_path + '/aws-ses');
 const redis = require(__libs_path + '/redis');
 const bcrypt = require('bcrypt');
@@ -12,9 +10,10 @@ const winstonLogger = require(__libs_path + '/winston');
 const speakesay = require('speakeasy');
 const { wsSendJSON } = require('../../../../socket/ws-lambda-client');
 const { saveLoginHistory } = require('./login-history.controller');
-const { createNotification } = require('./notification.controller');
 const mailTransporter = require(__libs_path + '/mailer');
 const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require("@aws-sdk/client-apigatewaymanagementapi");
+const consts = require('../../../../config/consts');
+const utils = require('../../../../libs/utils');
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -93,9 +92,9 @@ const login = (req, returnData, callback) => {
 
     // validate input
     if (validator.isNull(username))
-        return callback('ERROR_USERNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_USERNAME_MISSING);
     if (validator.isNull(password))
-        return callback('ERROR_PASSWORD_MISSING');
+        return callback(`${consts.ERRORS.ERROR_PASSWORD_MISSING}`);
 
     let userQuery = {
         username
@@ -114,10 +113,10 @@ const login = (req, returnData, callback) => {
             }
             else {
                 if (user.status === 0) {
-                    return callback('ERROR_USER_LOCK');
+                    return callback(consts.ERRORS.ERROR_USER_LOCK);
                 }
                 else if (!user.authenticate(password)) {
-                    return callback('ERROR_PASSWORD_INCORRECT')
+                    return callback(consts.ERRORS.ERROR_PASSWORD_INCORRECT)
                 }
                 else {
                     const randomKey = utils.randomstring(50) + ObjectId().toString().replace('-', '');
@@ -127,7 +126,7 @@ const login = (req, returnData, callback) => {
                             redis.SET(randomKey, user.email, errSaveRedis => {
                                 if(errSaveRedis){
                                     winstonLogger.error(`Error when saving random key when login with otp by email ${user.email}:` + JSON.stringify(errSaveRedis));
-                                    return callback('ERROR_SAVE_REDIS_RANDOM_KEY')
+                                    return callback(consts.ERRORS.ERROR_SAVE_REDIS_RANDOM_KEY)
                                 }
                                 redis.EXPIRE(randomKey, consts.otpExpiredTime);
                                 returnData.set({email: user.email, rd: randomKey});
@@ -195,19 +194,19 @@ const generateOTP = (req, returnData, callback) => {
     redis.GET(rd, (errorGetRandom, resultEmail) => {
         if(errorGetRandom){
             winstonLogger.error(`Error while getting random key from redis: ${JSON.stringify(errorGetRandom)}`);
-            return callback('ERROR_GET_RANDOM_KEY');
+            return callback(consts.ERRORS.ERROR_GET_RANDOM_KEY);
         }
         if(resultEmail != email){
-            return callback('ERROR_EMAIL_RD_NOT_PAIRED');
+            return callback(consts.ERRORS.ERROR_EMAIL_RD_NOT_PAIRED);
         }
         User.findOne().where({email: email}).exec((errFindUser, user) => {
             if(errFindUser){
                 winstonLogger.error('Error find user with email: ' + JSON.stringify(errFindUser));
-                return callback('ERROR_FIND_USER_WITH_EMAIL');
+                return callback(consts.ERRORS.ERROR_FIND_USER_WITH_EMAIL);
             }
             if(!user){
                 winstonLogger.error('Error find user with email: User not found');
-                return callback('ERROR_USER_NOT_FOUND');
+                return callback(consts.ERRORS.ERROR_USER_NOT_FOUND);
             }
             const secret = speakesay.generateSecret().base32;
             winstonLogger.info('test secret: ' + secret);
@@ -253,17 +252,17 @@ const checkUserTFA = (req, returnData, callback) => {
     redis.GET(hashedSecret, (err, secretData) => {
         if(err){
             winstonLogger.error(`Redis error get key ${hashedSecret}: ${JSON.stringify(err)}`);
-            callback('ERROR_REDIS_GET_KEY');
+            callback(consts.ERRORS.ERROR_REDIS_GET_KEY);
         }
         else {
             if(!secretData){
-                callback("ERROR_REDIS_KEY_NOT_EXIST");
+                callback(consts.ERRORS.ERROR_REDIS_KEY_NOT_EXIST);
             }
             else {
                 const {secret, count} = JSON.parse(secretData);
                 const hashedCheck = bcrypt.compareSync(secret, hashedSecret);
                 if(!hashedCheck){
-                    return callback("ERROR_OTP_INVALID");
+                    return callback(consts.ERRORS.ERROR_OTP_INVALID);
                 }
                 const isValid = speakesay.totp.verify({
                     secret, token, encoding: 'base32', window: 10
@@ -272,7 +271,7 @@ const checkUserTFA = (req, returnData, callback) => {
                     redis.GET(secret, (errUser, userStr) => {
                         if(errUser){
                             winstonLogger.error(`Redis error get key for user ${secret}: ${JSON.stringify(errUser)}`);
-                            callback('ERROR_REDIS_GET_KEY_USER');
+                            callback(consts.ERRORS.ERROR_REDIS_GET_KEY_USER);
                         }
                         else {
                             const userId = JSON.parse(userStr)._id;
@@ -317,11 +316,11 @@ const checkUserTFA = (req, returnData, callback) => {
                         redis.DEL(hashedSecret);
                         redis.DEL(secret);
                         winstonLogger.error(`Max count invalid OTP for user ${JSON.stringify({hashedSecret, token})}`);
-                        callback("ERROR_MAX_COUNT_INVALID_OTP");
+                        callback(consts.ERRORS.ERROR_MAX_COUNT_INVALID_OTP);
                     }
                     else {
                         redis.SET(hashedSecret, JSON.stringify({secret, count: count - 1}));
-                        callback("ERROR_OTP_INCORRECT");
+                        callback(consts.ERRORS.ERROR_OTP_INCORRECT);
                     }
                 }
             }
@@ -360,7 +359,7 @@ const checkEmailExist = (req, returnData, callback) => {
     let email = req.params.email;
 
     if (validator.isNull(email))
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
 
     User.findOne()
         .where({
@@ -370,7 +369,7 @@ const checkEmailExist = (req, returnData, callback) => {
             if (err) return callback(err);
             // trả về lỗi nếu mã cửa hàng không tồn tại
             if (data)
-                return callback('ERROR_EMAIL_EXISTS');
+                return callback(consts.ERRORS.ERROR_EMAIL_EXISTS);
             callback();
         });
 }
@@ -385,7 +384,7 @@ const getUser = (req, returnData, callback) => {
         .exec(function (err, data) {
             if (err) return callback(err);
             if (!data) {
-                return callback('ERROR_USER_NOT_EXISTS');
+                return callback(consts.ERRORS.ERROR_USER_NOT_EXISTS);
             } else {
                 returnData.set(data);
                 return callback();
@@ -396,27 +395,27 @@ const getUser = (req, returnData, callback) => {
 const sendEmailToChangePass = (req, returnData, callback) => {
     const { email } = req.params;
     if(validator.isNull(email)){
-        return callback("ERROR_EMAIL_MISSING");
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     User.findOne({ email }).exec((err, user) => {
         if(err){
-            return callback("ERROR_FIND_USER")
+            return callback(consts.ERRORS.ERROR_FIND_USER)
         }
         if(!user){
-            return callback("ERROR_CANNOT_FIND_USER")
+            return callback(consts.ERRORS.ERROR_CANNOT_FIND_USER)
         }
         redis.EXISTS(consts.redis_key.change_password, email, (err, isExist) => {
             if(err){
-                return callback("ERROR_FIND_USER")
+                return callback(consts.ERRORS.ERROR_FIND_USER)
             }
             if(isExist){
-                return callback("ERROR_USER_BEING_CHANGE_PASSWORD");
+                return callback(consts.ERRORS.ERROR_USER_BEING_CHANGE_PASSWORD);
             }
             else {
                 const token = utils.randomstring(50) + ObjectId().toString().replace('-', '');
                 redis.SET(`${consts.redis_key.change_password}.${email}`, token, (err) => {
                     if(err){
-                        return callback("ERROR_REDIS");
+                        return callback(consts.ERRORS.ERROR_REDIS);
                     }
                     redis.EXPIRE(`${consts.redis_key.change_password}.${email}`, consts.changePassTokenTime)
                     mailTransporter.sendMail({
@@ -444,17 +443,17 @@ const sendEmailToChangePass = (req, returnData, callback) => {
 const checkChangepasswordUrl = (req, returnData, callback) => {
     const { email, t } = req.params;
     if (validator.isNull(email)) {
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     if (validator.isNull(t)) {
-        return callback('ERROR_FIND_USER');
+        return callback(consts.ERRORS.ERROR_FIND_USER);
     }
     redis.GET(`${consts.redis_key.change_password}.${email}`, (err, exist) => {
         if(err){
-            return callback('ERROR_REDIS');
+            return callback(consts.ERRORS.ERROR_REDIS);
         }
         if(!exist){
-            return callback('ERROR_FIND_USER');
+            return callback(consts.ERRORS.ERROR_FIND_USER);
         }
         returnData.set({ok: true});
         return callback();
@@ -464,45 +463,45 @@ const checkChangepasswordUrl = (req, returnData, callback) => {
 const handleChangePassToken = (req, returnData, callback) => {
     const { email, t, newPass, confirmNewPass, oldPass } = req.params;
     if (validator.isNull(email)) {
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     if (validator.isNull(t)) {
-        return callback('ERROR_FIND_USER');
+        return callback(consts.ERRORS.ERROR_FIND_USER);
     }
     if (validator.isNull(newPass)) {
-        return callback('ERROR_NEWPASS_MISSING');
+        return callback(consts.ERRORS.ERROR_NEWPASS_MISSING);
     }
     if (validator.isNull(confirmNewPass)) {
-        return callback('ERROR_CONFIRMPASS_MISSING');
+        return callback(consts.ERRORS.ERROR_CONFIRMPASS_MISSING);
     }
     if(newPass !== confirmNewPass){
-        return callback("ERROR_CONFIRM_PASS_NOT_MATCH")
+        return callback(consts.ERRORS.ERROR_CONFIRM_PASS_NOT_MATCH)
     }
     redis.GET(`${consts.redis_key.change_password}.${email}`, (err, exist) => {
         if(err){
-            return callback('ERROR_REDIS');
+            return callback(consts.ERRORS.ERROR_REDIS);
         }
         if(!exist){
-            return callback('ERROR_FIND_USER');
+            return callback(consts.ERRORS.ERROR_FIND_USER);
         }
         else {
             if(exist != t){
-                return callback("ERROR_TOKEN_NOT_MATCH")
+                return callback(consts.ERRORS.ERROR_TOKEN_NOT_MATCH)
             }
             else {
                 redis.DEL(`${consts.redis_key.change_password}.${email}`);  
                 User.findOne({ email }).exec((err, user) => {
                     if(err || !user){
-                        return callback("ERROR_FIND_USER");
+                        return callback(consts.ERRORS.ERROR_FIND_USER);
                     }
                     else if (!user.authenticate(oldPass)) {
-                        return callback('ERROR_OLDPASSWORD_INCORRECT')
+                        return callback(consts.ERRORS.ERROR_OLDPASSWORD_INCORRECT)
                     }
                     user.password = newPass;
                     user.defaultPassword = false;
                     user.save((errSave, newUser) => {
                         if(errSave){
-                            return callback("ERROR_SAVE_USER");
+                            return callback(consts.ERRORS.ERROR_SAVE_USER);
                         }
                         returnData.set({ok: true});
                         callback();
@@ -517,10 +516,10 @@ const deactivateUsers = (req, returnData, callback) => {
     let { ids } = req.params;
 
     if (validator.isNull(ids)) {
-        return callback('ERROR_IDS_MISSING');
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
     }
     if(!Array.isArray(ids)){
-        return callback('ERROR_IDS_NOT_ARRAY')
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
 
     User
@@ -541,12 +540,15 @@ const deactivateUsers = (req, returnData, callback) => {
 
 const deleteUsers = (req, returnData, callback) => {
     let { ids } = req.params;
-
+    const userId = req.user._id;
     if (validator.isNull(ids)) {
-        return callback('ERROR_IDS_MISSING');
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
     }
     if(!Array.isArray(ids)){
-        return callback('ERROR_IDS_NOT_ARRAY')
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
+    }
+    if(ids.includes(userid)){
+        return callback(consts.ERRORS.ERROR_DEL_CURR_USER);
     }
 
     User
@@ -578,22 +580,22 @@ const signUp = (req, returnData, callback) => {
     } = req.params;
 
     if (validator.isNull(username)) {
-        return callback('ERROR_USERNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_USERNAME_MISSING);
     }
     if (validator.isNull(password)) {
-        return callback('ERROR_PASSWORD_MISSING');
+        return callback(`${consts.ERRORS.ERROR_PASSWORD_MISSING}`);
     }
     if (validator.isNull(email)) {
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     if (validator.isNull(firstname)) {
-        return callback('ERROR_FIRSTNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_FIRSTNAME_MISSING);
     }
     if (validator.isNull(lastname)) {
-        return callback('ERROR_LASTNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_LASTNAME_MISSING);
     }
     if (validator.isNull(level)) {
-        return callback('ERROR_LEVEL_MISSING');
+        return callback(consts.ERRORS.ERROR_LEVEL_MISSING);
     }
 
     let query = {
@@ -615,7 +617,7 @@ const signUp = (req, returnData, callback) => {
                 return callback(err);
             }
             if (data) {
-                return callback('ERROR_USER_EXIST');
+                return callback(consts.ERRORS.ERROR_USER_EXIST);
             }
 
             let newUser = new User();
@@ -640,7 +642,7 @@ const signUp = (req, returnData, callback) => {
                 UserSecurityQuestion.insertMany(models, (errQuestion, resultQuestion) => {
                     let error = null;
                     if (err) {
-                        error = "ERROR_INSERT_USER_QUESTION";
+                        error = consts.ERRORS.ERROR_INSERT_USER_QUESTION;
                     }
                     returnData.set({result, error});
                     callback();
@@ -653,10 +655,10 @@ const unlockUsers = (req, returnData, callback) => {
     let { ids } = req.params;
 
     if (validator.isNull(ids)) {
-        return callback('ERROR_IDS_MISSING');
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
     }
     if(!Array.isArray(ids)){
-        return callback('ERROR_IDS_NOT_ARRAY')
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
 
     User
@@ -687,25 +689,25 @@ const createUserOAuth = (req, returnData, callback) => {
     } = req.params;
 
     if (validator.isNull(username)) {
-        return callback('ERROR_USERNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_USERNAME_MISSING);
     }
     if (validator.isNull(password)) {
-        return callback('ERROR_PASSWORD_MISSING');
+        return callback(`${consts.ERRORS.ERROR_PASSWORD_MISSING}`);
     }
     if (validator.isNull(email)) {
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     if (validator.isNull(firstname)) {
-        return callback('ERROR_FIRSTNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_FIRSTNAME_MISSING);
     }
     if (validator.isNull(lastname)) {
-        return callback('ERROR_LASTNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_LASTNAME_MISSING);
     }
     if (validator.isNull(level)) {
-        return callback('ERROR_LEVEL_MISSING');
+        return callback(consts.ERRORS.ERROR_LEVEL_MISSING);
     }
     if (validator.isNull(authId)) {
-        return callback('ERROR_AUTHID_MISSING');
+        return callback(consts.ERRORS.ERROR_AUTHID_MISSING);
     }
 
     let query = {
@@ -727,7 +729,7 @@ const createUserOAuth = (req, returnData, callback) => {
                         return callback(err);
                     }
                     if(!jsonData.status){
-                        return callback("ERROR_USER_LOCK");
+                        return callback(consts.ERRORS.ERROR_USER_LOCK);
                     }
                     sendMailPromise([
                         'andithang.work@gmail.com'
@@ -772,32 +774,32 @@ const updateUser = (req, returnData, callback) => {
     const userId = req.user._id;
 
     if (validator.isNull(username)) {
-        return callback('ERROR_USERNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_USERNAME_MISSING);
     }
     if (validator.isNull(email)) {
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     if (validator.isNull(firstname)) {
-        return callback('ERROR_FIRSTNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_FIRSTNAME_MISSING);
     }
     if (validator.isNull(lastname)) {
-        return callback('ERROR_LASTNAME_MISSING');
+        return callback(consts.ERRORS.ERROR_LASTNAME_MISSING);
     }
     if (validator.isNull(mobile)) {
-        return callback('ERROR_MOBILE_MISSING');
+        return callback(consts.ERRORS.ERROR_MOBILE_MISSING);
     }
 
     User.findOne({ _id: userId })
         .exec((err, data) => {
             if (err) {
-                return callback("ERROR_CANNOT_FIND_USER");
+                return callback(consts.ERRORS.ERROR_CANNOT_FIND_USER);
             }
             if (!data) {
-                return callback("ERROR_USER_NOT_EXIST");
+                return callback(consts.ERRORS.ERROR_USER_NOT_EXIST);
             }
             User.findOne({ email }).exec((errExist, userExist) => {
                 if(errExist){
-                    return callback("ERROR_ERROR_FIND_USER_EMAIL_EXIST");
+                    return callback(consts.ERRORS.ERROR_ERROR_FIND_USER_EMAIL_EXIST);
                 }
                 if(userExist && userExist._id.toString() != userId){
                     return callback("ERRROR_EMAIL_EXIST");
@@ -814,7 +816,7 @@ const updateUser = (req, returnData, callback) => {
                 })
                     .exec((errSave, dataSave) => {
                         if (errSave) {
-                            return callback("ERROR_CANNOT_UPDATE_USER");
+                            return callback(consts.ERRORS.ERROR_CANNOT_UPDATE_USER);
                         }
                         returnData.set({...dataSave._doc})
                         callback();
@@ -826,7 +828,7 @@ const updateUser = (req, returnData, callback) => {
 const encryptSessionAndUrl = (req, returnData, callback) => {
     const {url} = req.params;
     if(url.startsWith('http')){
-        return callback("ERROR_URL_INVALID");
+        return callback(consts.ERRORS.ERROR_URL_INVALID);
     }
     const currTime = new Date().getTime();
     const userId = req.user._id;
@@ -839,10 +841,10 @@ const encryptSessionAndUrl = (req, returnData, callback) => {
 const authenticateKeyUrl = (req, returnData, callback) => {
     const {k, endTime, url} = req.params;
     if(url.startsWith('http')){
-        return callback("ERROR_URL_INVALID");
+        return callback(consts.ERRORS.ERROR_URL_INVALID);
     }
     if(new Date().getTime() > endTime){
-        return callback("ERROR_KEY_EXPIRED");
+        return callback(consts.ERRORS.ERROR_KEY_EXPIRED);
     }
     const userId = req.user._id;
     const isValid = bcrypt.compareSync(JSON.stringify({userId, url}), k);
@@ -853,18 +855,18 @@ const authenticateKeyUrl = (req, returnData, callback) => {
 const sentForgotPasswordRequest = (req, returnData, callback) => {
     const { email } = req.params;
     if (validator.isNull(email)) {
-        return callback('ERROR_EMAIL_MISSING');
+        return callback(consts.ERRORS.ERROR_EMAIL_MISSING);
     }
     User.findOne({ email }).exec((errFindUser, user) => {
         if(errFindUser || !user){
-            return callback("ERROR_FIND_USER");
+            return callback(consts.ERRORS.ERROR_FIND_USER);
         }
         const newPassword = utils.randomstring(10), token = utils.randomstring(10) + ObjectId().toString().replace('-', '');
         // temporary set new password, wait until user click the link sent to email then discard it
         redis.SET(`${consts.redis_key.forgot_password}.${token}`, newPassword,  errSaveRedis => {
             if(errSaveRedis){
                 winstonLogger.error(`Error when saving new password when forgot by email ${user.email}:` + JSON.stringify(errSaveRedis));
-                return callback('ERROR_SAVE_REDIS_FORGOT_PASSWORD');
+                return callback(consts.ERRORS.ERROR_SAVE_REDIS_FORGOT_PASSWORD);
             }
             redis.EXPIRE(`${consts.redis_key.forgot_password}.${token}`, consts.changePassTokenTime);
             // send token via email to user
@@ -881,7 +883,7 @@ const sentForgotPasswordRequest = (req, returnData, callback) => {
             .catch(errEmail => {
                 winstonLogger.error(`Forgot password request sent failed: ${errEmail}`);
                 redis.DEL(`${consts.redis_key.forgot_password}.${token}`);
-                return callback('ERROR_SENT_MAIL_FORGOT_PASSWORD');
+                return callback(consts.ERRORS.ERROR_SENT_MAIL_FORGOT_PASSWORD);
             })
         })
     })
@@ -891,11 +893,11 @@ const handleForgotPasswordRequest = (req, returnData, callback) => {
     const { t, email } = req.params;
     redis.GET(`${consts.redis_key.forgot_password}.${t}`, (errRedis, newPassword) => {
         if(errRedis || !newPassword){
-            return callback('ERROR_FIND_USER');
+            return callback(consts.ERRORS.ERROR_FIND_USER);
         }
         User.findOne({ email }).exec((errFindUser, user) => {
             if(errFindUser || !user){
-                return callback("ERROR_FIND_USER");
+                return callback(consts.ERRORS.ERROR_FIND_USER);
             }
             user.password = newPassword;
             user.defaultPassword = true;
@@ -945,6 +947,44 @@ const handlePostToConnectionFromLambda = async (connId, notification, endpoint) 
     }
 }
 
+const resetPassword = (req, returnData, callback) => {
+    const { i: userId } = req.params;
+    const currUserId = req.user._id;
+    if(currUserId == userId){
+        return callback(consts.ERRORS.ERROR_SELF_RESET_PASSWORD);
+    }
+    const newPassword = utils.randomstring(10);
+    User
+        .findOne({_id: userId})
+        .exec((err, data) => {
+            if (err) {
+                return callback(err);
+            }
+            if (!data) {
+                return callback(consts.ERRORS.ERROR_USER_NOT_EXIST);
+            }
+            data.password = newPassword;
+            data.save((err, result) => {
+                if(err){
+                    return callback(err);
+                }
+                mailTransporter.sendMail({
+                    from: process.env.MAIL_USERNAME,
+                    to: data.email,
+                    text: `Mật khẩu cho tài khoản có email ${data.email} của bạn đã được reset. Mật khẩu mới là: ${newPassword}. Xin lưu ý: Để đảm bảo bảo mật cho tài khoản của bạn, hãy thay đổi mật khẩu thành mật khẩu mới của bạn qua: Click icon avatar > Chọn Profile > Đổi mật khẩu . Cảm ơn bạn đã sử dụng hệ thống của chúng tôi.`,
+                    subject: '[My ML] - Yêu cầu reset mật khẩu'
+                }).then(() => {
+                    winstonLogger.info(`Reset password token sent to email: ${data.email}`);
+                })
+                .catch(errEmail => {
+                    winstonLogger.error(`Sent reset password token failed: ${errEmail}`);
+                })
+                returnData.set({ok: true, result});
+                callback();
+            })
+        })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -965,3 +1005,4 @@ exports.checkChangepasswordUrl = checkChangepasswordUrl;
 exports.sentForgotPasswordRequest = sentForgotPasswordRequest;
 exports.handleForgotPasswordRequest = handleForgotPasswordRequest;
 exports.postToConnectionLambda = postToConnectionLambda;
+exports.resetPassword = resetPassword;
