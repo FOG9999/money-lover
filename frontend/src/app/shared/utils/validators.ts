@@ -1,5 +1,5 @@
 import { AbstractControl, FormControl } from "@angular/forms";
-import { REGEX } from "app/consts";
+import { REGEX, removeAscent } from "app/consts";
 
 let validators = {
     validateUsername: (control: AbstractControl) => {
@@ -21,7 +21,7 @@ let validators = {
     validateName: (control: AbstractControl) => {
         if (!control.value || !control.value.trim()) {
             return { error: true, required: true };
-        } else if (!new RegExp(REGEX.NAME, 'i').test(control.value)) {
+        } else if (!new RegExp(REGEX.NAME, 'g').test(removeAscent(control.value))) {
             return { error: true, invalid: true };
         }
         return {};

@@ -39,8 +39,8 @@
                 <mat-error *ngIf="formGroup.get('answerThree').invalid">Câu trả lời bắt buộc nhập</mat-error>
             </mat-form-field>
 
-            <button class="w-full" mat-raised-button color="primary" [disabled]="formGroup.invalid || isSaving" (click)="saveQuestions()">{{saveTitle}}</button>
             <button class="w-full m-t-8" mat-raised-button (click)="goBack()" *ngIf="!isAuthMode">Quay lại</button>
+            <button class="w-full" mat-raised-button color="primary" [disabled]="formGroup.invalid || isSaving" (click)="saveQuestions()">{{saveTitle}}</button>
         </form>
     </mat-card-content>
 </mat-card>

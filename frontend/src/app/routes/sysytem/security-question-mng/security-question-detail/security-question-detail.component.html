@@ -8,6 +8,6 @@
     </form>
 </div>
 <div mat-dialog-actions align="end">
-    <button mat-button color="primary" [disabled]="formGroup.invalid || loading" (click)="save()">Lưu</button>
     <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button color="primary" [disabled]="formGroup.invalid || loading" (click)="save()">Lưu</button>
 </div>
