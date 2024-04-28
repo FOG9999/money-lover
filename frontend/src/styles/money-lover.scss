@@ -70,3 +70,12 @@ button .mat-icon {
 .outcome-category-name {
     color: $outcome-color;
 }
+
+.dropdown-item {
+    &.dropdown-item-accent {
+        color: #ff4081;
+    }
+    &.dropdown-item-warn {
+        color: #f44336;
+    }
+}

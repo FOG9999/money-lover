@@ -38,4 +38,19 @@ export class UsersService {
         let api: string = `api.v1.systemuser.get`;
         return this.http.post<User>(environment.SERVER_URL, {api_name: api}, {observe: 'body'});
     }
+
+    deleteSingleUser(id: string){
+        let api: string = "api.v1.systemuser.deletesingle";
+        return this.http.post<User>(environment.SERVER_URL, {api_name: api, i: id}, {observe: 'body'});
+    }
+
+    restoreUsers(ids: string[]){
+        let api: string = "api.v1.systemuser.restoreuser";
+        return this.http.post<User>(environment.SERVER_URL, {api_name: api, ids}, {observe: 'body'});
+    }
+
+    deletePermanently(ids: string[]){
+        let api: string = "api.v1.systemuser.deletepermanently";
+        return this.http.post<User>(environment.SERVER_URL, {api_name: api, ids}, {observe: 'body'});
+    }
 }

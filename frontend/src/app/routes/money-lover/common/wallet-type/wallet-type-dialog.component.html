@@ -25,6 +25,6 @@
     <mat-error *ngIf="walletTypeName.hasError('required')"></mat-error>
 </div>
 <div mat-dialog-actions align="end">
-    <button mat-button [mat-dialog-close]="walletType" color="primary" [disabled]="!isValid">Lưu</button>
     <button mat-button (click)="closeDialog()">Đóng</button>
+    <button mat-button [mat-dialog-close]="walletType" color="primary" [disabled]="!isValid">Lưu</button>
 </div>

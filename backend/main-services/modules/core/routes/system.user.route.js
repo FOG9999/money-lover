@@ -18,6 +18,7 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.delete', controller.deleteUsers, { systemApi: true });
     consts.registerApi('api.v1.systemuser.deletesingle', controller.deleteSingleUser, { systemApi: true });
     consts.registerApi('api.v1.systemuser.restoreuser', controller.restoreUsers, { systemApi: true });
+    consts.registerApi('api.v1.systemuser.deletepermanently', controller.deletePermanently, { systemApi: true });
     consts.registerApi('api.v1.systemuser.update', controller.updateUser, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.getkey', controller.encryptSessionAndUrl, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.authkey', controller.authenticateKeyUrl, { anyAuth: true });

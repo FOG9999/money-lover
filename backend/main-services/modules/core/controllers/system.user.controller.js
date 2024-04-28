@@ -24,9 +24,6 @@ const list = (req, returnData, callback) => {
     if (!validator.isNull(isDelete)) {
         query['status'] = isDelete;
     }
-    else {
-        query['is_delete'] = false;
-    }
     if (validator.isNull(page)) {
         page = 0;
     }
@@ -547,7 +544,7 @@ const deleteUsers = (req, returnData, callback) => {
     if(!Array.isArray(ids)){
         return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
-    if(ids.includes(userid)){
+    if(ids.includes(userId)){
         return callback(consts.ERRORS.ERROR_DEL_CURR_USER);
     }
 
@@ -1026,6 +1023,22 @@ const restoreUsers =  (req, returnData, callback) => {
     })
 }
 
+const deletePermanently = (req, returnData, callback) => {
+    const { ids } = req.params;
+    User.find({_id: { $in: ids }}).exec((err, data) => {
+        if(err) return callback(err);
+        if(!data.length){
+            return callback(consts.ERRORS.ERROR_FIND_USER);
+        }
+        if(data.find(u => u.status || !u.is_delete)) return callback(consts.ERRORS.ERROR_NOT_ALL_DEL_TEMP)
+        User.deleteOne({_id: { $in: ids }}).exec((errDel, result) => {
+            if(errDel) return callback(errDel);
+            returnData.set({ok: true, result});
+            callback();
+        })
+    })
+}
+
 exports.deactivateUsers = deactivateUsers;
 exports.list = list;
 exports.checkEmailExist = checkEmailExist;
@@ -1049,3 +1062,4 @@ exports.postToConnectionLambda = postToConnectionLambda;
 exports.resetPassword = resetPassword;
 exports.deleteSingleUser = deleteSingleUser;
 exports.restoreUsers = restoreUsers;
+exports.deletePermanently = deletePermanently;

@@ -335,6 +335,8 @@ export function getResponseErrorMessage(message: string){
       return "Bạn không thể tự reset password của chính mình.";
     case "ERROR_DEL_CURR_USER": 
       return "Bạn không thể tự xóa tài khoản của chính mình.";
+    case "ERROR_NOT_ALL_DEL_TEMP": 
+      return "Không thể xóa vĩnh viễn các tài khoản đang hoạt động.";
     default:
       return 'Không tồn tại mesage';
   }

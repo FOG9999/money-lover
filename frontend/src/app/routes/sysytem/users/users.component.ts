@@ -26,8 +26,8 @@ export class UsersListComponent implements OnInit {
 
     searchKey: string = "";
     userList: Partial<User>[] = [];
-    displayedColumns: string[] = ['action','Username', 'Họ Tên', 'Email', 'Vai trò', 'Ngày tạo', 'Trạng thái'];
-    columnProps: string[] = ['action','username','fullname', 'email', 'level', 'dateCreated', 'status'];
+    displayedColumns: string[] = ['checkbox', 'Username', 'Họ Tên', 'Email', 'Vai trò', 'Ngày tạo', 'Trạng thái', 'Thao tác'];
+    columnProps: string[] = ['checkbox', 'username','fullname', 'email', 'level', 'dateCreated', 'status', 'actions'];
     total: number = 0;
     pageSize: number = CONSTS.page_size;
     page: number = 0;
@@ -76,8 +76,8 @@ export class UsersListComponent implements OnInit {
                 this.loading = true;
                 this.usersService.deleteUsers(Array.from(this.listChecked))
                 .subscribe(res => {
-                    this.loading = false;
                     this.toast.success("Xóa vĩnh viễn tài khoản thành công");
+                    this.loading = false;
                     this.searchUsers();
                     this.listChecked.clear();
                 }, err => {
@@ -161,14 +161,42 @@ export class UsersListComponent implements OnInit {
     }
 
     isShowLockButton(){
-        if(this.listChecked.size)
-            return this.userList.filter(u => this.listChecked.has(u._id)).map(u => u.status).find(s => s == 0) == null;
+        if(this.listChecked.size){
+            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            return checkedItems.length && checkedItems.map(u => u.status).find(s => s == 0) == null;
+        }
+        else return false;
+    }
+
+    isShowDeletePermanentButton(){
+        if(this.listChecked.size){
+            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            return checkedItems.length && !checkedItems.find(u => u.status || !u.is_delete);
+        }
         else return false;
     }
 
     isShowUnlockButton(){
-        if(this.listChecked.size)
-            return this.userList.filter(u => this.listChecked.has(u._id)).map(u => u.status).find(s => s == 1) == null;
+        if(this.listChecked.size){
+            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            return checkedItems.length && checkedItems.map(u => u.status).find(s => s == 1) == null;
+        }
+        else return false;
+    }
+
+    isShowDeleteTempButton(){
+        if(this.listChecked.size){
+            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            return checkedItems.length && checkedItems.map(u => u.is_delete).find(s => s) == null;
+        }
+        else return false;
+    }
+
+    isShowRestoreButton(){
+        if(this.listChecked.size){
+            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            return checkedItems.length && !checkedItems.find(u => u.status || !u.is_delete);
+        }
         else return false;
     }
 
@@ -176,5 +204,67 @@ export class UsersListComponent implements OnInit {
         this.page = evt.pageIndex;
         this.pageSize = evt.pageSize;
         this.searchUsers();
+    }
+
+    deleteSingleUser(user: Partial<User>){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: `Xác nhận xóa tài khoản '${user.username}'?`,
+                message: `Xóa tài khoản với username '${user.username}'?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed?: boolean) => {
+            if(isConfirmed){
+                this.loading = true;
+                this.usersService.deleteSingleUser(user._id).subscribe(() => {
+                    this.toast.success(`Xóa tài khoản thành công`);
+                    this.loading = false;
+                    this.searchUsers();
+                    this.listChecked.clear();
+                }, () => this.loading = false)
+            }
+        })
+    }
+
+    restoreUser(user?: Partial<User>){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: user ? `Xác nhận khôi phục tài khoản '${user.username}'?`: `Xác nhận khôi phục ${this.listChecked.size} tài khoản?`,
+                message: user ? `Khôi phục tài khoản với username '${user.username}'?`: `Khôi phục ${this.listChecked.size} tài khoản?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed?: boolean) => {
+            if(isConfirmed){
+                this.loading = true;
+                this.usersService.restoreUsers(user ? [user._id]: Array.from(this.listChecked)).subscribe(() => {
+                    this.toast.success(`Khôi phục ${user ? '1': this.listChecked.size} tài khoản thành công`);
+                    this.loading = false;
+                    this.searchUsers();
+                    if(user && this.listChecked.has(user._id)) this.listChecked.delete(user._id);
+                    else if(!user) this.listChecked.clear();
+                }, () => this.loading = false)
+            }
+        })
+    }
+
+    deletePermanently(user?: Partial<User>){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: user ? `Xác nhận xóa vĩnh viễn tài khoản '${user.username}'?`: `Xác nhận xóa vĩnh viễn ${this.listChecked.size} tài khoản?`,
+                message: user ? `Hành động này không thể hoàn tác. Xóa vĩnh viễn tài khoản '${user.username}'?`: `Hành động này không thể hoàn tác. Xóa vĩnh viễn ${this.listChecked.size} tài khoản?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed?: boolean) => {
+            if(isConfirmed){
+                this.loading = true;
+                this.usersService.deletePermanently(user? [user._id]: Array.from(this.listChecked)).subscribe(() => {
+                    this.toast.success(`Xóa vĩnh viễn ${user ? '1': this.listChecked.size} tài khoản thành công`);
+                    this.loading = false;
+                    this.searchUsers();
+                    if(user && this.listChecked.has(user._id)) this.listChecked.delete(user._id);
+                    else if(!user) this.listChecked.clear();
+                }, () => this.loading = false)
+            }
+        })
     }
 }
