@@ -14,7 +14,7 @@
 }
 
 .category-name {
-    font-size: large;
+    font-size: 18px;
     font-weight: 500;
 }
 
@@ -23,7 +23,7 @@
     align-items: center;
     justify-content: end;
     padding-right: 16px;
-    font-size: large;
+    font-size: 18px;
 }
 
 .income {
@@ -32,11 +32,6 @@
 
 .outcome {
     color: $outcome-color;
-}
-
-.title {
-    font-size: large;
-    font-weight: 600;
 }
 
 .empty-list-transactions-container {

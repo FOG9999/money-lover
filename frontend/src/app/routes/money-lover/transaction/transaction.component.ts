@@ -3,10 +3,9 @@ import { Category } from 'app/model/category.model';
 import { Wallet } from 'app/model/wallet.model';
 import { CommonService } from '../common/common.service';
 import { WalletService } from '../user-wallet/user-wallet.service';
-import { takeUntil, Subject, timer } from 'rxjs';
+import { takeUntil, Subject } from 'rxjs';
 import { Transaction } from 'app/model/transaction.model';
-import { formatNumber, randomString } from '@shared';
-import { ChartComponent } from 'ng-apexcharts';
+import { formatNumber } from '@shared';
 import { ChartOptions, NoDataChart } from 'app/model/chart-option';
 import { TransactionService } from './transaction.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,6 +13,7 @@ import { TransactionDialogComponent } from './transaction-dialog/transaction-dia
 import { ToastrService } from 'ngx-toastr';
 import { TransactionViewComponent } from './transaction-view/transaction-view.component';
 import { INCOME_COLOR, OUTCOME_COLOR } from 'app/my-ml-consts';
+import * as moment from "moment";
 
 interface MonthTab {
     from: Date,
@@ -61,7 +61,8 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     inOutcomeChartOptions: Partial<ChartOptions> = {
         labels: [],
         chart: {
-            type: "pie"
+            type: "pie",
+            height: 450
         },
         colors: [INCOME_COLOR, OUTCOME_COLOR],
         tooltip: {
@@ -73,24 +74,38 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         },
         noData: {
             ...NoDataChart
+        },
+        legend: {
+            show: true,            
+            position: 'bottom',
         }
     };
     totalOutcome: number = 0;
     outcomeChartOptions: Partial<ChartOptions> = {
         chart: {
-            type: "pie"
+            type: "pie",
+            height: 450
         },
         noData: {
             ...NoDataChart
+        },
+        legend: {
+            show: true,            
+            position: 'bottom',
         }
     }
     totalIncome: number = 0;
     incomeChartOptions: Partial<ChartOptions> = {
         chart: {
-            type: "pie"
+            type: "pie",
+            height: 450
         },
         noData: {
             ...NoDataChart
+        },
+        legend: {
+            show: true,            
+            position: 'bottom',
         }
     }
 
@@ -149,17 +164,11 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             if(tab.from.getMonth() == currentMonth && tab.from.getFullYear() == currentYear){
                 tab.title = "Tháng này"
             }
-            else if(
-                (tab.from.getMonth() == currentMonth - 1 && tab.from.getFullYear() == currentYear)  || 
-                (tab.from.getMonth() == 11 && tab.from.getFullYear() == currentYear-1)
-            ){
-                tab.title = "Tháng trước"
-            }
-            else if(
-                (tab.from.getMonth() == currentMonth + 1 && tab.from.getFullYear() == currentYear)  || 
-                (tab.from.getMonth() == 0 && tab.from.getFullYear() == currentYear+1)
-            ){
-                tab.title = "Tháng sau"
+            else if(moment(tab.from).diff(new Date(), "months") == -1){                
+                tab.title = "Tháng trước";
+            } 
+            else if(moment(tab.to).diff(new Date(), "months") == 1){
+                tab.title = "Tháng sau";
             }
         });
         this.listMonthTabs = [

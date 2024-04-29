@@ -1,13 +1,13 @@
 <div class="matero-row" fxLayout="row wrap">
-    <div class="matero-col list-transactions one-half w-full" fxFlex="100" fxFlex.gt-md="60" fxFlex.gt-lg="70"
+    <div class="matero-col list-transactions one-half" fxFlex="100" fxFlex.gt-md="60"
         fxLayout="row" fxLayoutAlign="center start">
-        <mat-card>
+        <mat-card class="w-full">
             <mat-card-content>
-                <div fxLayout="row" fxFill class="p-y-16">
-                    <div fxFlex="grow" class="title" fxLayout="row" fxLayoutAlign="start center">Thống kê giao dịch
+                <div fxLayout="row" fxFill>
+                    <div fxFlex="grow" class="mat-card-title" fxLayout="row" fxLayoutAlign="start center">Thống kê giao dịch
                     </div>
                     <div fxFlex="auto">
-                        <mat-icon class="cursor-pointer" (click)="createTransaction()">add</mat-icon>
+                        <mat-icon class="cursor-pointer" (click)="createTransaction()" matTooltip="Thêm giao dịch">add</mat-icon>
                     </div>
                 </div>
                 <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
@@ -29,31 +29,31 @@
             </mat-card-content>
         </mat-card>
     </div>
-    <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex.gt-lg="30" fxFlex="100">
+    <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex="100">
         <mat-card>
-            <mat-card-header>Báo cáo thu chi</mat-card-header>
+            <mat-card-header class="mat-card-title">Báo cáo thu chi</mat-card-header>
             <mat-card-content>
                 <div id="income-outcome-chart">
-                    <apx-chart [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels"
+                    <apx-chart [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels" [legend]="inOutcomeChartOptions.legend"
                         [chart]="inOutcomeChartOptions.chart" [colors]="inOutcomeChartOptions.colors" [noData]="inOutcomeChartOptions.noData"
                         [tooltip]="inOutcomeChartOptions.tooltip"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>
         <mat-card>
-            <mat-card-header>Báo cáo chi tiêu theo chủng loại</mat-card-header>
+            <mat-card-header class="mat-card-title">Báo cáo chi tiêu theo chủng loại</mat-card-header>
             <mat-card-content>
                 <div class="outcome-category-based-chart">
-                    <apx-chart [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels"
+                    <apx-chart [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels" [legend]="outcomeChartOptions.legend"
                         [chart]="outcomeChartOptions.chart" [tooltip]="outcomeChartOptions.tooltip" [noData]="inOutcomeChartOptions.noData"></apx-chart>
                 </div>
             </mat-card-content>
         </mat-card>
         <mat-card>
-            <mat-card-header>Báo cáo thu nhập theo chủng loại</mat-card-header>
+            <mat-card-header class="mat-card-title">Báo cáo thu nhập theo chủng loại</mat-card-header>
             <mat-card-content>
                 <div class="income-category-based-chart">
-                    <apx-chart [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels"
+                    <apx-chart [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels" [legend]="incomeChartOptions.legend"
                         [chart]="incomeChartOptions.chart" [tooltip]="incomeChartOptions.tooltip" [noData]="inOutcomeChartOptions.noData"></apx-chart>
                 </div>
             </mat-card-content>
@@ -81,7 +81,7 @@
             <mat-list role="list">
                 <mat-list-item class="m-y-8" role="listitem"
                     *ngFor="let tran of getListTransactionOfOneCategory(category)">
-                    <div class="hover-item transaction-item p-8" fxLayout="row" fxFill (click)="viewTransaction(tran._id)">
+                    <div class="hover-item transaction-item p-8" fxLayout="row" fxFill (click)="viewTransaction(tran._id)" matTooltip="Click để xem chi tiết">
                         <div fxFlex="grow" class="transaction-date-note">
                             <div class="date">{{ tran.dateCreatedObj.toLocaleDateString('vi-VN') }}</div>
                             <div class="note">{{ tran.note }}</div>

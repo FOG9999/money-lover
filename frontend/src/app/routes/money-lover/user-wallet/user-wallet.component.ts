@@ -55,7 +55,7 @@ export class UserWalletComponent implements OnInit {
                 wallet: {
                     walletType: '',
                     amount: 0,
-                    includeInTotal: false
+                    includeInTotal: true
                 }
             }
         })

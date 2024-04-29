@@ -24,7 +24,7 @@
                 <div fxLayout="row" fxLayoutAlign="center center" class="matero-col p-8" fxFlex="20" fxFlex.gt-sm="10">
                     <ml-icon [path]="wallet.walletType.icon.path"></ml-icon>
                 </div>
-                <div class="matero-col p-16" fxFlex="70" fxFlex.gt-sm="85">
+                <div class="matero-col p-16" fxFlex="70" fxFlex.gt-sm="85" (click)="editWallet(wallet._id)">
                     <div class="matero-col" fxFlex="80" fxLayout="row" fxLayoutAlign="start center">
                         <div>
                             <div class="wallet-name">{{wallet.walletType.name}}</div>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div fxLayout="row" fxLayoutAlign="end center" class="matero-col" fxFlex="20">
-                        <button mat-button color="accent" (click)="editWallet(wallet._id)">
+                        <button mat-button color="accent">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </div>
