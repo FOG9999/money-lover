@@ -51,7 +51,7 @@
         {
           "route": "import-transaction",
           "name": "import-transaction",
-          "level": ["USER"],
+          "level": ["TEST"],
           "type": "link"
         },
         {

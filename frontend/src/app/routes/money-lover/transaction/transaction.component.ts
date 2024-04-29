@@ -160,14 +160,15 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     private updateTabTitles(listMonthTabs: MonthTab[]){
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
+        const startOfToday = new Date(new Date().setHours(0, 0, 0, 0));
         listMonthTabs.forEach(tab => {
             if(tab.from.getMonth() == currentMonth && tab.from.getFullYear() == currentYear){
                 tab.title = "Tháng này"
             }
-            else if(moment(tab.from).diff(new Date(), "months") == -1){                
+            else if(moment(tab.from).diff(startOfToday, "months") == -1){                
                 tab.title = "Tháng trước";
             } 
-            else if(moment(tab.to).diff(new Date(), "months") == 1){
+            else if(moment(tab.to).diff(startOfToday, "months") == 1){
                 tab.title = "Tháng sau";
             }
         });
@@ -328,7 +329,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.transactionService.getListData({
             from: this.selectedMonthTab.from,
-            to: this.selectedMonthTab.to
+            to: new Date(new Date(this.selectedMonthTab.to).setHours(23, 59, 59, 999))
         }).subscribe(list => {
             this.listTransactions = list.map((tran) => {
                 if(tran.dateCreated){

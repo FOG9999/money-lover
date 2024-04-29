@@ -46,11 +46,11 @@ const routes: Routes = [
         component: TransactionListComponent,
         data: {title: "Giao dịch", titleI18n: 'transaction'}
       },
-      {
-        path: 'import-transaction',
-        component: TransactionImportComponent,
-        data: {title: "Import giao dịch", titleI18n: 'import-transaction'}
-      },
+      // {
+      //   path: 'import-transaction',
+      //   component: TransactionImportComponent,
+      //   data: {title: "Import giao dịch", titleI18n: 'import-transaction'}
+      // },
       {
         path: 'report',
         loadChildren: () => import('./report/report.module').then(m => m.ReportModule)

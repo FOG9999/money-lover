@@ -2,12 +2,22 @@
     .category-container {
         display: flex;
         flex-direction: column;
+        padding-bottom: 12px;
         div:first-child {
             height: 90%;
         }
         &:hover {
             background-color: #e0e0e0;
             border-radius: 5px;
+        }
+    }
+    .user-category-item {
+        position: relative;
+        .user-category-checkbox {
+            position: absolute;
+            z-index: 10; // float when hovering
+            top: 12px;
+            left: 20px;
         }
     }
 
