@@ -31,7 +31,14 @@
     </div>
     <div class="matero-col report-overview one-half" fxFlex.gt-md="40" fxFlex="100">
         <mat-card>
-            <div class="mat-card-title">Báo cáo thu chi</div>
+            <div fxLayout="row" fxFill>
+                <div fxFlex="grow" class="mat-card-title" fxLayout="row" fxLayoutAlign="start center">Báo cáo thu chi
+                </div>
+                <div fxFlex="auto">
+                    <mat-icon class="cursor-pointer" matTooltip="Lọc thời gian" [matMenuTriggerFor]="filterInoutcome">list</mat-icon>
+                </div>
+            </div>
+            <ng-container *ngTemplateOutlet="showTimeFilterInoutcomeTpl"></ng-container>
             <mat-card-content>
                 <div id="income-outcome-chart">
                     <apx-chart [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels" [legend]="inOutcomeChartOptions.legend"
@@ -41,7 +48,14 @@
             </mat-card-content>
         </mat-card>
         <mat-card>
-            <div class="mat-card-title">Báo cáo chi tiêu theo chủng loại</div>
+            <div fxLayout="row" fxFill>
+                <div fxFlex="grow" class="mat-card-title" fxLayout="row" fxLayoutAlign="start center">Báo cáo chi tiêu theo chủng loại
+                </div>
+                <div fxFlex="auto">
+                    <mat-icon class="cursor-pointer" matTooltip="Lọc thời gian" [matMenuTriggerFor]="filterOutcome">list</mat-icon>
+                </div>
+            </div>
+            <ng-container *ngTemplateOutlet="showTimeFilterOutcomeTpl"></ng-container>
             <mat-card-content>
                 <div class="outcome-category-based-chart">
                     <apx-chart [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels" [legend]="outcomeChartOptions.legend"
@@ -50,7 +64,14 @@
             </mat-card-content>
         </mat-card>
         <mat-card>
-            <div class="mat-card-title">Báo cáo thu nhập theo chủng loại</div>
+            <div fxLayout="row" fxFill>
+                <div fxFlex="grow" class="mat-card-title" fxLayout="row" fxLayoutAlign="start center">Báo cáo thu nhập theo chủng loại
+                </div>
+                <div fxFlex="auto">
+                    <mat-icon class="cursor-pointer" matTooltip="Lọc thời gian" [matMenuTriggerFor]="filterIncome">list</mat-icon>
+                </div>
+            </div>
+            <ng-container *ngTemplateOutlet="showTimeFilterIncomeTpl"></ng-container>
             <mat-card-content>
                 <div class="income-category-based-chart">
                     <apx-chart [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels" [legend]="incomeChartOptions.legend"
@@ -102,3 +123,38 @@
 <ng-template #loadingTpl>
     <app-loading></app-loading>
 </ng-template>
+
+<!-- show time filter -->
+<ng-template #showTimeFilterInoutcomeTpl>
+    <small><em>Từ {{ timeFromInoutcome | date: "dd/MM/yyyy" }} đến {{ timeToInoutcome | date: "dd/MM/yyyy" }}</em></small>
+</ng-template>
+<ng-template #showTimeFilterOutcomeTpl>
+    <small><em>Từ {{ timeFromOutcome | date: "dd/MM/yyyy" }} đến {{ timeToOutcome | date: "dd/MM/yyyy" }}</em></small>
+</ng-template>
+<ng-template #showTimeFilterIncomeTpl>
+    <small><em>Từ {{ timeFromIncome | date: "dd/MM/yyyy" }} đến {{ timeToIncome | date: "dd/MM/yyyy" }}</em></small>
+</ng-template>
+
+<!-- time filter income/outcome -->
+<mat-menu #filterInoutcome>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'this-week')">Tuần này</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'this-month')">Tháng này</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'this-year')">Năm nay</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'custom')">Tùy chọn</button>
+</mat-menu>
+
+<!-- time filter outcome categories -->
+<mat-menu #filterOutcome>
+    <button mat-menu-item (click)="filterChart('outcome', 'this-week')">Tuần này</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'this-month')">Tháng này</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'this-year')">Năm nay</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'custom')">Tùy chọn</button>
+</mat-menu>
+
+<!-- time filter income categories -->
+<mat-menu #filterIncome>
+    <button mat-menu-item (click)="filterChart('income', 'this-week')">Tuần này</button>
+    <button mat-menu-item (click)="filterChart('income', 'this-month')">Tháng này</button>
+    <button mat-menu-item (click)="filterChart('income', 'this-year')">Năm nay</button>
+    <button mat-menu-item (click)="filterChart('income', 'custom')">Tùy chọn</button>
+</mat-menu>

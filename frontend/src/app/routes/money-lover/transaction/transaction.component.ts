@@ -15,6 +15,9 @@ import { TransactionViewComponent } from './transaction-view/transaction-view.co
 import { INCOME_COLOR, OUTCOME_COLOR } from 'app/my-ml-consts';
 import * as moment from "moment";
 
+type FilterChartType = "inoutcome" | "income" | "outcome";
+type FilterChartDateOption = "this-week" | "this-month" | "this-year" | "custom";
+
 interface MonthTab {
     from: Date,
     to: Date,
@@ -108,6 +111,12 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             position: 'bottom',
         }
     }
+    timeFromInoutcome: Date = moment().startOf("month").toDate();
+    timeToInoutcome: Date = moment().endOf("month").toDate();
+    timeFromIncome: Date = moment().startOf("month").toDate();
+    timeToIncome: Date = moment().endOf("month").toDate();
+    timeFromOutcome: Date = moment().startOf("month").toDate();
+    timeToOutcome: Date = moment().endOf("month").toDate();
 
     /**
      * create month tabs based on current time
@@ -227,14 +236,14 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.getListTransaction();        
     }
 
-    private getInOutcomeChartData() {
+    private getInOutcomeChartData(listData: Partial<Transaction>[]) {
         let income =
-            this.listTransactions
+            listData
                 .filter(tran =>
                     tran.category.transactionType == 1
                 ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
         let outcome =
-            this.listTransactions
+            listData
                 .filter(tran =>
                     tran.category.transactionType == 0
                 ).reduce((pre, curr) => ({ amount: curr.amount + pre.amount }), {amount: 0}).amount;
@@ -250,9 +259,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
-    private getOutcomeChartData() {
+    private getOutcomeChartData(listData: Partial<Transaction>[]) {
         let outcomeArr =
-            this.listTransactions
+            listData
                 .filter(tran =>
                     tran.category.transactionType == 0
                 );
@@ -284,9 +293,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
-    private getIncomeChartData(){
+    private getIncomeChartData(listData: Partial<Transaction>[]){
         let incomeArr =
-            this.listTransactions
+            listData
                 .filter(tran =>
                     tran.category.transactionType == 1
                 );
@@ -319,10 +328,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
-    private updateCharts(){
-        this.getInOutcomeChartData();
-        this.getOutcomeChartData();
-        this.getIncomeChartData();
+    private updateCharts(listData: Partial<Transaction>[]){
+        this.getInOutcomeChartData(listData);
+        this.getOutcomeChartData(listData);
+        this.getIncomeChartData(listData);
     }
 
     private getListTransaction(){
@@ -341,7 +350,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 return tran;
             });
             this.loading = false;
-            this.updateCharts();
+            this.updateCharts(this.listTransactions);
         }, (err) => {
             this.loading = false;
         })
@@ -384,6 +393,62 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             }
             else {
                 console.log(res)
+            }
+        })
+    }
+
+    filterChart(chartType: FilterChartType, dateType: FilterChartDateOption){
+        let from: Date, to: Date;
+        const momentDateNow = moment(new Date());
+        switch (dateType) {
+            case 'this-month':
+                from = momentDateNow.startOf("month").toDate();
+                to = momentDateNow.endOf('month').toDate();
+                break;
+            case 'this-week':
+                from = momentDateNow.startOf("week").toDate();
+                to = momentDateNow.endOf('week').toDate();
+                break;
+            case 'this-year':
+                from = momentDateNow.startOf("year").toDate();
+                to = momentDateNow.endOf('year').toDate();
+                break;
+            default:
+                from = momentDateNow.startOf("month").toDate();
+                to = momentDateNow.endOf('month').toDate();
+                break;
+        }
+        this.transactionService.getListData({
+            from: this.selectedMonthTab.from,
+            to: new Date(new Date(this.selectedMonthTab.to).setHours(23, 59, 59, 999))
+        }).subscribe(list => {
+            list = list.map((tran) => {
+                if(tran.dateCreated){
+                    tran.dateCreatedObj = new Date(tran.dateCreated);
+                }
+                if(tran.dateUpdated){
+                    tran.dateUpdatedObj = new Date(tran.dateUpdated);
+                }
+                return tran;
+            });
+            switch (chartType) {
+                case 'inoutcome':
+                    this.timeFromInoutcome = from;
+                    this.timeToInoutcome = to;
+                    this.getInOutcomeChartData(list);
+                    break;
+                case 'income':
+                    this.timeFromIncome = from;
+                    this.timeToIncome = to;
+                    this.getIncomeChartData(list);
+                    break;
+                case 'outcome':
+                    this.timeFromOutcome = from;
+                    this.timeToOutcome = to;
+                    this.getOutcomeChartData(list);
+                    break;
+                default:
+                    break;
             }
         })
     }
