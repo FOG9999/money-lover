@@ -39,6 +39,7 @@ export class TransactionDialogComponent implements OnInit {
         }
         // create
         else {
+            this.title = "Thêm mới giao dịch";
             this.transaction = {
                 category: {
                     icon: {

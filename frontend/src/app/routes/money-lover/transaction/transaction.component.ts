@@ -51,6 +51,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.initMonthTabs();
         this.getOtherDataList();
         this.getListTransaction();
+        this.filterChart('inoutcome', 'this-month');
+        this.filterChart('income', 'this-month');
+        this.filterChart('outcome', 'this-month');
     }
 
     listMonthTabs: MonthTab[] = [];
@@ -111,12 +114,12 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             position: 'bottom',
         }
     }
-    timeFromInoutcome: Date = moment().startOf("month").toDate();
-    timeToInoutcome: Date = moment().endOf("month").toDate();
-    timeFromIncome: Date = moment().startOf("month").toDate();
-    timeToIncome: Date = moment().endOf("month").toDate();
-    timeFromOutcome: Date = moment().startOf("month").toDate();
-    timeToOutcome: Date = moment().endOf("month").toDate();
+    timeFromInoutcome: Date;
+    timeToInoutcome: Date;
+    timeFromIncome: Date;
+    timeToIncome: Date;
+    timeFromOutcome: Date;
+    timeToOutcome: Date;
 
     /**
      * create month tabs based on current time
@@ -328,12 +331,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         }
     }
 
-    private updateCharts(listData: Partial<Transaction>[]){
-        this.getInOutcomeChartData(listData);
-        this.getOutcomeChartData(listData);
-        this.getIncomeChartData(listData);
-    }
-
     private getListTransaction(){
         this.loading = true;
         this.transactionService.getListData({
@@ -350,7 +347,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 return tran;
             });
             this.loading = false;
-            this.updateCharts(this.listTransactions);
         }, (err) => {
             this.loading = false;
         })
@@ -418,10 +414,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                 to = momentDateNow.endOf('month').toDate();
                 break;
         }
-        this.transactionService.getListData({
-            from: this.selectedMonthTab.from,
-            to: new Date(new Date(this.selectedMonthTab.to).setHours(23, 59, 59, 999))
-        }).subscribe(list => {
+        this.transactionService.getListData({ from , to }).subscribe(list => {
             list = list.map((tran) => {
                 if(tran.dateCreated){
                     tran.dateCreatedObj = new Date(tran.dateCreated);
