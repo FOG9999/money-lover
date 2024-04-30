@@ -51,9 +51,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.initMonthTabs();
         this.getOtherDataList();
         this.getListTransaction();
-        this.filterChart('inoutcome', 'this-month');
-        this.filterChart('income', 'this-month');
-        this.filterChart('outcome', 'this-month');
     }
 
     listMonthTabs: MonthTab[] = [];
@@ -114,12 +111,12 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             position: 'bottom',
         }
     }
-    timeFromInoutcome: Date;
-    timeToInoutcome: Date;
-    timeFromIncome: Date;
-    timeToIncome: Date;
-    timeFromOutcome: Date;
-    timeToOutcome: Date;
+    timeFromInoutcome: Date = moment().startOf("month").toDate();
+    timeToInoutcome: Date = moment().endOf("month").toDate();
+    timeFromIncome: Date = moment().startOf("month").toDate();
+    timeToIncome: Date = moment().endOf("month").toDate();
+    timeFromOutcome: Date = moment().startOf("month").toDate();
+    timeToOutcome: Date = moment().endOf("month").toDate();
 
     /**
      * create month tabs based on current time
@@ -314,7 +311,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         let series = [];
         labels.forEach((label, ind) => {
             let amount = incomeArr.filter(tran => tran.category.name == label).reduce((pre, curr) => ({amount: curr.amount + pre.amount}), {amount: 0}).amount;
-            series.push(parseFloat((amount/totalIncome*100).toFixed(2)));
+            series.push(amount);
         });
         this.totalIncome = totalIncome;
         this.incomeChartOptions = {
@@ -337,15 +334,8 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             from: this.selectedMonthTab.from,
             to: new Date(new Date(this.selectedMonthTab.to).setHours(23, 59, 59, 999))
         }).subscribe(list => {
-            this.listTransactions = list.map((tran) => {
-                if(tran.dateCreated){
-                    tran.dateCreatedObj = new Date(tran.dateCreated);
-                }
-                if(tran.dateUpdated){
-                    tran.dateUpdatedObj = new Date(tran.dateUpdated);
-                }
-                return tran;
-            });
+            this.listTransactions = this.transformListTransaction(list);
+            this.reloadAllChartsWithCurrentParams();
             this.loading = false;
         }, (err) => {
             this.loading = false;
@@ -389,6 +379,43 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             }
             else {
                 console.log(res)
+            }
+        })
+    }
+
+    transformListTransaction(list: Partial<Transaction>[]){
+        return list.map((tran) => {
+            if(tran.dateCreated){
+                tran.dateCreatedObj = new Date(tran.dateCreated);
+            }
+            if(tran.dateUpdated){
+                tran.dateUpdatedObj = new Date(tran.dateUpdated);
+            }
+            return tran;
+        });
+    }
+
+    reloadAllChartsWithCurrentParams(){
+        this.reloadChartWithCurrentParams('inoutcome', this.timeFromInoutcome, this.timeToInoutcome);
+        this.reloadChartWithCurrentParams('outcome', this.timeFromOutcome, this.timeToOutcome);
+        this.reloadChartWithCurrentParams('income', this.timeFromIncome, this.timeToIncome);
+    }
+
+    reloadChartWithCurrentParams(chartType: FilterChartType, from: Date, to: Date){
+        this.transactionService.getListData({ from , to }).subscribe(list => {
+            list = this.transformListTransaction(list);
+            switch (chartType) {
+                case 'inoutcome':
+                    this.getInOutcomeChartData(list);
+                    break;
+                case 'income':
+                    this.getIncomeChartData(list);
+                    break;
+                case 'outcome':
+                    this.getOutcomeChartData(list);
+                    break;
+                default:
+                    break;
             }
         })
     }
