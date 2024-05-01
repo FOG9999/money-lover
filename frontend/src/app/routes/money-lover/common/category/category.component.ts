@@ -24,6 +24,7 @@ export class CategoryComponent implements OnInit, OnChanges {
     indexHovering: number = -1;
     nameEditting: string = "";
     pageSize: number = CONSTS.page_size;
+    pageSizeOptions: number[] = CONSTS.page_size_options;
     page: number = 0;
     total: number = 0;
     iconSelectionDialogRef: MatDialogRef<IconSelectionComponent>;

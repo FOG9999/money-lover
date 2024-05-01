@@ -198,15 +198,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
      * get list other data
      */
     private getOtherDataList() {
-        this.commonSv.getListCategories("")
-            .pipe(
-                takeUntil(this.onDestroy$)
-            ).subscribe(data => {
+        this.commonSv.getListCategories("").subscribe(data => {
                 this.listCategories = [...data.results];
             });
-        this.walletSv.getListWallets({}).pipe(
-            takeUntil(this.onDestroy$)
-        ).subscribe(res => {
+        this.walletSv.getListWallets({}).subscribe(res => {
             this.listWallets = [...res];
         })
     }

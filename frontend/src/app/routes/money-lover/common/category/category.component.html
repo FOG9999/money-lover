@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-        <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" (page)="onPageEvent($event)">
+        <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" [pageSizeOptions]="pageSizeOptions" (page)="onPageEvent($event)">
         </mat-paginator>
     </ng-container>
 </ng-container>
