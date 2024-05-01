@@ -122,6 +122,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     selectedFilterOptionOutcome = "this-month";
     selectedFilterOptionIncome = "this-month";
     selectedChart: FilterChartType = 'inoutcome';
+    noDataInoutcome: boolean = false;
+    noDataOutcome: boolean = false;
+    noDataIncome: boolean = false;
 
     /**
      * create month tabs based on current time
@@ -242,6 +245,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     private getInOutcomeChartData(listData: Partial<Transaction>[]) {
+        this.noDataInoutcome = !listData.length;
+        if(!listData.length){
+            return;
+        }
         let income =
             listData
                 .filter(tran =>
@@ -272,6 +279,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     private getOutcomeChartData(listData: Partial<Transaction>[]) {
+        this.noDataOutcome = !listData.length;
+        if(!listData.length){
+            return;
+        }
         let outcomeArr =
             listData
                 .filter(tran =>
@@ -306,6 +317,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     }
 
     private getIncomeChartData(listData: Partial<Transaction>[]){
+        this.noDataIncome = !listData.length;
+        if(!listData.length){
+            return;
+        }
         let incomeArr =
             listData
                 .filter(tran =>

@@ -41,7 +41,7 @@
             <ng-container *ngTemplateOutlet="showTimeFilterInoutcomeTpl"></ng-container>
             <mat-card-content class="chart-content">
                 <div id="income-outcome-chart">
-                    <apx-chart [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels" [legend]="inOutcomeChartOptions.legend"
+                    <apx-chart *ngIf="!noDataInoutcome; else noDataChartTpl" [series]="inOutcomeChartOptions.series" [labels]="inOutcomeChartOptions.labels" [legend]="inOutcomeChartOptions.legend"
                         [chart]="inOutcomeChartOptions.chart" [colors]="inOutcomeChartOptions.colors" [noData]="inOutcomeChartOptions.noData"
                         [tooltip]="inOutcomeChartOptions.tooltip"></apx-chart>
                 </div>
@@ -58,7 +58,7 @@
             <ng-container *ngTemplateOutlet="showTimeFilterOutcomeTpl"></ng-container>
             <mat-card-content class="chart-content">
                 <div class="outcome-category-based-chart">
-                    <apx-chart [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels" [legend]="outcomeChartOptions.legend"
+                    <apx-chart *ngIf="!noDataOutcome; else noDataChartTpl" [series]="outcomeChartOptions.series" [labels]="outcomeChartOptions.labels" [legend]="outcomeChartOptions.legend"
                         [chart]="outcomeChartOptions.chart" [tooltip]="outcomeChartOptions.tooltip" [noData]="inOutcomeChartOptions.noData"></apx-chart>
                 </div>
             </mat-card-content>
@@ -74,7 +74,7 @@
             <ng-container *ngTemplateOutlet="showTimeFilterIncomeTpl"></ng-container>
             <mat-card-content class="chart-content">
                 <div class="income-category-based-chart">
-                    <apx-chart [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels" [legend]="incomeChartOptions.legend"
+                    <apx-chart *ngIf="!noDataIncome; else noDataChartTpl" [series]="incomeChartOptions.series" [labels]="incomeChartOptions.labels" [legend]="incomeChartOptions.legend"
                         [chart]="incomeChartOptions.chart" [tooltip]="incomeChartOptions.tooltip" [noData]="inOutcomeChartOptions.noData"></apx-chart>
                 </div>
             </mat-card-content>
@@ -172,4 +172,9 @@
 <!-- icon show select chart -->
 <ng-template #iconShowChartTpl>
     <mat-icon [matMenuTriggerFor]="filterSelectChart" matTooltip="Chọn biểu đồ" class="cursor-pointer">arrow_drop_down</mat-icon>
+</ng-template>
+
+<!-- no data for charts -->
+<ng-template #noDataChartTpl>
+    <empty></empty>
 </ng-template>
