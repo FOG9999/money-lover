@@ -42,3 +42,20 @@
     align-items: center;
     font-size: 16px;
 }
+
+:host ::ng-deep .tabgroup-list-transaction .mat-tab-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    ::-webkit-scrollbar {
+        width: 1px;
+    }
+    height: calc(100vh - 230px);
+}
+
+@media screen and (min-width: 1280px) {
+    .chart-content {
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }  
+}

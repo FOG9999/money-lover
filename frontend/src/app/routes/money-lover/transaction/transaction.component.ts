@@ -66,7 +66,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         labels: [],
         chart: {
             type: "pie",
-            height: 450
+            height: 400
         },
         colors: [INCOME_COLOR, OUTCOME_COLOR],
         tooltip: {
@@ -88,7 +88,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     outcomeChartOptions: Partial<ChartOptions> = {
         chart: {
             type: "pie",
-            height: 450
+            height: 400
         },
         noData: {
             ...NoDataChart
@@ -102,7 +102,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     incomeChartOptions: Partial<ChartOptions> = {
         chart: {
             type: "pie",
-            height: 450
+            height: 400
         },
         noData: {
             ...NoDataChart
@@ -121,6 +121,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     selectedFilterOptionInoutcome = "this-month";
     selectedFilterOptionOutcome = "this-month";
     selectedFilterOptionIncome = "this-month";
+    selectedChart: FilterChartType = 'inoutcome';
 
     /**
      * create month tabs based on current time
@@ -455,13 +456,13 @@ export class TransactionListComponent implements OnInit, OnDestroy {
                     case 'income':
                         this.timeFromIncome = from;
                         this.timeToIncome = to;
-                        this.selectedFilterOptionOutcome = dateType;
+                        this.selectedFilterOptionIncome = dateType;
                         this.getIncomeChartData(list);
                         break;
                     case 'outcome':
                         this.timeFromOutcome = from;
                         this.timeToOutcome = to;
-                        this.selectedFilterOptionIncome = dateType;
+                        this.selectedFilterOptionOutcome = dateType;
                         this.getOutcomeChartData(list);
                         break;
                     default:
