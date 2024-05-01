@@ -10,7 +10,7 @@
                         <mat-icon class="cursor-pointer" (click)="createTransaction()" matTooltip="Thêm giao dịch">add</mat-icon>
                     </div>
                 </div>
-                <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)">
+                <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedIndexChange)="changeTab($event)" mat-align-tabs="center">
                     <mat-tab *ngFor="let tab of listMonthTabs" [label]="tab.title">
                         <ng-template matTabContent>
                             <ng-container *ngIf="!loading; else loadingTpl">
@@ -137,24 +137,27 @@
 
 <!-- time filter income/outcome -->
 <mat-menu #filterInoutcome>
-    <button mat-menu-item (click)="filterChart('inoutcome', 'this-week')">Tuần này</button>
-    <button mat-menu-item (click)="filterChart('inoutcome', 'this-month')">Tháng này</button>
-    <button mat-menu-item (click)="filterChart('inoutcome', 'this-year')">Năm nay</button>
-    <button mat-menu-item (click)="filterChart('inoutcome', 'custom')">Tùy chọn</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'this-week')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionInoutcome == 'this-week'}">Tuần này</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'this-month')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionInoutcome == 'this-month'}">Tháng này</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'last-month')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionInoutcome == 'last-month'}">Tháng trước</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'this-year')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionInoutcome == 'this-year'}">Năm nay</button>
+    <button mat-menu-item (click)="filterChart('inoutcome', 'custom')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionInoutcome == 'custom'}">Tùy chọn</button>
 </mat-menu>
 
 <!-- time filter outcome categories -->
 <mat-menu #filterOutcome>
-    <button mat-menu-item (click)="filterChart('outcome', 'this-week')">Tuần này</button>
-    <button mat-menu-item (click)="filterChart('outcome', 'this-month')">Tháng này</button>
-    <button mat-menu-item (click)="filterChart('outcome', 'this-year')">Năm nay</button>
-    <button mat-menu-item (click)="filterChart('outcome', 'custom')">Tùy chọn</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'this-week')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionOutcome == 'this-week'}">Tuần này</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'this-month')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionOutcome == 'this-month'}">Tháng này</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'last-month')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionOutcome == 'last-month'}">Tháng trước</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'this-year')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionOutcome == 'this-year'}">Năm nay</button>
+    <button mat-menu-item (click)="filterChart('outcome', 'custom')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionOutcome == 'custom'}">Tùy chọn</button>
 </mat-menu>
 
 <!-- time filter income categories -->
 <mat-menu #filterIncome>
-    <button mat-menu-item (click)="filterChart('income', 'this-week')">Tuần này</button>
-    <button mat-menu-item (click)="filterChart('income', 'this-month')">Tháng này</button>
-    <button mat-menu-item (click)="filterChart('income', 'this-year')">Năm nay</button>
-    <button mat-menu-item (click)="filterChart('income', 'custom')">Tùy chọn</button>
+    <button mat-menu-item (click)="filterChart('income', 'this-week')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionIncome == 'this-week'}">Tuần này</button>
+    <button mat-menu-item (click)="filterChart('income', 'this-month')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionIncome == 'this-month'}">Tháng này</button>
+    <button mat-menu-item (click)="filterChart('income', 'last-month')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionIncome == 'last-month'}">Tháng trước</button>
+    <button mat-menu-item (click)="filterChart('income', 'this-year')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionIncome == 'this-year'}">Năm nay</button>
+    <button mat-menu-item (click)="filterChart('income', 'custom')" [ngClass]="{'selected-menu-dropdown-item': selectedFilterOptionIncome == 'custom'}">Tùy chọn</button>
 </mat-menu>

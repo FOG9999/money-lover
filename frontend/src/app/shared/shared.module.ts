@@ -31,6 +31,7 @@ import { ChangeSecurityQuestionComponent } from './components/change-security-qu
 import { SecurityQuestionComponent } from './components/security-question/security-question.component';
 import { FormErrorPipe } from './pipes/form-error.pipe';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CalendarRangeComponent } from './components/calendar-range/calendar-range.component';
 
 const THIRD_MODULES = [
   MaterialModule,
@@ -45,7 +46,7 @@ const THIRD_MODULES = [
   ToastrModule,
   TranslateModule
 ];
-const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent, EmptyComponent, AuthByQuestionComponent, ChangeSecurityQuestionComponent, SecurityQuestionComponent];
+const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent, EmptyComponent, AuthByQuestionComponent, ChangeSecurityQuestionComponent, SecurityQuestionComponent, CalendarRangeComponent];
 const COMPONENTS_DYNAMIC = [];
 const DIRECTIVES = [NumberFormatDirective];
 const PIPES = [FormatNumberPipe, LevelRolePipe, FormErrorPipe];

@@ -14,9 +14,10 @@ import { ToastrService } from 'ngx-toastr';
 import { TransactionViewComponent } from './transaction-view/transaction-view.component';
 import { INCOME_COLOR, OUTCOME_COLOR } from 'app/my-ml-consts';
 import * as moment from "moment";
+import { CalendarRangeComponent } from '@shared/components/calendar-range/calendar-range.component';
 
 type FilterChartType = "inoutcome" | "income" | "outcome";
-type FilterChartDateOption = "this-week" | "this-month" | "this-year" | "custom";
+type FilterChartDateOption = "this-week" | "this-month" | "this-year" | "custom" | "last-month";
 
 interface MonthTab {
     from: Date,
@@ -117,6 +118,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     timeToIncome: Date = moment().endOf("month").toDate();
     timeFromOutcome: Date = moment().startOf("month").toDate();
     timeToOutcome: Date = moment().endOf("month").toDate();
+    selectedFilterOptionInoutcome = "this-month";
+    selectedFilterOptionOutcome = "this-month";
+    selectedFilterOptionIncome = "this-month";
 
     /**
      * create month tabs based on current time
@@ -255,7 +259,14 @@ export class TransactionListComponent implements OnInit, OnDestroy {
         this.inOutcomeChartOptions = {
             ...this.inOutcomeChartOptions,
             labels,
-            series
+            series,
+            tooltip: {
+                y: {
+                    formatter: (val, { series, seriesIndex, dataPointIndex, w }) => {
+                        return `${formatNumber(val.toString())}đ (${(val/(income+outcome)*100).toFixed(2) + '%'})`
+                    }
+                }
+            }
         }
     }
 
@@ -286,7 +297,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             tooltip: {
                 y: {
                     formatter: (val, { series, seriesIndex, dataPointIndex, w }) => {
-                        return `${formatNumber(val.toString())} (${(val/totalOutcome*100).toFixed(2) + '%'})`
+                        return `${formatNumber(val.toString())}đ (${(val/totalOutcome*100).toFixed(2) + '%'})`
                     }
                 }
             }
@@ -321,7 +332,7 @@ export class TransactionListComponent implements OnInit, OnDestroy {
             tooltip: {
                 y: {
                     formatter: (val, { series, seriesIndex, dataPointIndex, w }) => {
-                        return `${formatNumber(val.toString())} (${(val/totalIncome*100).toFixed(2) + '%'})`
+                        return `${formatNumber(val.toString())}đ (${(val/totalIncome*100).toFixed(2) + '%'})`
                     }
                 }
             }
@@ -423,53 +434,77 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     filterChart(chartType: FilterChartType, dateType: FilterChartDateOption){
         let from: Date, to: Date;
         const momentDateNow = moment(new Date());
+        const doSearch = () => {
+            this.transactionService.getListData({ from , to }).subscribe(list => {
+                list = list.map((tran) => {
+                    if(tran.dateCreated){
+                        tran.dateCreatedObj = new Date(tran.dateCreated);
+                    }
+                    if(tran.dateUpdated){
+                        tran.dateUpdatedObj = new Date(tran.dateUpdated);
+                    }
+                    return tran;
+                });
+                switch (chartType) {
+                    case 'inoutcome':
+                        this.timeFromInoutcome = from;
+                        this.timeToInoutcome = to;
+                        this.selectedFilterOptionInoutcome = dateType;
+                        this.getInOutcomeChartData(list);
+                        break;
+                    case 'income':
+                        this.timeFromIncome = from;
+                        this.timeToIncome = to;
+                        this.selectedFilterOptionOutcome = dateType;
+                        this.getIncomeChartData(list);
+                        break;
+                    case 'outcome':
+                        this.timeFromOutcome = from;
+                        this.timeToOutcome = to;
+                        this.selectedFilterOptionIncome = dateType;
+                        this.getOutcomeChartData(list);
+                        break;
+                    default:
+                        break;
+                }
+            })
+        }
         switch (dateType) {
             case 'this-month':
                 from = momentDateNow.startOf("month").toDate();
                 to = momentDateNow.endOf('month').toDate();
+                doSearch();
+                break;
+            case 'last-month':
+                from = moment().subtract(1, "month").startOf("month").toDate();
+                to = moment().subtract(1, "month").endOf('month').toDate();
+                doSearch();
                 break;
             case 'this-week':
                 from = momentDateNow.startOf("week").toDate();
                 to = momentDateNow.endOf('week').toDate();
+                doSearch();
                 break;
             case 'this-year':
                 from = momentDateNow.startOf("year").toDate();
                 to = momentDateNow.endOf('year').toDate();
+                doSearch();
                 break;
-            default:
-                from = momentDateNow.startOf("month").toDate();
-                to = momentDateNow.endOf('month').toDate();
+            default: // custom
+                this.dialogService.open(CalendarRangeComponent, {
+                    data: {
+                        title: "Lựa chọn khoảng thời gian tìm kiếm",
+                        timeFrom: chartType == 'inoutcome' ? this.timeFromInoutcome: (chartType == 'outcome' ? this.timeFromOutcome: this.timeFromIncome),
+                        timeTo: chartType == 'inoutcome' ? this.timeToInoutcome: (chartType == 'outcome' ? this.timeToOutcome: this.timeToIncome),
+                    }
+                }).afterClosed().subscribe((filterObj?: { timeFrom: Date, timeTo: Date }) => {
+                    if(filterObj){
+                        from = filterObj.timeFrom;
+                        to = filterObj.timeTo;
+                        doSearch();
+                    }
+                })
                 break;
         }
-        this.transactionService.getListData({ from , to }).subscribe(list => {
-            list = list.map((tran) => {
-                if(tran.dateCreated){
-                    tran.dateCreatedObj = new Date(tran.dateCreated);
-                }
-                if(tran.dateUpdated){
-                    tran.dateUpdatedObj = new Date(tran.dateUpdated);
-                }
-                return tran;
-            });
-            switch (chartType) {
-                case 'inoutcome':
-                    this.timeFromInoutcome = from;
-                    this.timeToInoutcome = to;
-                    this.getInOutcomeChartData(list);
-                    break;
-                case 'income':
-                    this.timeFromIncome = from;
-                    this.timeToIncome = to;
-                    this.getIncomeChartData(list);
-                    break;
-                case 'outcome':
-                    this.timeFromOutcome = from;
-                    this.timeToOutcome = to;
-                    this.getOutcomeChartData(list);
-                    break;
-                default:
-                    break;
-            }
-        })
     }
 }
