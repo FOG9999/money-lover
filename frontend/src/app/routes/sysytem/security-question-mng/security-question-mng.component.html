@@ -42,12 +42,12 @@
                         </div>
                     </div>
                 </mat-list-item>
+                <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" [pageSizeOptions]="pageSizeOptions" (page)="onChangePage($event)">
+                </mat-paginator>
             </mat-list>
             <ng-template #emptyTpl>
                 <empty></empty>
             </ng-template>
         </ng-template>
-        <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" [pageSizeOptions]="pageSizeOptions" (page)="onChangePage($event)">
-        </mat-paginator>
     </mat-card-content>
 </mat-card>

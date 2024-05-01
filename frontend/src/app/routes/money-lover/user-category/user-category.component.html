@@ -23,52 +23,65 @@
                 </button>
             </div>
         </div>
-        <div class="matero-row" fxLayout="row wrap">
-            <div class="matero-col cursor-pointer user-category-item" fxFlex="50" fxFlex.gt-xs="20" fxFlex.gt-md="10" *ngFor="let category of listCategories; let i = index">
-                <span class="user-category-checkbox">
-                    <mat-checkbox [(ngModel)]="listChecked[i]"
-                        *ngIf="category.isDefault == 0"></mat-checkbox>
-                </span>
-                <div class="category-container p-t-32 position-relative"
-                    (mouseenter)="onMouseEnterEdit(i)" (mouseleave)="onMouseLeaveEdit()"
-                    *ngIf="category.isDefault == 0; else default">
-                    <div (click)="editCategoryIcon(i)">
-                        <ml-icon [path]="category.icon.path" matLine></ml-icon>
-                    </div>
-                    <div class="text-center" matLine *ngIf="indexEditting != i; else editting" [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
-                        {{category.name}}
-                    </div>
-                    <ng-template #editting>
-                        <div class="text-center">
-                            <input #editInput matInput type="text" [(ngModel)]="nameEditting" />
+        <ng-container *ngIf="!loading; else loadingTpl">
+            <ng-container *ngIf="listCategories.length; else noDataTpl">
+                <div class="matero-row" fxLayout="row wrap">
+                    <div class="matero-col cursor-pointer user-category-item" fxFlex="50" fxFlex.gt-xs="20" fxFlex.gt-md="10" *ngFor="let category of listCategories; let i = index">
+                        <span class="user-category-checkbox">
+                            <mat-checkbox [(ngModel)]="listChecked[i]"
+                                *ngIf="category.isDefault == 0"></mat-checkbox>
+                        </span>
+                        <div class="category-container p-t-32 position-relative"
+                            (mouseenter)="onMouseEnterEdit(i)" (mouseleave)="onMouseLeaveEdit()"
+                            *ngIf="category.isDefault == 0; else default">
+                            <div (click)="editCategoryIcon(i)">
+                                <ml-icon [path]="category.icon.path" matLine></ml-icon>
+                            </div>
+                            <div class="text-center" matLine *ngIf="indexEditting != i; else editting" [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
+                                {{category.name}}
+                            </div>
+                            <ng-template #editting>
+                                <div class="text-center">
+                                    <input #editInput matInput type="text" [(ngModel)]="nameEditting" />
+                                </div>
+                            </ng-template>
+                            <button mat-icon-button *ngIf="indexHovering == i && indexEditting != i"
+                                class="position-absolute edit-category" (click)="editName(i)">
+                                <mat-icon color="accent">edit</mat-icon>
+                            </button>
+                            <button mat-icon-button *ngIf="indexEditting == i" class="position-absolute accept-category"
+                                (click)="finishEditName(i)">
+                                <mat-icon color="primary">check</mat-icon>
+                            </button>
+                            <button mat-icon-button *ngIf="indexEditting == i" class="position-absolute cancel-category"
+                                (click)="cancelExitEditName()">
+                                <mat-icon color="accent">cancel</mat-icon>
+                            </button>
                         </div>
-                    </ng-template>
-                    <button mat-icon-button *ngIf="indexHovering == i && indexEditting != i"
-                        class="position-absolute edit-category" (click)="editName(i)">
-                        <mat-icon color="accent">edit</mat-icon>
-                    </button>
-                    <button mat-icon-button *ngIf="indexEditting == i" class="position-absolute accept-category"
-                        (click)="finishEditName(i)">
-                        <mat-icon color="primary">check</mat-icon>
-                    </button>
-                    <button mat-icon-button *ngIf="indexEditting == i" class="position-absolute cancel-category"
-                        (click)="cancelExitEditName()">
-                        <mat-icon color="accent">cancel</mat-icon>
-                    </button>
+                        <ng-template #default>
+                            <div class="category-container p-t-32 position-relative">
+                                <div>
+                                    <ml-icon [path]="category.icon.path" matLine></ml-icon>
+                                </div>
+                                <div class="text-center" matLine [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
+                                    {{category.name}}
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
                 </div>
-                <ng-template #default>
-                    <div class="category-container p-t-32 position-relative">
-                        <div>
-                            <ml-icon [path]="category.icon.path" matLine></ml-icon>
-                        </div>
-                        <div class="text-center" matLine [ngClass]="{'outcome-category-name': category.transactionType == 0, 'income-category-name': category.transactionType == 1}">
-                            {{category.name}}
-                        </div>
-                    </div>
-                </ng-template>
-            </div>
-        </div>
-        <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" (page)="onPageEvent($event)">
-        </mat-paginator>
+                <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" (page)="onPageEvent($event)">
+                </mat-paginator>
+            </ng-container>
+        </ng-container>
     </mat-card-content>
 </mat-card>
+
+<ng-template #noDataTpl>
+    <empty></empty>
+</ng-template>
+
+<!-- loading -->
+<ng-template #loadingTpl>
+    <app-loading></app-loading>
+</ng-template>

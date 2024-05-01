@@ -45,6 +45,7 @@ export class UserCategoryComponent implements OnInit {
     search: string = "";
     page: number = 0;
     total: number = 0;
+    loading: boolean = true;
 
     ngOnInit() {
         this.getListIcons();
@@ -105,14 +106,16 @@ export class UserCategoryComponent implements OnInit {
     }
 
     getDataCategories() {
+        this.loading = true;
         this.commonService.getListCategories(this.search, this.page, this.pageSize).subscribe(res => {
             this.listCategories = [...res.results];
             this.total = res.total;
+            this.loading = false;
             setTimeout(() => {
                 this.renewListChecked();
                 this.updatePreviousState();
             });
-        })
+        }, () => this.loading = false)
     }
 
     onPageEvent(evt: PageEvent){

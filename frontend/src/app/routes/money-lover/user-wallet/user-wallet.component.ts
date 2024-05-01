@@ -30,7 +30,7 @@ export class UserWalletComponent implements OnInit {
     listChecked: boolean[] = [];
     search: string = "";
     listCategories: Category[] = [];
-    loading: boolean;
+    loading: boolean = true;
 
     ngOnInit() {
         this.getListWallets();
@@ -38,13 +38,16 @@ export class UserWalletComponent implements OnInit {
     }
 
     getListWallets() {
+        this.loading = true;
         this.walletService.getListWallets({ search: this.search })
             .subscribe(res => {
                 this.listWallets = [...res];
+                this.loading = false;
                 setTimeout(() => {
                     this.renewListChecked();
                 });
             }, () => {
+                this.loading = false;
                 this.toastService.error("Lỗi tải danh sách ví")
             })
     }
