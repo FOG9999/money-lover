@@ -11,6 +11,7 @@ import { Wallet, WalletForm } from 'app/model/wallet.model';
 import { CommonService } from '../common/common.service';
 import { WalletService } from './user-wallet.service';
 import { ToastrService } from 'ngx-toastr';
+import { CONSTS } from 'app/consts';
 
 @Component({
     selector: 'ml-wallet-dialog',
@@ -44,8 +45,8 @@ export class WalletDialogComponent implements OnInit {
     }
 
     getDataWalletTypes() {
-        this.commonService.getListWalletTypes({ search: '' }).subscribe(res => {
-            this.listWalletTypes = [...res];
+        this.commonService.getListWalletTypes({ search: '', size: CONSTS.page_size_get_all }).subscribe(res => {
+            this.listWalletTypes = [...res.results];
         })
     }
 

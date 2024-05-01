@@ -52,7 +52,7 @@ export class CommonService {
     /* #region Wallet type */
     getListWalletTypes(search: any) {
         const api_name: string = "api.v1.wallet-type.list";
-        return this.http.post<Category[]>(environment.SERVER_URL, { api_name, ...search }, { observe: "body" });
+        return this.http.post<{results: Category[], total: number }>(environment.SERVER_URL, { api_name, ...search }, { observe: "body" });
     }
 
     insertWalletType(data: { name: string, icon: string }) {

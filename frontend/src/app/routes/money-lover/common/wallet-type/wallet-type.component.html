@@ -30,7 +30,7 @@
         </div>
     </div>
 </div>
-<mat-paginator [length]="listWalletTypes.length" [pageSize]="pageSize">
+<mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onChangePage($event)" [pageIndex]="page">
 
 <!-- loading -->
 <ng-template #loadingTpl>

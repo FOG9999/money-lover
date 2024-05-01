@@ -70,7 +70,7 @@
                         </ng-template>
                     </div>
                 </div>
-                <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page" (page)="onPageEvent($event)">
+                <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [pageIndex]="page" (page)="onPageEvent($event)">
                 </mat-paginator>
             </ng-container>
         </ng-container>

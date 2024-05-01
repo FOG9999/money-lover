@@ -6,6 +6,7 @@ import { Icon } from 'app/model/icon.model';
 import { ToastrService } from 'ngx-toastr';
 import { CommonService } from '../common.service';
 import { IconSelectionComponent } from '../../icon-selection/icon-selection.component';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'ml-wallet-type',
@@ -22,7 +23,10 @@ export class WalletTypeComponent implements OnInit, OnChanges {
     indexEditting: number = -1;
     indexHovering: number = -1;
     nameEditting: string = "";
+    page: number = 0;
+    total: number = 0;
     pageSize: number = CONSTS.page_size;
+    pageSizeOptions: number[] = CONSTS.page_size_options;
     iconSelectionDialogRef: MatDialogRef<IconSelectionComponent>;
     loading: boolean = false;
 
@@ -98,9 +102,10 @@ export class WalletTypeComponent implements OnInit, OnChanges {
 
     getDataWalletTypes() {
         this.loading = true;
-        this.commonService.getListWalletTypes({ search: this.search }).subscribe(res => {
+        this.commonService.getListWalletTypes({ search: this.search, page: this.page, size: this.pageSize }).subscribe(res => {
             this.loading = false;
-            this.listWalletTypes = [...res];
+            this.listWalletTypes = [...res.results];
+            this.total = res.total;
             setTimeout(() => {
                 this.renewListChecked();
                 this.updatePreviousState();
@@ -129,6 +134,12 @@ export class WalletTypeComponent implements OnInit, OnChanges {
                 }
             });
         }
+    }
+
+    onChangePage(evt: PageEvent){
+        this.page = evt.pageIndex;
+        this.pageSize = evt.pageSize;
+        this.getDataWalletTypes();
     }
 
     /**

@@ -2,12 +2,13 @@ const WalletType = require('../models/wallet-type');
 const validator = require('validator');
 const async = require('async');
 const fs = require('fs');
+const consts = require('../../../../config/consts');
 const utils = require(__libs_path + '/utils'),
 mongoose = require('mongoose'),
 ObjectId = mongoose.Types.ObjectId;
 
 const listWalletTypes = (req, returnData, callback) => {
-    const { search, isDelete } = req.params;
+    let { search, isDelete, page, size } = req.params;
 
     const query = {
         $or: [{
@@ -18,16 +19,37 @@ const listWalletTypes = (req, returnData, callback) => {
         query['isDelete'] = isDelete;
     }
     else query['isDelete'] = false;
+    
+    if (validator.isNull(page)) {
+        page = 0;
+    }
+    if (validator.isNull(size)) {
+        size = consts.page_size;
+    }
 
     WalletType
         .find()
         .where(query)
         .populate('icon')
         .sort({dateCreated: -1})
+        .skip(page*size)
+        .limit(size)
         .exec((err, results) => {
             if (err) return callback(err);
-            returnData.set(results);
-            callback();
+            // calculate count
+            WalletType.aggregate([{
+                $match: query
+            }, {
+                $count: "total"
+            }])
+            .exec((errCount, result) => {
+                if(errCount){
+                    winstonLogger.error(`Error searching wallet types when arregate total: ${errCount ? JSON.stringify(errCount) : 'result with total empty'}`)
+                    return callback(errCount);
+                }
+                returnData.set({results, total: result[0] ? result[0].total: 0});
+                callback();
+            })
         })
 }
 

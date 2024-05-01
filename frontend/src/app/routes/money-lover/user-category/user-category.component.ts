@@ -35,6 +35,7 @@ export class UserCategoryComponent implements OnInit {
     indexHovering: number = -1;
     nameEditting: string = "";
     pageSize: number = 20;
+    pageSizeOptions: number[] = CONSTS.page_size_options;
     iconSelectionDialogRef: MatDialogRef<IconSelectionComponent>;
     newCategoryDialog: MatDialogRef<CategoryDialogComponent>;
     confirmDeletionDialog: MatDialogRef<ConfirmDeletionComponent>;
