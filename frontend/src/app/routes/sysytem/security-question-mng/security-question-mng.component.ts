@@ -4,7 +4,7 @@ import { SecurityQuestionService } from '@shared';
 import { SecurityQuestion } from 'app/model/question.model';
 import { SecurityQuestionDetailComponent } from './security-question-detail/security-question-detail.component';
 import { CONSTS } from 'app/consts';
-import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
+import { ConfirmDeletionComponent } from '@shared/components/confirm-deletion/confirm-deletion.component';
 import { ToastrService } from 'ngx-toastr';
 import { PageEvent } from '@angular/material/paginator';
 

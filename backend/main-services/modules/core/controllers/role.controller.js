@@ -1,9 +1,10 @@
 const Role = require('../models/role');
 const validator = require('validator');
 const async = require('async');
+const consts = require('../../../../config/consts');
 
 const listRoles = (req, returnData, callback) => {
-    const { search, status } = req.params;
+    const { search, status, page, size } = req.params;
 
     const query = {
         $or: [{
@@ -15,14 +16,34 @@ const listRoles = (req, returnData, callback) => {
     if (!validator.isNull(status)) {
         query['status'] = status;
     }
+    if (validator.isNull(page)) {
+        page = 0;
+    }
+    if (validator.isNull(size)) {
+        size = consts.page_size;
+    }
 
     Role
         .find()
         .where(query)
+        .sort({dateCreated: -1})
+        .skip(page*size)
+        .limit(size)
         .exec((err, results) => {
             if (err) return callback(err);
-            returnData.set(results);
-            callback();
+            // calculate count
+            Role.aggregate([{
+                $match: query
+            }, {
+                $count: "total"
+            }])
+            .exec((errCount, result) => {
+                if(errCount){
+                    return callback(errCount);
+                }
+                returnData.set({results, total: result[0] ? result[0].total: 0});
+                callback();
+            })
         })
 }
 
@@ -33,34 +54,37 @@ const getRole = (req, returnData, callback) => {
         .findOne({ _id: id })
         .exec((err, data) => {
             if (err) return callback(err);
-            if (!data) return callback('ERROR_ROLE_NOT_FOUND');
+            if (!data) return callback(consts.ERRORS.ERROR_ROLE_NOT_FOUND);
             returnData.set(data);
             callback();
         })
 }
 
 const addRole = (req, returnData, callback) => {
-    const { title, description } = req.params;
+    const { title, description, code } = req.params;
     const creator = req.user;
 
     if (validator.isNull(title)) {
-        return callback('ERROR_TITLE_MISSING');
+        return callback(consts.ERRORS.ERROR_TITLE_MISSING);
+    }
+    if (validator.isNull(code)) {
+        return callback(consts.ERRORS.ERROR_CODE_MISSING);
     }
     if (validator.isNull(description)) {
-        return callback('ERROR_DESCRIPTION_MISSING');
+        return callback(consts.ERRORS.ERROR_DESCRIPTION_MISSING);
     }
 
     async.series([
         function (cb) {
             Role
                 .findOne()
-                .where({ title: title })
+                .where({ code: code })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);
                     }
                     if (data) {
-                        cb('ERROR_ROLE_EXIST');
+                        cb(consts.ERRORS.ERROR_ROLE_EXIST);
                     }
                     else cb();
                 })
@@ -68,8 +92,9 @@ const addRole = (req, returnData, callback) => {
         function (cb) {
             let newRole = new Role({
                 title,
+                code,
                 description,
-                creator: creator._id
+                userCreated: creator._id
             })
             newRole.save((err, result) => {
                 if (err) cb(err);
@@ -87,16 +112,19 @@ const addRole = (req, returnData, callback) => {
 }
 
 const updateRole = (req, returnData, callback) => {
-    let { title, description, id } = req.params;
+    let { title, description, id, status, code } = req.params;
 
     if (validator.isNull(title)) {
-        return callback('ERROR_TITLE_MISSING');
+        return callback(consts.ERRORS.ERROR_TITLE_MISSING);
+    }
+    if (validator.isNull(code)) {
+        return callback(consts.ERRORS.ERROR_CODE_MISSING);
     }
     if (validator.isNull(description)) {
-        return callback('ERROR_DESCRIPTION_MISSING');
+        return callback(consts.ERRORS.ERROR_DESCRIPTION_MISSING);
     }
     if (!validator.isMongoId(id)) {
-        return callback('ERROR_ID_MISSING');
+        return callback(consts.ERRORS.ERROR_ID_MISSING);
     }
 
     Role
@@ -107,10 +135,10 @@ const updateRole = (req, returnData, callback) => {
                 return callback(err);
             }
             if (!result) {
-                return callback('ERROR_ROLE_NOT_FOUND');
+                return callback(consts.ERRORS.ERROR_ROLE_NOT_FOUND);
             }
             else {
-                utils.merge(result, { title, description });
+                utils.merge(result, { title, description, code, status: status ? 1: 0 });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
@@ -124,7 +152,7 @@ const deleteRole = (req, returnData, callback) => {
     let { id } = req.params;
 
     if (validator.isNull(id)) {
-        return callback('ERROR_ID_MISSING');
+        return callback(consts.ERRORS.ERROR_ID_MISSING);
     }
 
     Role

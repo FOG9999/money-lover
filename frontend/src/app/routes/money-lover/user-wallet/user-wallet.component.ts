@@ -10,7 +10,7 @@ import { WalletService } from './user-wallet.service';
 import { AppState } from 'app/app.state';
 import { Store } from '@ngrx/store';
 import { CoreActions } from '@core/store/core.actions';
-import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
+import { ConfirmDeletionComponent } from '@shared/components/confirm-deletion/confirm-deletion.component';
 @Component({
     selector: 'ml-user-wallet',
     templateUrl: 'user-wallet.component.html',

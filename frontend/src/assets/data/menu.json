@@ -39,6 +39,12 @@
               "type": "link",
               "name": "security-question",
               "level": ["ADMIN", "SYSTEM"]
+            },
+            {
+              "route": "role",
+              "type": "link",
+              "name": "role",
+              "level": ["ADMIN", "SYSTEM"]
             }
           ]
         },

@@ -29,6 +29,16 @@ let RoleSchema = new Schema({
     is_delete: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: Number,
+        default: 1
+    },
+    code: {
+        type: String,
+        max: 200,
+        trim: true,
+        required: consts.ERRORS.ERROR_ROLE_CODE_MISSING
     }
 });
 

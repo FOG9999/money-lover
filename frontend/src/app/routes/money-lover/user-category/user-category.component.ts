@@ -8,7 +8,7 @@ import { CommonService } from '../common/common.service';
 import { UserCategoryService } from './user-category.service';
 import { IconService } from '@shared';
 import { CategoryDialogComponent } from '../common/category/category-dialog.component';
-import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
+import { ConfirmDeletionComponent } from '@shared/components/confirm-deletion/confirm-deletion.component';
 import { IconSelectionComponent } from '../icon-selection/icon-selection.component';
 import { PageEvent } from '@angular/material/paginator';
 

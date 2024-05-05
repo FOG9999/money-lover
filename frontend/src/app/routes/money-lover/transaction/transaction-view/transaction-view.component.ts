@@ -6,7 +6,7 @@ import { TransactionDialogComponent } from '../transaction-dialog/transaction-di
 import { TransactionService } from '../transaction.service';
 import { formatNumber } from '@shared';
 import { ToastrService } from 'ngx-toastr';
-import { ConfirmDeletionComponent } from '@shared/components/money-lover/confirm-deletion/confirm-deletion.component';
+import { ConfirmDeletionComponent } from '@shared/components/confirm-deletion/confirm-deletion.component';
 
 @Component({
     selector: 'transaction-view',

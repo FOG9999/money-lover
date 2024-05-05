@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminAuthGuardService } from '@shared';
 import { UsersListComponent } from './users/users.component';
 import { SecurityQuestionMngComponent } from './security-question-mng/security-question-mng.component';
+import { RoleMngComponent } from './roles/roles.component';
 
 export const routes: Routes = [
     {
@@ -16,6 +17,12 @@ export const routes: Routes = [
         canActivate: [AdminAuthGuardService],
         component: SecurityQuestionMngComponent,
         data: { title: 'Câu hỏi bảo mật', titleI18n: 'security-question' },
+    },
+    {
+        path: "role",
+        canActivate: [AdminAuthGuardService],
+        component: RoleMngComponent,
+        data: {title: "Vai trò hệ thống", titleI18n: "role"}
     }
 ]
 

@@ -6,9 +6,9 @@ module.exports = function() {
     // Root routing
     var controller = require('../controllers/role.controller.js');
 
-    consts.registerApi('api.v1.systemuser.role.delete', controller.deleteRole, { systemApi: true });
-    consts.registerApi('api.v1.systemuser.role.list', controller.listRoles, { systemApi: true });
-    consts.registerApi('api.v1.systemuser.role.add', controller.addRole, { systemApi: true });
-    consts.registerApi('api.v1.systemuser.role.get', controller.getRole, { systemApi: true });
-    consts.registerApi('api.v1.systemuser.role.update', controller.updateRole, { systemApi: true });
+    consts.registerApi('api.v1.role.delete', controller.deleteRole, { systemApi: true });
+    consts.registerApi('api.v1.role.list', controller.listRoles, { systemApi: true });
+    consts.registerApi('api.v1.role.add', controller.addRole, { systemApi: true });
+    consts.registerApi('api.v1.role.get', controller.getRole, { systemApi: true });
+    consts.registerApi('api.v1.role.update', controller.updateRole, { systemApi: true });
 };
