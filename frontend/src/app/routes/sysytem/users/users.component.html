@@ -60,10 +60,10 @@
                                     <div *ngSwitchCase="'status'">
                                         <ng-container *ngIf="!element.is_delete; else deletedUser">
                                             <ng-container *ngIf="element[column]; else notActive">
-                                                <mat-icon class="active" matTooltip="Đang hoạt động">check</mat-icon>
+                                                <mat-icon class="active" matTooltip="Đang hoạt động">lock_open</mat-icon>
                                             </ng-container>
                                             <ng-template #notActive>
-                                                <mat-icon class="inactive" matTooltip="Bị khóa">cancel</mat-icon>
+                                                <mat-icon class="inactive" matTooltip="Bị khóa">block</mat-icon>
                                             </ng-template>
                                         </ng-container>
                                         <ng-template #deletedUser>

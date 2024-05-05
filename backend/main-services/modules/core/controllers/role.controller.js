@@ -2,9 +2,10 @@ const Role = require('../models/role');
 const validator = require('validator');
 const async = require('async');
 const consts = require('../../../../config/consts');
+const { merge } = require('../../../../libs/utils');
 
 const listRoles = (req, returnData, callback) => {
-    const { search, status, page, size } = req.params;
+    const { search, status, page, size, is_delete } = req.params;
 
     const query = {
         $or: [{
@@ -21,6 +22,11 @@ const listRoles = (req, returnData, callback) => {
     }
     if (validator.isNull(size)) {
         size = consts.page_size;
+    }
+    if (validator.isNull(is_delete)) {
+        query['is_delete'] = false;
+    } else {
+        query['is_delete'] = is_delete;
     }
 
     Role
@@ -70,9 +76,6 @@ const addRole = (req, returnData, callback) => {
     if (validator.isNull(code)) {
         return callback(consts.ERRORS.ERROR_CODE_MISSING);
     }
-    if (validator.isNull(description)) {
-        return callback(consts.ERRORS.ERROR_DESCRIPTION_MISSING);
-    }
 
     async.series([
         function (cb) {
@@ -112,7 +115,7 @@ const addRole = (req, returnData, callback) => {
 }
 
 const updateRole = (req, returnData, callback) => {
-    let { title, description, id, status, code } = req.params;
+    let { title, description, _id, status, code } = req.params;
 
     if (validator.isNull(title)) {
         return callback(consts.ERRORS.ERROR_TITLE_MISSING);
@@ -123,13 +126,13 @@ const updateRole = (req, returnData, callback) => {
     if (validator.isNull(description)) {
         return callback(consts.ERRORS.ERROR_DESCRIPTION_MISSING);
     }
-    if (!validator.isMongoId(id)) {
+    if (!validator.isMongoId(_id)) {
         return callback(consts.ERRORS.ERROR_ID_MISSING);
     }
 
     Role
         .findOne()
-        .where({ _id: id })
+        .where({ _id })
         .exec((err, result) => {
             if (err) {
                 return callback(err);
@@ -138,7 +141,7 @@ const updateRole = (req, returnData, callback) => {
                 return callback(consts.ERRORS.ERROR_ROLE_NOT_FOUND);
             }
             else {
-                utils.merge(result, { title, description, code, status: status ? 1: 0 });
+                merge(result, { title, description, code, status: status ? 1: 0 });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
@@ -149,21 +152,57 @@ const updateRole = (req, returnData, callback) => {
 }
 
 const deleteRole = (req, returnData, callback) => {
-    let { id } = req.params;
-
-    if (validator.isNull(id)) {
-        return callback(consts.ERRORS.ERROR_ID_MISSING);
+    let { ids } = req.params;
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
 
     Role
-    .update({
-        _id: id
-    },{
+    .updateMany({
+        _id: {
+            $in: ids
+        }
+    }, {
         $set: {
-            is_delete: true
+            is_delete: true,
+            dateDeleted: new Date(),
+            status: 0
         }
     }, (err, data) => {
-        if(err) return callback(err);
+        if (err) return callback(err);
+        returnData.set(data)
+        callback();
+    })
+}
+
+const changeStatusRole = (req, returnData, callback) => {
+    let { ids, status } = req.params;
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
+    }
+    if(status !== 0 && status !== 1){
+        return callback(consts.ERRORS.ERROR_STATUS_INVALID)
+    }
+
+    Role
+    .updateMany({
+        _id: {
+            $in: ids
+        }
+    }, {
+        $set: {
+            status,
+            dateUpdated: new Date()
+        }
+    }, (err, data) => {
+        if (err) return callback(err);
+        returnData.set({...data})
         callback();
     })
 }
@@ -173,3 +212,4 @@ exports.listRoles = listRoles;
 exports.addRole = addRole;
 exports.getRole = getRole;
 exports.updateRole = updateRole;
+exports.changeStatusRole = changeStatusRole;

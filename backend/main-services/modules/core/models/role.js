@@ -12,7 +12,6 @@ let RoleSchema = new Schema({
     description: {
         type: String,
         max: 2000,
-        required: consts.ERRORS.ERROR_ROLE_DESCRIPTION_MISSING
     },
     dateCreated: {
         type: Date,

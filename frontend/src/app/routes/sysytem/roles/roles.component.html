@@ -17,11 +17,11 @@
                     <mat-icon>add</mat-icon>
                     Thêm mới
                 </button>
-                <button mat-button *ngIf="isShowLockButton()" color="accent">
+                <button mat-button *ngIf="isShowLockButton()" color="accent" (click)="changeStatusSelected(1)">
                     <mat-icon>block</mat-icon>
                     Khóa
                 </button>
-                <button mat-button *ngIf="isShowUnlockButton()" color="success" class="mat-success-outlined">
+                <button mat-button *ngIf="isShowUnlockButton()" color="success" class="mat-success-outlined" (click)="changeStatusSelected(0)">
                     <mat-icon>lock_open</mat-icon>
                     Mở khóa
                 </button>
@@ -52,10 +52,10 @@
                                 <div [ngSwitch]="column">
                                     <div *ngSwitchCase="'status'">
                                         <ng-container *ngIf="element[column]; else notActive">
-                                            <mat-icon class="active" matTooltip="Đang hoạt động">check</mat-icon>
+                                            <mat-icon class="active" matTooltip="Đang hoạt động">lock_open</mat-icon>
                                         </ng-container>
                                         <ng-template #notActive>
-                                            <mat-icon class="inactive" matTooltip="Bị khóa">cancel</mat-icon>
+                                            <mat-icon class="inactive" matTooltip="Bị khóa">block</mat-icon>
                                         </ng-template>
                                     </div>
                                     <div *ngSwitchCase="'checkbox'">
@@ -68,9 +68,9 @@
                                     <div *ngSwitchCase="'actions'">
                                         <button mat-icon-button [matMenuTriggerFor]="menuActions"><mat-icon>more_vert</mat-icon></button>
                                         <mat-menu #menuActions="matMenu">
-                                            <button mat-menu-item><mat-icon>repeat</mat-icon>Cài lại mật khẩu</button>
-                                            <button mat-menu-item><mat-icon>refresh</mat-icon> Khôi phục</button>
-                                            <button mat-menu-item class="dropdown-item dropdown-item-accent"><mat-icon color="accent">delete</mat-icon>Xóa</button>
+                                            <button mat-menu-item (click)="open(element)"><mat-icon>edit</mat-icon>Cập nhật</button>
+                                            <button mat-menu-item (click)="changeStatus(element)"><mat-icon>{{ element.status ? 'block': 'lock_open' }}</mat-icon>{{ element.status ? 'Khóa': 'Mở khóa' }}</button>
+                                            <button mat-menu-item class="dropdown-item dropdown-item-accent" (click)="deleteSingle(element)"><mat-icon color="accent">delete</mat-icon>Xóa</button>
                                         </mat-menu>
                                     </div>
                                     <div *ngSwitchDefault>

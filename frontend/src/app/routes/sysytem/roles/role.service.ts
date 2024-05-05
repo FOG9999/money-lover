@@ -17,17 +17,22 @@ export class RoleService {
 
     addRole(role: Partial<Role>){
         const api_name: string = "api.v1.role.add";
-        return this.http.post<Role[]>(environment.SERVER_URL, { api_name, ...role }, { observe: "body" });
+        return this.http.post<Role>(environment.SERVER_URL, { api_name, ...role }, { observe: "body" });
     }
 
     updateRole(role: Partial<Role>){
         const api_name: string = "api.v1.role.update";
-        return this.http.post<Role[]>(environment.SERVER_URL, { api_name, ...role }, { observe: "body" });
+        return this.http.post<Role>(environment.SERVER_URL, { api_name, ...role }, { observe: "body" });
     }
 
     deleteRole(ids: string[]){
         const api_name: string = "api.v1.role.delete";
         return this.http.post<Role[]>(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
+    }
+
+    changeStatusRole(ids: string[], status: 0 | 1){
+        const api_name: string = "api.v1.role.changestatus";
+        return this.http.post<Role[]>(environment.SERVER_URL, { api_name, ids, status }, { observe: "body" });
     }
 
     getRole(id: string){

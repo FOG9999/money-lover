@@ -27,8 +27,8 @@ export class RoleMngComponent implements OnInit {
 
     listRoles: Partial<Role>[] = [];
     searchKey: string = "";
-    displayedColumns: string[] = ['checkbox', 'Tên vai trò', 'Mã vai trò', 'Ngày tạo', 'Trạng thái', 'Thao tác'];
-    columnProps: string[] = ['checkbox', 'title','code', 'dateCreated', 'status', 'actions'];
+    displayedColumns: string[] = ['checkbox', 'Tên vai trò', 'Mã vai trò', 'Mô tả', 'Ngày tạo', 'Trạng thái', 'Thao tác'];
+    columnProps: string[] = ['checkbox', 'title','code', 'description', 'dateCreated', 'status', 'actions'];
     loading: boolean = false;
     listChecked: boolean[] = [];
     total: number = 0;
@@ -64,11 +64,11 @@ export class RoleMngComponent implements OnInit {
     open(role?: Partial<Role>, evt?: Event){
         this.dialogService.open(RoleDialogComponent, {
             data: {
-                role: role ? role: {}
+                id: role ? role._id: null
             },
             width: '400px'
         })
-        .afterClosed().subscribe((res: undefined | Partial<Role>) => {
+        .afterClosed().subscribe((res: string) => {
             if(res){
                 this.searchRoles();
             }
@@ -153,11 +153,79 @@ export class RoleMngComponent implements OnInit {
     }
 
     toggleCheckAllItems(val: boolean){
-        this.listChecked.forEach(item => item = val);
+        let clone = [];
+        this.listChecked.forEach(() => {clone.push(val)});
+        this.listChecked = [...clone];
     }
 
     isChecked(id: string){
         const itemIndex = this.listRoles.findIndex(r => r._id == id);
         return this.listChecked[itemIndex];
+    }
+
+    deleteSingle(role: Partial<Role>){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: `Xác nhận xóa vai trò`,
+                message: `Xóa vai trò '${role.title}'?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed?: boolean) => {
+            if(isConfirmed){
+                this.loading = true;
+                this.roleService.deleteRole([role._id]).subscribe(() => {
+                    this.toast.success(`Xóa vai trò thành công`);
+                    this.loading = false;
+                    this.searchRoles();
+                    this.resetListChecked();
+                }, () => this.loading = false)
+            }
+        })
+    }
+
+    changeStatus(role: Partial<Role>){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: `Xác nhận ${role.status ? '': 'mở'} khóa vai trò?`,
+                message: `${role.status ? 'Khóa': 'Mở khóa'} vai trò ${role.title}?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.loading = true;
+                this.roleService.changeStatusRole([role._id], role.status ? 0: 1)
+                .subscribe(res => {
+                    this.loading = false;
+                    this.toast.success(`${role.status ? 'Khóa': 'Mở khóa'} vai trò thành công`);
+                    this.searchRoles();
+                    this.resetListChecked();
+                }, err => {
+                    this.loading = false;
+                })                
+            }
+        })
+    }
+
+    changeStatusSelected(currStatus: 0 | 1){
+        this.dialogService.open(ConfirmDeletionComponent, {
+            data: {
+                title: `Xác nhận ${currStatus ? '': 'mở'} khóa vai trò?`,
+                message: `${currStatus ? 'Khóa': 'Mở khóa'} ${this.getNumOfSelected()} vai trò?`
+            }
+        })
+        .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
+            if (isConfirmed) {
+                this.loading = true;
+                this.roleService.changeStatusRole(this.listRoles.filter((_, i) => this.listChecked[i]).map(r => r._id), currStatus ? 0 : 1)
+                .subscribe(res => {
+                    this.loading = false;
+                    this.toast.success(`${currStatus ? 'Khóa': 'Mở khóa'} vai trò thành công`);
+                    this.searchRoles();
+                    this.resetListChecked();
+                }, err => {
+                    this.loading = false;
+                })                
+            }
+        })
     }
 }

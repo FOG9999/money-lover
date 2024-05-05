@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Role } from 'app/model/role.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RoleService } from './role.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'role-dialog',
@@ -14,6 +15,7 @@ export class RoleDialogComponent implements OnInit {
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { id?: string },
         private roleService: RoleService,
+        private toast: ToastrService,
         private dialogRef: MatDialogRef<RoleDialogComponent>
     ) { }
 
@@ -29,7 +31,6 @@ export class RoleDialogComponent implements OnInit {
                 })
             }, (err) => {
                 console.error(err);
-                this.close("Lỗi lấy thông tin vai trò");
             })
         }
         // create
@@ -51,36 +52,30 @@ export class RoleDialogComponent implements OnInit {
         description: new FormControl(null),
     });
 
-    /**
-     * close current dialog
-     * @param msg string if having error; obj when successful
-     */
-    close(msg?: string | {msg: string}){
+    close(msg?: Partial<Role>){
         this.dialogRef.close(msg);
     }
 
     getCurrentData(): Role {
-        return this.roleForm.value;
+        return {
+            ...this.role,
+            ...this.roleForm.value
+        }
     }
 
     save(){
         if(this.data && this.data.id){
             this.roleService.updateRole(this.getCurrentData())
             .subscribe(res => {
-                console.log(res);
-                this.close({msg: "Cập nhật vai trò thành công"})
-            }, err => {
-                console.error(err);
-                this.close("Cập nhật vai trò thất bại");
+                this.toast.success("Cập nhật vai trò thành công");
+                this.close(res);
             })
         }
         else {
             this.roleService.addRole(this.getCurrentData())
             .subscribe(res => {
-                this.close({msg: "Thêm vai trò thành công"})
-            }, err => {
-                console.error(err);
-                this.close("Thêm vai trò thất bại");
+                this.toast.success("Thêm vai trò thành công");
+                this.close(res);
             })
         }
     }

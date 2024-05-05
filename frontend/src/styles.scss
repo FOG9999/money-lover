@@ -5,3 +5,11 @@
 @import 'styles/plugins';
 @import 'styles/custom';
 @import 'styles/money-lover';
+
+.active {
+    color: green;
+}
+
+.inactive {
+    color: red;
+}
