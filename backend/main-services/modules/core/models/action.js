@@ -9,12 +9,11 @@ let ActionSchema = new Schema({
     title: {
         type: String,
         trim: true,
-        required: 'ERROR_ACTION_TITLE_MISSING'
+        required: consts.ERRORS.ERROR_ACTION_TITLE_MISSING
     },
     description: {
         type: String,
         max: 2000,
-        required: 'ERROR_ACTION_DESCRIPTION_MISSING'
     },
     dateCreated: {
         type: Date,
@@ -24,11 +23,6 @@ let ActionSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    moduleId: {
-        type: ObjectId,
-        ref: 'Module',
-        default: null
-    },
     userCreated: {
         type: ObjectId,
         ref: 'User'
@@ -36,6 +30,16 @@ let ActionSchema = new Schema({
     is_delete: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: Number,
+        default: 1
+    },
+    code: {
+        type: String,
+        max: 200,
+        trim: true,
+        required: consts.ERRORS.ERROR_ACTION_CODE_MISSING
     }
 });
 

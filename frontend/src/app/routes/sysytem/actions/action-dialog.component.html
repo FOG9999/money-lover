@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<div mat-dialog-content>
+    <ng-container *ngIf="action; else loading">
+        <form class="form-field-full" [formGroup]="actionForm">
+            <!-- Tên hành động -->
+            <mat-form-field appearance="outline">
+                <mat-label>Tên hành động</mat-label>
+                <input matInput formControlName="title">
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('title')">close</mat-icon>
+            </mat-form-field>
+
+            <!-- Mã hành động -->
+            <mat-form-field appearance="outline">
+                <mat-label>Mã hành động</mat-label>
+                <input matInput formControlName="code">
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('code')">close</mat-icon>
+            </mat-form-field>
+
+            <!-- Note -->
+            <mat-form-field appearance="outline">
+                <mat-label>Mô tả</mat-label>
+                <textarea matInput placeholder="Mô tả" type="text" formControlName="description" cols="3"></textarea>
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('description')">close</mat-icon>
+            </mat-form-field>
+        </form>
+    </ng-container>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
+    <button mat-button [disabled]="!actionForm.valid" color="primary" (click)="save()">Lưu</button>
+</div>
+
+<!-- loading -->
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

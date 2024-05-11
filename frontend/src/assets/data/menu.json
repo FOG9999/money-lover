@@ -45,6 +45,12 @@
               "type": "link",
               "name": "role",
               "level": ["ADMIN", "SYSTEM"]
+            },
+            {
+              "route": "action",
+              "type": "link",
+              "name": "action",
+              "level": ["ADMIN", "SYSTEM"]
             }
           ]
         },

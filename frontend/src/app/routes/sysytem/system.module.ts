@@ -6,6 +6,8 @@ import { SecurityQuestionMngComponent } from './security-question-mng/security-q
 import { SecurityQuestionDetailComponent } from './security-question-mng/security-question-detail/security-question-detail.component';
 import { RoleMngComponent } from './roles/roles.component';
 import { RoleDialogComponent } from './roles/role-dialog.component';
+import { ActionMngComponent } from './actions/actions.component';
+import { ActionDialogComponent } from './actions/action-dialog.component';
 
 @NgModule({
     imports: [SharedModule, SystemRoutingModule],
@@ -15,7 +17,9 @@ import { RoleDialogComponent } from './roles/role-dialog.component';
         SecurityQuestionMngComponent,
         SecurityQuestionDetailComponent,
         RoleMngComponent,
-        RoleDialogComponent
+        RoleDialogComponent,
+        ActionMngComponent,
+        ActionDialogComponent
     ]
 })
 export class SystemModule { }
