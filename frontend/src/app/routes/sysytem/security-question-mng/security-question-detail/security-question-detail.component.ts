@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SecurityQuestionService } from '@shared';
+import { SecurityQuestionService, trim } from '@shared';
 import { SecurityQuestion } from 'app/model/question.model';
 import { ToastrService } from 'ngx-toastr';
 
@@ -23,6 +23,7 @@ export class SecurityQuestionDetailComponent implements OnInit {
     })
     title: string = "Thêm mới câu hỏi bảo mật";
     loading: boolean = false;
+    trim = trim;
 
     ngOnInit() {
         this.formGroup.get('question')?.setValue(this.data.question.question);

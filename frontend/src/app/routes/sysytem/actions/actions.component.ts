@@ -43,6 +43,7 @@ export class ActionMngComponent implements OnInit {
             this.listActions = res.results;
             this.total = res.total;
             this.resetListChecked();
+            if(!this.listActions.length) this.isAllChecked = false;
         }, err => {
             this.loading = false;
         })

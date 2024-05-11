@@ -4,6 +4,7 @@ import { Action } from 'app/model/action.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionService } from './action.service';
 import { ToastrService } from 'ngx-toastr';
+import { trim } from '@shared';
 
 @Component({
     selector: 'action-dialog',
@@ -51,6 +52,7 @@ export class ActionDialogComponent implements OnInit {
         code: new FormControl(null, Validators.required),
         description: new FormControl(null),
     });
+    trim = trim;
 
     close(msg?: Partial<Action>){
         this.dialogRef.close(msg);

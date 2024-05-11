@@ -43,6 +43,7 @@ export class RoleMngComponent implements OnInit {
             this.listRoles = res.results;
             this.total = res.total;
             this.resetListChecked();
+            if(!this.listRoles.length) this.isAllChecked = false;
         }, err => {
             this.loading = false;
         })

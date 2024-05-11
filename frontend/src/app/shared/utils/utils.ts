@@ -1,3 +1,4 @@
+import { AbstractControl } from "@angular/forms";
 import { FileExtension, UploadTypeMIME } from "app/consts";
 
 /**
@@ -340,4 +341,8 @@ export function getResponseErrorMessage(message: string){
     default:
       return 'Không tồn tại mesage';
   }
+}
+
+export const trim = (control: AbstractControl) => {
+  if(control) control.setValue(control.value ? control.value.trim(): '');
 }

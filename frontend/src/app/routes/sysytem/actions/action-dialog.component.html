@@ -5,21 +5,23 @@
             <!-- Tên hành động -->
             <mat-form-field appearance="outline">
                 <mat-label>Tên hành động</mat-label>
-                <input matInput formControlName="title">
+                <input matInput formControlName="title" (blur)="trim(actionForm.get('title'))">
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('title')">close</mat-icon>
+                <mat-error *ngIf="actionForm.get('title').invalid">Tên hành động không hợp lệ</mat-error>
             </mat-form-field>
 
             <!-- Mã hành động -->
             <mat-form-field appearance="outline">
                 <mat-label>Mã hành động</mat-label>
-                <input matInput formControlName="code">
+                <input matInput formControlName="code" (blur)="trim(actionForm.get('code'))">
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('code')">close</mat-icon>
+                <mat-error *ngIf="actionForm.get('code').invalid">Mã hành động không hợp lệ</mat-error>
             </mat-form-field>
 
             <!-- Note -->
             <mat-form-field appearance="outline">
                 <mat-label>Mô tả</mat-label>
-                <textarea matInput placeholder="Mô tả" type="text" formControlName="description" cols="3"></textarea>
+                <textarea matInput placeholder="Mô tả" type="text" formControlName="description" cols="3" (blur)="trim(actionForm.get('description'))"></textarea>
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('description')">close</mat-icon>
             </mat-form-field>
         </form>

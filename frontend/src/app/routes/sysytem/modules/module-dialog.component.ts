@@ -4,6 +4,7 @@ import { Module } from 'app/model/module.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModuleService } from './module.service';
 import { ToastrService } from 'ngx-toastr';
+import { trim } from '@shared';
 
 @Component({
     selector: 'module-dialog',
@@ -35,7 +36,7 @@ export class ModuleDialogComponent implements OnInit {
         }
         // create
         else {
-            this.title = "Thêm mới vai trò";
+            this.title = "Thêm mới module";
             this.module = {
                 title: null,
                 code: null,
@@ -45,12 +46,13 @@ export class ModuleDialogComponent implements OnInit {
     }
 
     module: Partial<Module>;
-    title: string = "Chỉnh sửa vai trò";
+    title: string = "Chỉnh sửa module";
     moduleForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
         code: new FormControl(null, Validators.required),
         description: new FormControl(null),
     });
+    trim = trim;
 
     close(msg?: Partial<Module>){
         this.dialogRef.close(msg);
@@ -67,14 +69,14 @@ export class ModuleDialogComponent implements OnInit {
         if(this.data && this.data.id){
             this.moduleService.updateModule(this.getCurrentData())
             .subscribe(res => {
-                this.toast.success("Cập nhật vai trò thành công");
+                this.toast.success("Cập nhật module thành công");
                 this.close(res);
             })
         }
         else {
             this.moduleService.addModule(this.getCurrentData())
             .subscribe(res => {
-                this.toast.success("Thêm vai trò thành công");
+                this.toast.success("Thêm module thành công");
                 this.close(res);
             })
         }

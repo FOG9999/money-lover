@@ -43,6 +43,7 @@ export class ModuleMngComponent implements OnInit {
             this.listModules = res.results;
             this.total = res.total;
             this.resetListChecked();
+            if(!this.listModules.length) this.isAllChecked = false;
         }, err => {
             this.loading = false;
         })

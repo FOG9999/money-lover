@@ -14,6 +14,7 @@ let ActionSchema = new Schema({
     description: {
         type: String,
         max: 2000,
+        trim: true,
     },
     dateCreated: {
         type: Date,

@@ -81,7 +81,7 @@ const addAction = (req, returnData, callback) => {
         function (cb) {
             Action
                 .findOne()
-                .where({ code })
+                .where({ code, is_delete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);

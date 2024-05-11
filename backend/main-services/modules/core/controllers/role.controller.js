@@ -81,7 +81,7 @@ const addRole = (req, returnData, callback) => {
         function (cb) {
             Role
                 .findOne()
-                .where({ code: code })
+                .where({ code: code, is_delete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);

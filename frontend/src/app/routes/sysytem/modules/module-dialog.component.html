@@ -5,21 +5,23 @@
             <!-- Tên module -->
             <mat-form-field appearance="outline">
                 <mat-label>Tên module</mat-label>
-                <input matInput formControlName="title">
+                <input matInput formControlName="title" (blur)="trim(moduleForm.get('title'))">
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('title')">close</mat-icon>
+                <mat-error *ngIf="moduleForm.get('title').invalid">Tên module không hợp lệ</mat-error>
             </mat-form-field>
 
             <!-- Mã module -->
             <mat-form-field appearance="outline">
                 <mat-label>Mã module</mat-label>
-                <input matInput formControlName="code">
+                <input matInput formControlName="code" (blur)="trim(moduleForm.get('code'))">
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('code')">close</mat-icon>
+                <mat-error *ngIf="moduleForm.get('code').invalid">Mã module không hợp lệ</mat-error>
             </mat-form-field>
 
             <!-- Note -->
             <mat-form-field appearance="outline">
                 <mat-label>Mô tả</mat-label>
-                <textarea matInput placeholder="Mô tả" type="text" formControlName="description" cols="3"></textarea>
+                <textarea matInput placeholder="Mô tả" type="text" formControlName="description" cols="3" (blur)="trim(moduleForm.get('description'))"></textarea>
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('description')">close</mat-icon>
             </mat-form-field>
         </form>

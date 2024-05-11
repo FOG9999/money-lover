@@ -6,7 +6,7 @@ import { TransactionService } from '../transaction.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { WalletSelectComponent } from '../../wallet-select/wallet-select.component';
 import { CategorySelectComponent } from '../../category-select/category-select.component';
-import { currencyToNumber } from '@shared';
+import { currencyToNumber, trim } from '@shared';
 
 @Component({
     selector: 'transaction-dialog',
@@ -67,6 +67,7 @@ export class TransactionDialogComponent implements OnInit {
         note: new FormControl(''),
         dateCreated: new FormControl(new Date(), Validators.required)
     });
+    trim = trim;
 
     /**
      * close current dialog

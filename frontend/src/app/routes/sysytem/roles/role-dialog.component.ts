@@ -4,6 +4,7 @@ import { Role } from 'app/model/role.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RoleService } from './role.service';
 import { ToastrService } from 'ngx-toastr';
+import { trim } from '@shared';
 
 @Component({
     selector: 'role-dialog',
@@ -18,6 +19,8 @@ export class RoleDialogComponent implements OnInit {
         private toast: ToastrService,
         private dialogRef: MatDialogRef<RoleDialogComponent>
     ) { }
+
+    trim = trim;
 
     ngOnInit() {
         // update

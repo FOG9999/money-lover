@@ -48,7 +48,7 @@ const THIRD_MODULES = [
 ];
 const COMPONENTS = [BreadcrumbComponent, PageHeaderComponent, ErrorCodeComponent, MLIconComponent, ConfirmDeletionComponent, AppLoadingComponent, UploadComponent, EmptyComponent, AuthByQuestionComponent, ChangeSecurityQuestionComponent, SecurityQuestionComponent, CalendarRangeComponent];
 const COMPONENTS_DYNAMIC = [];
-const DIRECTIVES = [NumberFormatDirective];
+const DIRECTIVES = [NumberFormatDirective,];
 const PIPES = [FormatNumberPipe, LevelRolePipe, FormErrorPipe];
 
 @NgModule({

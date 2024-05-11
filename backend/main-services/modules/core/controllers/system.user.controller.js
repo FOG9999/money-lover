@@ -605,6 +605,11 @@ const signUp = (req, returnData, callback) => {
             {
                 email: email
             }
+        ],
+        "$and": [
+            {
+                is_delete: false
+            }
         ]
     }
 

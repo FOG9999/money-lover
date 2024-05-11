@@ -13,6 +13,7 @@ let ModuleSchema = new Schema({
     },
     description: {
         type: String,
+        trim: true,
         max: 2000
     },
     dateCreated: {

@@ -44,7 +44,7 @@
             <!-- Note -->
             <mat-form-field appearance="outline">
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput placeholder="Ghi chú" type="text" formControlName="note" cols="3"></textarea>
+                <textarea matInput placeholder="Ghi chú" type="text" formControlName="note" cols="3" (blur)="trim(transactionForm.get('note'))"></textarea>
                 <mat-icon class="hover-item" matSuffix (click)="clearFormControl('note')">close</mat-icon>
             </mat-form-field>
         </form>

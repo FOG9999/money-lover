@@ -2,7 +2,7 @@
 <div mat-dialog-content>
     <form class="form-field-full" [formGroup]="formGroup">
         <mat-form-field appearance="outline">
-            <textarea matInput placeholder="Nhập nội dung câu hỏi" type="text" formControlName="question" required></textarea>
+            <textarea matInput placeholder="Nhập nội dung câu hỏi" type="text" formControlName="question" required (blur)="trim(formGroup.get('question'))"></textarea>
             <mat-error *ngIf="formGroup.get('question').invalid">Nội dung câu hỏi bắt buộc nhập</mat-error>
         </mat-form-field>
     </form>

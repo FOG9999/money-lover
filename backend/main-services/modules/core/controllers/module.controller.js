@@ -2,6 +2,7 @@ const Module = require('../models/module');
 const validator = require('validator');
 const async = require('async');
 const consts = require('../../../../config/consts');
+const { merge } = require('../../../../libs/utils');
 
 const listModules = (req, returnData, callback) => {
     const { search, status, page, size, is_delete } = req.params;
@@ -80,7 +81,7 @@ const addModule = (req, returnData, callback) => {
         function (cb) {
             Module
                 .findOne()
-                .where({ title: title })
+                .where({ code, is_delete: false })
                 .exec((err, data) => {
                     if (err) {
                         cb(err);
@@ -137,7 +138,7 @@ const updateModule = (req, returnData, callback) => {
                 return callback(consts.ERRORS.ERROR_MODULE_NOT_FOUND);
             }
             else {
-                utils.merge(result, { title, description, code, status: status ? 1: 0 });
+                merge(result, { title, description, code, status: status ? 1: 0 });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
