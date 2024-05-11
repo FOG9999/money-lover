@@ -123,9 +123,6 @@ const updateRole = (req, returnData, callback) => {
     if (validator.isNull(code)) {
         return callback(consts.ERRORS.ERROR_CODE_MISSING);
     }
-    if (validator.isNull(description)) {
-        return callback(consts.ERRORS.ERROR_DESCRIPTION_MISSING);
-    }
     if (!validator.isMongoId(_id)) {
         return callback(consts.ERRORS.ERROR_ID_MISSING);
     }

@@ -51,6 +51,12 @@
               "type": "link",
               "name": "action",
               "level": ["ADMIN", "SYSTEM"]
+            },
+            {
+              "route": "module",
+              "type": "link",
+              "name": "module",
+              "level": ["ADMIN", "SYSTEM"]
             }
           ]
         },

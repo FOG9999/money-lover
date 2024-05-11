@@ -9,12 +9,11 @@ let ModuleSchema = new Schema({
     title: {
         type: String,
         trim: true,
-        required: 'ERROR_MODULE_TITLE_MISSING'
+        required: consts.ERRORS.ERROR_TITLE_MISSING
     },
     description: {
         type: String,
-        max: 2000,
-        required: 'ERROR_MODULE_DESCRIPTION_MISSING'
+        max: 2000
     },
     dateCreated: {
         type: Date,
@@ -31,6 +30,16 @@ let ModuleSchema = new Schema({
     is_delete: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: Number,
+        default: 1
+    },
+    code: {
+        type: String,
+        max: 200,
+        trim: true,
+        required: consts.ERRORS.ERROR_CODE_MISSING
     }
 });
 

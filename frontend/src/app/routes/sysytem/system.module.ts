@@ -8,6 +8,8 @@ import { RoleMngComponent } from './roles/roles.component';
 import { RoleDialogComponent } from './roles/role-dialog.component';
 import { ActionMngComponent } from './actions/actions.component';
 import { ActionDialogComponent } from './actions/action-dialog.component';
+import { ModuleDialogComponent } from './modules/module-dialog.component';
+import { ModuleMngComponent } from './modules/modules.component';
 
 @NgModule({
     imports: [SharedModule, SystemRoutingModule],
@@ -19,7 +21,9 @@ import { ActionDialogComponent } from './actions/action-dialog.component';
         RoleMngComponent,
         RoleDialogComponent,
         ActionMngComponent,
-        ActionDialogComponent
+        ActionDialogComponent,
+        ModuleMngComponent,
+        ModuleDialogComponent
     ]
 })
 export class SystemModule { }

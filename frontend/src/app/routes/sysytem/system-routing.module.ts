@@ -5,6 +5,7 @@ import { UsersListComponent } from './users/users.component';
 import { SecurityQuestionMngComponent } from './security-question-mng/security-question-mng.component';
 import { RoleMngComponent } from './roles/roles.component';
 import { ActionMngComponent } from './actions/actions.component';
+import { ModuleMngComponent } from './modules/modules.component';
 
 export const routes: Routes = [
     {
@@ -30,6 +31,12 @@ export const routes: Routes = [
         canActivate: [AdminAuthGuardService],
         component: ActionMngComponent,
         data: {title: "Hành động hệ thống", titleI18n: "action"}
+    },
+    {
+        path: "module",
+        canActivate: [AdminAuthGuardService],
+        component: ModuleMngComponent,
+        data: {title: "Module hệ thống", titleI18n: "module"}
     }
 ]
 

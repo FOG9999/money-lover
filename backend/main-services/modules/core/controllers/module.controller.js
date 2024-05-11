@@ -1,13 +1,14 @@
 const Module = require('../models/module');
 const validator = require('validator');
 const async = require('async');
+const consts = require('../../../../config/consts');
 
 const listModules = (req, returnData, callback) => {
-    const { search, status } = req.params;
+    const { search, status, page, size, is_delete } = req.params;
 
     const query = {
         $or: [{
-            name: new RegExp(search, 'i')
+            title: new RegExp(search, 'i')
         }, {
             code: new RegExp(search, 'i')
         }]
@@ -15,14 +16,39 @@ const listModules = (req, returnData, callback) => {
     if (!validator.isNull(status)) {
         query['status'] = status;
     }
+    if (validator.isNull(page)) {
+        page = 0;
+    }
+    if (validator.isNull(size)) {
+        size = consts.page_size;
+    }
+    if (validator.isNull(is_delete)) {
+        query['is_delete'] = false;
+    } else {
+        query['is_delete'] = is_delete;
+    }
 
     Module
         .find()
         .where(query)
+        .sort({dateCreated: -1})
+        .skip(page*size)
+        .limit(size)
         .exec((err, results) => {
             if (err) return callback(err);
-            returnData.set(results);
-            callback();
+            // calculate count
+            Module.aggregate([{
+                $match: query
+            }, {
+                $count: "total"
+            }])
+            .exec((errCount, result) => {
+                if(errCount){
+                    return callback(errCount);
+                }
+                returnData.set({results, total: result[0] ? result[0].total: 0});
+                callback();
+            })
         })
 }
 
@@ -33,21 +59,21 @@ const getModule = (req, returnData, callback) => {
         .findOne({ _id: id })
         .exec((err, data) => {
             if (err) return callback(err);
-            if (!data) return callback('ERROR_MODULE_NOT_FOUND');
+            if (!data) return callback(consts.ERRORS.ERROR_MODULE_NOT_FOUND);
             returnData.set(data);
             callback();
         })
 }
 
 const addModule = (req, returnData, callback) => {
-    const { title, description } = req.params;
+    const { title, description, code } = req.params;
     const creator = req.user;
 
     if (validator.isNull(title)) {
-        return callback('ERROR_TITLE_MISSING');
+        return callback(consts.ERRORS.ERROR_TITLE_MISSING);
     }
-    if (validator.isNull(description)) {
-        return callback('ERROR_DESCRIPTION_MISSING');
+    if (validator.isNull(code)) {
+        return callback(consts.ERRORS.ERROR_CODE_MISSING);
     }
 
     async.series([
@@ -60,7 +86,7 @@ const addModule = (req, returnData, callback) => {
                         cb(err);
                     }
                     if (data) {
-                        cb('ERROR_MODULE_EXIST');
+                        cb(consts.ERRORS.ERROR_MODULE_EXIST);
                     }
                     else cb();
                 })
@@ -69,6 +95,7 @@ const addModule = (req, returnData, callback) => {
             let newModule = new Module({
                 title,
                 description,
+                code,
                 creator: creator._id
             })
             newModule.save((err, result) => {
@@ -87,30 +114,30 @@ const addModule = (req, returnData, callback) => {
 }
 
 const updateModule = (req, returnData, callback) => {
-    let { title, description, id } = req.params;
+    let { title, description, _id, status, code } = req.params;
 
     if (validator.isNull(title)) {
-        return callback('ERROR_TITLE_MISSING');
+        return callback(consts.ERRORS.ERROR_TITLE_MISSING);
     }
-    if (validator.isNull(description)) {
-        return callback('ERROR_DESCRIPTION_MISSING');
+    if (validator.isNull(code)) {
+        return callback(consts.ERRORS.ERROR_CODE_MISSING);
     }
-    if (!validator.isMongoId(id)) {
-        return callback('ERROR_ID_MISSING');
+    if (!validator.isMongoId(_id)) {
+        return callback(consts.ERRORS.ERROR_ID_MISSING);
     }
 
     Module
         .findOne()
-        .where({ _id: id })
+        .where({ _id })
         .exec((err, result) => {
             if (err) {
                 return callback(err);
             }
             if (!result) {
-                return callback('ERROR_MODULE_NOT_FOUND');
+                return callback(consts.ERRORS.ERROR_MODULE_NOT_FOUND);
             }
             else {
-                utils.merge(result, { title, description });
+                utils.merge(result, { title, description, code, status: status ? 1: 0 });
                 result.save(function (error, data) {
                     if (error) return callback(error);
                     returnData.set(data);
@@ -121,21 +148,57 @@ const updateModule = (req, returnData, callback) => {
 }
 
 const deleteModule = (req, returnData, callback) => {
-    let { id } = req.params;
-
-    if (validator.isNull(id)) {
-        return callback('ERROR_ID_MISSING');
+    let { ids } = req.params;
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
 
     Module
-    .update({
-        _id: id
-    },{
+    .updateMany({
+        _id: {
+            $in: ids
+        }
+    }, {
         $set: {
-            is_delete: true
+            is_delete: true,
+            dateDeleted: new Date(),
+            status: 0
         }
     }, (err, data) => {
-        if(err) return callback(err);
+        if (err) return callback(err);
+        returnData.set(data)
+        callback();
+    })
+}
+
+const changeStatusModule = (req, returnData, callback) => {
+    let { ids, status } = req.params;
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
+    }
+    if(status !== 0 && status !== 1){
+        return callback(consts.ERRORS.ERROR_STATUS_INVALID)
+    }
+
+    Module
+    .updateMany({
+        _id: {
+            $in: ids
+        }
+    }, {
+        $set: {
+            status,
+            dateUpdated: new Date()
+        }
+    }, (err, data) => {
+        if (err) return callback(err);
+        returnData.set({...data})
         callback();
     })
 }
@@ -145,3 +208,4 @@ exports.listModules = listModules;
 exports.addModule = addModule;
 exports.getModule = getModule;
 exports.updateModule = updateModule;
+exports.changeStatusModule = changeStatusModule;
