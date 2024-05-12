@@ -97,7 +97,8 @@ const addModule = (req, returnData, callback) => {
                 title,
                 description,
                 code,
-                creator: creator._id
+                creator: creator._id,
+                status: 1
             })
             newModule.save((err, result) => {
                 if (err) cb(err);

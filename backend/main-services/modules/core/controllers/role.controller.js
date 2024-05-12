@@ -97,7 +97,8 @@ const addRole = (req, returnData, callback) => {
                 title,
                 code,
                 description,
-                userCreated: creator._id
+                userCreated: creator._id,
+                status: 1
             })
             newRole.save((err, result) => {
                 if (err) cb(err);

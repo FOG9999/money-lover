@@ -176,7 +176,7 @@ const notifyLogin = (user, platform, connectionKey) => {
         user: user._id,
         type: "user",
         priority: 1,
-        description: `Phát hiện đăng nhập từ thiết bị ${platform.description}`,
+        description: `Phát hiện đăng nhập từ thiết bị ${platform ? platform.description: "Unknown"}`,
         title: "Phát hiện đăng nhập",
         link: `${process.env.ML_MY_DOMAIN}/auth/session-management`,
         connectionKey
