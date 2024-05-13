@@ -6,7 +6,7 @@ const consts = require('../../../../config/consts');
 const { merge } = require('../../../../libs/utils');
 
 const listPermissions = (req, returnData, callback) => {
-    let { search, status, page, size, is_delete, role } = req.params;
+    let { search, status, page, size, is_delete, role, module: moduleId, action } = req.params;
 
     const query = {
         $or: [{
@@ -33,40 +33,74 @@ const listPermissions = (req, returnData, callback) => {
         query['role'] = role;
     }
 
-    Permission
-        .find()
-        .where(query)
-        .sort({dateCreated: -1})
-        .skip(page*size)
-        .limit(size)
-        .populate('role')
-        .populate({
-            path: 'moduleAction',
-            populate: [
-                {
-                    path: "module"
-                },
-                {
-                    path: "actions"
+    async.series([
+        function(cb){
+            let queryModuleAction = {};
+            if(validator.isMongoId(moduleId)){
+                queryModuleAction['module'] = moduleId;
+            }
+            if(validator.isMongoId(action)){
+                queryModuleAction['actions'] = {
+                    $elemMatch: {
+                        $eq: action
+                    }
+                };
+            }
+            ModuleAction
+                .find()
+                .where(queryModuleAction)
+                .exec((errMa, resultMa) => {
+                    if(errMa) cb(errMa);
+                    else cb(null, resultMa);
+                })
+        }
+    ], (err, data) => {
+        if(err) return callback(err);
+        let moduleActions = data[0];
+        if(moduleActions.length){
+            query['moduleAction'] = {
+                $elemMatch: {
+                    $in: moduleActions.map(ma => ma._id.toString())
                 }
-            ]
-        })
-        .exec((err, results) => {
-            if (err) return callback(err);
-            // calculate count
-            Permission.aggregate([{
-                $match: query
-            }, {
-                $count: "total"
-            }])
-            .exec((errCount, result) => {
-                if(errCount){
-                    return callback(errCount);
-                }
-                returnData.set({results, total: result[0] ? result[0].total: 0});
-                callback();
-            })
-        })
+            }
+            Permission
+                .find()
+                .where(query)
+                .sort({dateCreated: -1})
+                .skip(page*size)
+                .limit(size)
+                .populate('role')
+                .populate({
+                    path: 'moduleAction',
+                    populate: [
+                        {
+                            path: "module"
+                        },
+                        {
+                            path: "actions"
+                        }
+                    ]
+                })
+                .exec((errPermission, resultPermission) => {
+                    if(errPermission) return callback(errPermission);
+                    Permission.aggregate([{
+                        $match: query
+                    }, {
+                        $count: "total"
+                    }])
+                    .exec((errCount, result) => {
+                        if(errCount){
+                            return callback(errCount);
+                        }
+                        returnData.set({results: resultPermission, total: result[0] ? result[0].total: 0});
+                        callback();
+                    })
+                })
+        } else {
+            returnData.set({results: [], total: 0});
+            callback();
+        }
+    })
 }
 
 const getPermission = (req, returnData, callback) => {
