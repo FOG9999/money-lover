@@ -6,7 +6,7 @@ const consts = require('../../../../config/consts');
 const { merge } = require('../../../../libs/utils');
 
 const listPermissions = (req, returnData, callback) => {
-    let { search, status, page, size, is_delete } = req.params;
+    let { search, status, page, size, is_delete, role } = req.params;
 
     const query = {
         $or: [{
@@ -29,6 +29,9 @@ const listPermissions = (req, returnData, callback) => {
     } else {
         query['is_delete'] = is_delete;
     }
+    if (!validator.isNull(role)) {
+        query['role'] = role;
+    }
 
     Permission
         .find()
@@ -44,7 +47,7 @@ const listPermissions = (req, returnData, callback) => {
                     path: "module"
                 },
                 {
-                    path: "action"
+                    path: "actions"
                 }
             ]
         })
@@ -79,7 +82,7 @@ const getPermission = (req, returnData, callback) => {
                     path: "module"
                 },
                 {
-                    path: "action"
+                    path: "actions"
                 }
             ]
         })
@@ -130,7 +133,7 @@ const addPermission = (req, returnData, callback) => {
             let newModuleActions = moduleAction.map(ma => {
                 let newModuleAction = new ModuleAction({
                     module: ma.module,
-                    action: ma.action,
+                    actions: ma.actions,
                     dateCreated: new Date(),
                     userCreated: creator._id
                 })

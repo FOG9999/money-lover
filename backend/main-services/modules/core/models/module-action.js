@@ -17,10 +17,10 @@ let ModuleActionSchema = new Schema({
         type: ObjectId,
         ref: 'User'
     },
-    action: {
+    actions: [{
         type: ObjectId,
         ref: "Action"
-    }
+    }]
 })
 
 ModuleActionSchema.pre('save', function(next) {
