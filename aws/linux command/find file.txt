@@ -13,3 +13,6 @@ Look for all .jpg files in the /home and directories below it.
 Look for an empty file inside the current directory.
 
 4. find /home -user randomperson-mtime 6 -iname ".db"
+
+5. zip all and except:
+find . -type f ! -name '20240516.zip' ! -name '20240511.zip' -exec zip 20240515.zip {} +

@@ -32,75 +32,69 @@ const listPermissions = (req, returnData, callback) => {
     if (!validator.isNull(role)) {
         query['role'] = role;
     }
-
-    async.series([
-        function(cb){
-            let queryModuleAction = {};
-            if(validator.isMongoId(moduleId)){
-                queryModuleAction['module'] = moduleId;
+    
+    let queryModuleAction = {};
+    if(validator.isMongoId(moduleId)){
+        queryModuleAction['module'] = moduleId;
+    }
+    if(validator.isMongoId(action)){
+        queryModuleAction['actions'] = {
+            $elemMatch: {
+                $eq: action
             }
-            if(validator.isMongoId(action)){
-                queryModuleAction['actions'] = {
+        };
+    }
+    ModuleAction
+        .find()
+        .where(queryModuleAction)
+        .exec((errMa, moduleActions) => {
+            if(errMa) cb(errMa);
+            if(moduleActions.length){
+                query['moduleAction'] = {
                     $elemMatch: {
-                        $eq: action
+                        $in: moduleActions.map(ma => ma._id.toString())
                     }
-                };
-            }
-            ModuleAction
-                .find()
-                .where(queryModuleAction)
-                .exec((errMa, resultMa) => {
-                    if(errMa) cb(errMa);
-                    else cb(null, resultMa);
-                })
-        }
-    ], (err, data) => {
-        if(err) return callback(err);
-        let moduleActions = data[0];
-        if(moduleActions.length){
-            query['moduleAction'] = {
-                $elemMatch: {
-                    $in: moduleActions.map(ma => ma._id.toString())
                 }
-            }
-            Permission
-                .find()
-                .where(query)
-                .sort({dateCreated: -1})
-                .skip(page*size)
-                .limit(size)
-                .populate('role')
-                .populate({
-                    path: 'moduleAction',
-                    populate: [
-                        {
-                            path: "module"
-                        },
-                        {
-                            path: "actions"
-                        }
-                    ]
-                })
-                .exec((errPermission, resultPermission) => {
-                    if(errPermission) return callback(errPermission);
-                    Permission.aggregate([{
-                        $match: query
-                    }, {
-                        $count: "total"
-                    }])
-                    .exec((errCount, result) => {
-                        if(errCount){
-                            return callback(errCount);
-                        }
-                        returnData.set({results: resultPermission, total: result[0] ? result[0].total: 0});
-                        callback();
+                Permission
+                    .find()
+                    .where(query)
+                    .sort({dateCreated: -1})
+                    .skip(page*size)
+                    .limit(size)
+                    .populate('role')
+                    .populate({
+                        path: 'moduleAction',
+                        populate: [
+                            {
+                                path: "module"
+                            },
+                            {
+                                path: "actions"
+                            }
+                        ]
                     })
-                })
-        } else {
-            returnData.set({results: [], total: 0});
-            callback();
-        }
-    })
+                    .exec((errPermission, resultPermission) => {
+                        if(errPermission) return callback(errPermission);
+                        Permission.aggregate([{
+                            $match: query
+                        }, {
+                            $count: "total"
+                        }])
+                        .exec((errCount, result) => {
+                            if(errCount){
+                                return callback(errCount);
+                            }
+                            returnData.set({results: resultPermission, total: result[0] ? result[0].total: 0});
+                            callback();
+                        })
+                    })
+            } else {
+                returnData.set({results: [], total: 0});
+                callback();
+            }
+        })
+        
+        
 }
 
 const getPermission = (req, returnData, callback) => {
@@ -238,65 +232,65 @@ const addPermission = (req, returnData, callback) => {
 //         })
 // }
 
-// const deletePermission = (req, returnData, callback) => {
-//     let { ids } = req.params;
-//     if (validator.isNull(ids)) {
-//         return callback(consts.ERRORS.ERROR_IDS_MISSING);
-//     }
-//     if(!Array.isArray(ids)){
-//         return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
-//     }
+const deletePermission = (req, returnData, callback) => {
+    let { ids } = req.params;
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
+    }
 
-//     Permission
-//     .updateMany({
-//         _id: {
-//             $in: ids
-//         }
-//     }, {
-//         $set: {
-//             is_delete: true,
-//             dateDeleted: new Date(),
-//             status: 0
-//         }
-//     }, (err, data) => {
-//         if (err) return callback(err);
-//         returnData.set(data)
-//         callback();
-//     })
-// }
+    Permission
+    .updateMany({
+        _id: {
+            $in: ids
+        }
+    }, {
+        $set: {
+            is_delete: true,
+            dateDeleted: new Date(),
+            status: 0
+        }
+    }, (err, data) => {
+        if (err) return callback(err);
+        returnData.set(data)
+        callback();
+    })
+}
 
-// const changeStatusPermission = (req, returnData, callback) => {
-//     let { ids, status } = req.params;
-//     if (validator.isNull(ids)) {
-//         return callback(consts.ERRORS.ERROR_IDS_MISSING);
-//     }
-//     if(!Array.isArray(ids)){
-//         return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
-//     }
-//     if(status !== 0 && status !== 1){
-//         return callback(consts.ERRORS.ERROR_STATUS_INVALID)
-//     }
+const changeStatusPermission = (req, returnData, callback) => {
+    let { ids, status } = req.params;
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
+    }
+    if(status !== 0 && status !== 1){
+        return callback(consts.ERRORS.ERROR_STATUS_INVALID)
+    }
 
-//     Permission
-//     .updateMany({
-//         _id: {
-//             $in: ids
-//         }
-//     }, {
-//         $set: {
-//             status,
-//             dateUpdated: new Date()
-//         }
-//     }, (err, data) => {
-//         if (err) return callback(err);
-//         returnData.set({...data})
-//         callback();
-//     })
-// }
+    Permission
+    .updateMany({
+        _id: {
+            $in: ids
+        }
+    }, {
+        $set: {
+            status,
+            dateUpdated: new Date()
+        }
+    }, (err, data) => {
+        if (err) return callback(err);
+        returnData.set({...data})
+        callback();
+    })
+}
 
-// exports.deletePermission = deletePermission;
+exports.deletePermission = deletePermission;
 exports.listPermissions = listPermissions;
 exports.addPermission = addPermission;
 exports.getPermission = getPermission;
 // exports.updatePermission = updatePermission;
-// exports.changeStatusPermission = changeStatusPermission;
+exports.changeStatusPermission = changeStatusPermission;
