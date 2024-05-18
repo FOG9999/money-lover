@@ -1,0 +1,1 @@
+"C:\Program Files\MongoDB\Tools\100\bin\mongorestore" -u fog9999 -p fog9999 -h localhost --port 27018  --db my-money-lover --dir "D:\Coding\my-money-lover\database-backup\my-money-lover"

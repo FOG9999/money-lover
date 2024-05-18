@@ -1,0 +1,1 @@
+mongosh --host localhost --port 27018 --username fog9999 --password fog9999

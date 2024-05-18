@@ -99,6 +99,7 @@ const listPermissions = (req, returnData, callback) => {
 
 const getPermission = (req, returnData, callback) => {
     let id = req.params.id;
+    const db = require('../../../../database/system-db');
 
     Permission
         .findOne({ _id: id })
