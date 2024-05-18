@@ -14,12 +14,7 @@ const winstonLogger = require('../libs/winston');
  }
  
  var db = mongoose.createConnection(connectStr, {
-     useMongoClient: true,
-     autoReconnect: true,
-     keepAlive: 120,
-     config: {
-         autoIndex: false
-     }
+    useNewUrlParser: true, useUnifiedTopology: true
  });
  
  function reconnect() {

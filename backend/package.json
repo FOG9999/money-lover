@@ -29,7 +29,7 @@
     "md5": "^2.3.0",
     "moment": "latest",
     "moment-timezone": "latest",
-    "mongoose": "~4.11.7",
+    "mongoose": "^6.5.0",
     "mongoose-encryption": "^1.2.3",
     "mongoose-unique-validator": "^1.0.6",
     "nan": "^2.16.0",

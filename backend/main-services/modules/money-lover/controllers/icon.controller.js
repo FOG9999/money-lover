@@ -106,6 +106,7 @@ const insertAllIcons = (req, returnData, callback) => {
 }
 
 const uploadIcon = (req, returnData, callback) => {
+    const creator = req.user;
     try {
         let { file } = req.body;
         file = file.replace(/^data:image\/png;base64,/, "");

@@ -13,7 +13,7 @@
  }
  
  var db = mongoose.createConnection(connectStr, {
-     useMongoClient: true,
+     useNewUrlParser: true,
      autoReconnect: true,
      keepAlive: 120,
      config: {

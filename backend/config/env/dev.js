@@ -4,7 +4,7 @@ module.exports = {
     db: {
         system: {
             db_host: 'localhost',
-            db_port: 27017,
+            db_port: 27018,
             db_prefix: 'mongodb',
             db_database: 'my-money-lover',
             db_user: "fog9999",
