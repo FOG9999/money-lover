@@ -4,6 +4,7 @@ const validator = require('validator');
 const async = require('async');
 const consts = require('../../../../config/consts');
 const { merge } = require('../../../../libs/utils');
+const { useMongooseTransaction } = require('../../../../libs/mongoose-transaction');
 
 const listPermissions = (req, returnData, callback) => {
     let { search, status, page, size, is_delete, role, module: moduleId, action } = req.params;
@@ -99,7 +100,6 @@ const listPermissions = (req, returnData, callback) => {
 
 const getPermission = (req, returnData, callback) => {
     let id = req.params.id;
-    const db = require('../../../../database/system-db');
 
     Permission
         .findOne({ _id: id })
@@ -199,39 +199,66 @@ const addPermission = (req, returnData, callback) => {
 
 }
 
-// const updatePermission = (req, returnData, callback) => {
-//     let { title, description, _id, status, code } = req.params;
+const updatePermission = (req, returnData, callback) => {
+    let { title, description, _id, status, code, role, moduleAction, allow } = req.params;
+    const creator = req.user;
 
-//     if (validator.isNull(title)) {
-//         return callback(consts.ERRORS.ERROR_TITLE_MISSING);
-//     }
-//     if (validator.isNull(code)) {
-//         return callback(consts.ERRORS.ERROR_CODE_MISSING);
-//     }
-//     if (!validator.isMongoId(_id)) {
-//         return callback(consts.ERRORS.ERROR_ID_MISSING);
-//     }
+    if (validator.isNull(title)) {
+        return callback(consts.ERRORS.ERROR_TITLE_MISSING);
+    }
+    if (validator.isNull(code)) {
+        return callback(consts.ERRORS.ERROR_CODE_MISSING);
+    }
+    if (!validator.isMongoId(_id)) {
+        return callback(consts.ERRORS.ERROR_ID_MISSING);
+    }
+    if (!validator.isMongoId(role)) {
+        return callback(consts.ERRORS.ERROR_PERMISSION_ROLE_MISSING);
+    }
+    if (!validator.isBoolean(allow)) {
+        return callback(consts.ERRORS.ERROR_PERMISSION_ALLOW_MISSING);
+    }
+    if (validator.isNull(moduleAction) || !Array.isArray(moduleAction)) {
+        return callback(consts.ERRORS.ERROR_PERMISSION_MODULE_ACTION_MISSING);
+    }
 
-//     Permission
-//         .findOne()
-//         .where({ _id })
-//         .exec((err, result) => {
-//             if (err) {
-//                 return callback(err);
-//             }
-//             if (!result) {
-//                 return callback(consts.ERRORS.ERROR_permission_NOT_FOUND);
-//             }
-//             else {
-//                 merge(result, { title, description, code, status: status ? 1: 0 });
-//                 result.save(function (error, data) {
-//                     if (error) return callback(error);
-//                     returnData.set(data);
-//                     callback();
-//                 });
-//             }
-//         })
-// }
+    Permission
+        .findOne()
+        .where({ _id })
+        .exec((err, permission) => {
+            if (err) {
+                return callback(err);
+            }
+            if (!permission) {
+                return callback(consts.ERRORS.ERROR_PERMISSION_NOT_FOUND);
+            }
+            else {
+                useMongooseTransaction(async (session) => {
+                    // delete old module-actions
+                    await ModuleAction.deleteMany({ _id: { $in: permission.moduleAction } }, { session });
+                    // throw new Error('test')
+                    // create new module-actions
+                    let newModuleActions = moduleAction.map(ma => {
+                        let newModuleAction = new ModuleAction({
+                            module: ma.module,
+                            actions: ma.actions,
+                            dateCreated: new Date(),
+                            userCreated: creator._id
+                        })
+                        return newModuleAction;
+                    })
+                    const savedNewModuleActions = await ModuleAction.insertMany(newModuleActions, { session });
+                    // update original permission
+                    merge(permission, { title, description, code, role, status: status ? 1: 0, moduleAction: savedNewModuleActions.map(ma => ma._id) });
+                    const data = await permission.save({ session });
+                    returnData.set(data);
+                    callback();
+                }, err => {
+                    return callback(err);
+                })
+            }
+        })
+}
 
 const deletePermission = (req, returnData, callback) => {
     let { ids } = req.params;
@@ -293,5 +320,5 @@ exports.deletePermission = deletePermission;
 exports.listPermissions = listPermissions;
 exports.addPermission = addPermission;
 exports.getPermission = getPermission;
-// exports.updatePermission = updatePermission;
+exports.updatePermission = updatePermission;
 exports.changeStatusPermission = changeStatusPermission;

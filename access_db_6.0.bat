@@ -1,1 +1,1 @@
-mongosh --host localhost --port 27018 --username fog9999 --password fog9999
+mongosh mongodb://fog9999:fog9999@localhost:27018/admin?replicaSet=rs0
