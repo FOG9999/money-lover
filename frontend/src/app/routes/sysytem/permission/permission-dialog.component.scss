@@ -1,3 +1,47 @@
 .form-field-full {
     margin-top: 16px;
 }
+
+.header-flex {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    .title {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+    }
+}
+
+.allow-field-container {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    padding-bottom: 1.59375em; // from form-field's padding
+    mat-label {
+        width: 120px;
+    }
+    mat-radio-group {
+        display: flex;
+        justify-items: end;
+        flex-grow: 1;
+        mat-radio-button:first-child {
+            width: 40%;
+        }
+        mat-radio-button:nth-child(2) {
+            width: 60%;
+        }
+    }
+}
+
+.list-module-actions-accordion {
+    margin-top: 10px;
+    .table-container {
+        overflow: auto;
+    }
+    .table-module-actions {
+        margin-top: 10px;
+        width: 100%;
+        min-width: 500px;
+    }
+}

@@ -104,20 +104,17 @@ const getPermission = (req, returnData, callback) => {
     Permission
         .findOne({ _id: id })
         .populate('role')
-        // don't need to get all the actions for each module now, because we don't need to show them all immediately
-        // when click to expand each module, we will get actions of it
-        
-        // .populate({
-        //     path: 'moduleAction',
-        //     populate: [
-        //         {
-        //             path: "module"
-        //         },
-        //         // {
-        //         //     path: "actions"
-        //         // }
-        //     ]
-        // })
+        .populate({
+            path: 'moduleAction',
+            populate: [
+                {
+                    path: "module"
+                },
+                {
+                    path: "actions"
+                }
+            ]
+        })
         .exec((err, data) => {
             if (err) return callback(err);
             if (!data) return callback(consts.ERRORS.ERROR_PERMISSION_NOT_FOUND);
@@ -158,9 +155,12 @@ const getModuleActionsForPermission = (req, returnData, callback) => {
     Permission.findOne({ _id }, { moduleAction: { $slice: [page*size, (page+1)*size] } })
         .populate({ 
             path: 'moduleAction',
-            populate: {
+            populate: [{
                 path: "module"
-            }
+            },
+            {
+                path: "actions"
+            }]
          }).exec((err, data) => {
             if(err) return callback(err);
             Permission.findOne({ _id }).exec((errFind, pms) => {

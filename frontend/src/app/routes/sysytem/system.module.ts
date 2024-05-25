@@ -11,6 +11,7 @@ import { ActionDialogComponent } from './actions/action-dialog.component';
 import { ModuleDialogComponent } from './modules/module-dialog.component';
 import { ModuleMngComponent } from './modules/modules.component';
 import { PermissionMngComponent } from './permission/permissions.component';
+import { PermissionDialogComponent } from './permission/permission-dialog.component';
 
 @NgModule({
     imports: [SharedModule, SystemRoutingModule],
@@ -25,7 +26,8 @@ import { PermissionMngComponent } from './permission/permissions.component';
         ActionDialogComponent,
         ModuleMngComponent,
         ModuleDialogComponent,
-        PermissionMngComponent
+        PermissionMngComponent,
+        PermissionDialogComponent
     ]
 })
 export class SystemModule { }

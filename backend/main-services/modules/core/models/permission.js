@@ -31,6 +31,11 @@ let PermissionSchema = new Schema({
         type: ObjectId,
         ref: 'User'
     },
+    description: {
+        type: String,
+        max: 2000,
+        trim: true,
+    },
     is_delete: {
         type: Boolean,
         default: false

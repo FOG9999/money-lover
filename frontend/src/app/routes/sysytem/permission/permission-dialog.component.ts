@@ -1,89 +1,199 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Role } from 'app/model/role.model';
+import { Permission } from 'app/model/permission.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RoleService } from './permission.service';
+import { PermissionService } from './permission.service';
 import { ToastrService } from 'ngx-toastr';
 import { trim } from '@shared';
+import { ModuleAction } from 'app/model/module-action';
+import { Action } from 'app/model/action.model';
+import { CONSTS } from 'app/consts';
+import { Module } from 'app/model/module.model';
+import { RoleService } from '../roles/role.service';
+import { Role } from 'app/model/role.model';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
-    selector: 'role-dialog',
-    templateUrl: 'role-dialog.component.html',
-    styleUrls: ['role-dialog.component.scss']
+    selector: 'permission-dialog',
+    templateUrl: 'permission-dialog.component.html',
+    styleUrls: ['permission-dialog.component.scss']
 })
 
-export class RoleDialogComponent implements OnInit {
+export class PermissionDialogComponent implements OnInit {
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { id?: string },
+        private permissionService: PermissionService,
         private roleService: RoleService,
         private toast: ToastrService,
-        private dialogRef: MatDialogRef<RoleDialogComponent>
+        private dialogRef: MatDialogRef<PermissionDialogComponent>
     ) { }
 
     trim = trim;
 
     ngOnInit() {
+        this.getListRoles();
         // update
         if(this.data && this.data.id){
-            this.roleService.getRole(this.data.id).subscribe(res => {
-                this.role = res;
-                this.roleForm.setValue({
+            this.permissionService.getPermission(this.data.id).subscribe(res => {
+                this.permission = res;
+                this.permissionForm.setValue({
                     title: res.title,
                     code: res.code,                    
-                    description: res.description,                    
+                    description: res.description || '',                    
+                    role: res.role._id,                    
+                    allow: res.allow,                    
                 })
+                this.setMapOfActions(res.moduleAction);
             }, (err) => {
                 console.error(err);
             })
         }
         // create
         else {
-            this.title = "Thêm mới vai trò";
-            this.role = {
+            this.title = "Thêm mới quyền";
+            this.permission = {
                 title: null,
                 code: null,
-                description: null
+                description: null,
+                role: null,
+                allow: false
             }
         }
     }
 
-    role: Partial<Role>;
-    title: string = "Chỉnh sửa vai trò";
-    roleForm: FormGroup = new FormGroup({
+    permission: Partial<Permission>;
+    title: string = "Chỉnh sửa quyền";
+    permissionForm: FormGroup = new FormGroup({
         title: new FormControl(null, Validators.required),
         code: new FormControl(null, Validators.required),
         description: new FormControl(null),
+        allow: new FormControl(false, Validators.required),
+        role: new FormControl(null, Validators.required)
     });
+    listRoles: Role[] = [];
+    /**
+     * module._id is the key
+     */
+    mapOfActions: Map<string, { list: Action[], page: number, size: number, total: number, module: Module, displayList: Action[] }> = new Map<string, { list: Action[], page: number, size: number, total: number, module: Module, displayList: Action[] }>();
+    /**
+     * - keys of mapOfActions, used for ngFor in html.
+     * - ONLY the ones that are shown by the current page
+     */
+    listOfKeys: string[] = [];
+    displayedColumns: string[] = ['checkbox', 'Tên hành động', 'Mã hành động', 'Trạng thái', 'Thao tác'];
+    columnProps: string[] = ['checkbox', 'title','code', 'status', 'actions'];
+    listChecked: Map<string, string[]> = new Map<string, string[]>();
+    isAllChecked: boolean = false;
+    pageModuleActions: number = 0;
+    sizeModuleActions: number = CONSTS.page_size;
 
-    close(msg?: Partial<Role>){
+    close(msg?: Partial<Permission>){
         this.dialogRef.close(msg);
     }
 
-    getCurrentData(): Role {
+    getCurrentData(): Permission {
         return {
-            ...this.role,
-            ...this.roleForm.value
+            ...this.permission,
+            ...this.permissionForm.value
         }
+    }
+
+    setMapOfActions(moduleActions: Partial<ModuleAction>[]){
+        moduleActions.forEach(ma => {
+            this.mapOfActions.set(ma.module._id, {
+                page: 0,
+                size: CONSTS.page_size,
+                list: ma.actions,
+                total: ma.actions.length,
+                module: ma.module,
+                displayList: ma.actions.filter((act, ind) => ind >= 0 && ind < CONSTS.page_size)
+            })
+            this.listChecked.set(ma.module._id, []);
+        })
+        this.setListOfKeysToShow();
     }
 
     save(){
         if(this.data && this.data.id){
-            this.roleService.updateRole(this.getCurrentData())
+            this.permissionService.updatePermission(this.getCurrentData())
             .subscribe(res => {
-                this.toast.success("Cập nhật vai trò thành công");
+                this.toast.success("Cập nhật quyền thành công");
                 this.close(res);
             })
         }
         else {
-            this.roleService.addRole(this.getCurrentData())
+            this.permissionService.addPermission(this.getCurrentData())
             .subscribe(res => {
-                this.toast.success("Thêm vai trò thành công");
+                this.toast.success("Thêm quyền thành công");
                 this.close(res);
             })
         }
     }
 
     clearFormControl(name: string){
-        this.roleForm.get(name).setValue(null);
+        this.permissionForm.get(name).setValue(null);
+    }
+
+    deleteSelected(){
+
+    }
+
+    deleteAction(action: Action, key: string){
+
+    }
+
+    resetListChecked(key: string){
+        this.listChecked.set(key, []);
+    }
+
+    updateCheckAll(key: string){
+        let isCheckedAll = true;
+        const listActions = this.mapOfActions.get(key).list;
+        for (let index = 0; index < listActions.length; index++) {
+            if(!this.listChecked.get(key).includes(listActions[index]._id)){
+                isCheckedAll = false;
+                break;
+            }
+        }
+        this.isAllChecked = isCheckedAll;
+    }
+
+    toggleCheckItem(val: boolean, id: string, key: string){
+        if(val){
+            this.listChecked.set(key, [...this.listChecked.get(key), id]);
+        }
+        else this.listChecked.set(key, [...this.listChecked.get(key).filter(_id => _id != id)]);
+        this.updateCheckAll(key);
+    }
+
+    toggleCheckAllItems(val: boolean, key: string){
+        if(!val) this.resetListChecked(key);
+        else {
+            this.listChecked.set(key, this.mapOfActions.get(key).list.map(action => action._id));
+        }
+    }
+
+    isChecked(id: string, key: string){
+        return this.listChecked.get(key).includes(id);
+    }
+
+    getListRoles(){
+        this.roleService.getListRoles('', 0, 1000).subscribe(data => {
+            this.listRoles = data.results;
+        })
+    }
+
+    onChangePageActions(key: string, evt: PageEvent){
+        const curr = this.mapOfActions.get(key);
+        this.mapOfActions.set(key, {...curr, page: evt.pageIndex, displayList: curr.list.filter((_, ind) => ind >= evt.pageIndex*curr.size && ind < (evt.pageIndex+1)*curr.size)});
+    }
+
+    onChangePageModuleActions(evt: PageEvent){
+        this.pageModuleActions = evt.pageIndex;
+        this.setListOfKeysToShow();
+    }
+    
+    setListOfKeysToShow(){
+        this.listOfKeys = Array.from(this.mapOfActions.keys()).filter((_, ind) => ind >= this.pageModuleActions*this.sizeModuleActions && ind < (this.pageModuleActions+1)*this.sizeModuleActions);
     }
 }

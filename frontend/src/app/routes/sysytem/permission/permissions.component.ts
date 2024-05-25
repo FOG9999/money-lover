@@ -8,6 +8,9 @@ import { PageEvent } from '@angular/material/paginator';
 // import { PermissionDialogComponent } from './permission-dialog.component';
 import { PermissionService } from './permission.service';
 import { ModuleAction } from 'app/model/module-action';
+import { PermissionDialogComponent } from './permission-dialog.component';
+import { Module } from 'app/model/module.model';
+import { Action } from 'app/model/action.model';
 
 @Component({
     selector: 'permissions',
@@ -36,7 +39,14 @@ export class PermissionMngComponent implements OnInit {
     isAllChecked: boolean = false;
     pageSizeOptions: number[] = CONSTS.page_size_options;
     mapOfExpandedPermission: Map<string, {loading: boolean, data?: Permission}> = new Map<string, {loading: boolean, data?: Permission}>();
-    mapOfModuleActions: Map<string, {page: number, size: number, list?: ModuleAction[], loading: boolean, total?: number}> = new Map<string, {page: number, size: number, list?: ModuleAction[], loading: boolean, total?: number}>();
+    mapOfModuleActions: Map<string, {page: number, size: number, list?: ModuleAction[], loading: boolean, total?: number, displayList?: ModuleAction[]}> = new Map<string, {page: number, size: number, list?: ModuleAction[], loading: boolean, total?: number, displayList?: ModuleAction[]}>();
+    /**
+     * permission._id + '.' + module._id is the key
+     */
+    mapOfActions: Map<string, { list: Action[], page: number, size: number, total: number, module: Module, displayList: Action[] }> = new Map<string, { list: Action[], page: number, size: number, total: number, module: Module, displayList: Action[] }>();
+    
+    displayedColumns: string[] = ['Tên hành động', 'Mã hành động', 'Trạng thái'];
+    columnProps: string[] = ['title','code', 'status'];
 
     getListPermissions(){
         this.permissionService.getListPermissions(this.searchKey, this.page, this.pageSize).subscribe(res => {
@@ -48,6 +58,29 @@ export class PermissionMngComponent implements OnInit {
         }, err => {
             this.loading = false;
         })
+    }
+
+    setMapOfActions(permissionId: string, moduleActions: Partial<ModuleAction>[]){
+        moduleActions.forEach(ma => {
+            this.mapOfActions.set(permissionId + '.' + ma.module._id, {
+                page: 0,
+                size: CONSTS.page_size,
+                list: ma.actions,
+                total: ma.actions.length,
+                module: ma.module,
+                displayList: ma.actions.filter((act, ind) => ind >= 0 && ind < CONSTS.page_size)
+            })
+        })
+    }
+
+    onChangePageActions(key: string, evt: PageEvent){
+        const curr = this.mapOfActions.get(key);
+        this.mapOfActions.set(key, {...curr, page: evt.pageIndex, displayList: curr.list.filter((_, ind) => ind >= evt.pageIndex*curr.size && ind < (evt.pageIndex+1)*curr.size)});
+    }
+
+    onChangePageModuleActions(key: string, evt: PageEvent){
+        const curr = this.mapOfModuleActions.get(key);
+        this.mapOfModuleActions.set(key, {...curr, page: evt.pageIndex, displayList: curr.list.filter((_, ind) => ind >= evt.pageIndex*curr.size && ind < (evt.pageIndex+1)*curr.size)})
     }
 
     resetListChecked(){
@@ -64,20 +97,19 @@ export class PermissionMngComponent implements OnInit {
     }
 
     open(permission?: Partial<Permission>, evt?: Event){
-        // this.dialogService.open(PermissionDialogComponent, {
-        //     data: {
-        //         id: permission ? permission._id: null
-        //     },
-        //     width: '400px'
-        // })
-        // .afterClosed().subscribe((res: string) => {
-        //     if(res){
-        //         this.searchPermissions();
-        //     }
-        // })
-        // if(evt){
-        //     evt.stopPropagation()
-        // }
+        this.dialogService.open(PermissionDialogComponent, {
+            data: {
+                id: permission ? permission._id: null
+            }
+        })
+        .afterClosed().subscribe((res: string) => {
+            if(res){
+                this.searchPermissions();
+            }
+        })
+        if(evt){
+            evt.stopPropagation()
+        }
     }
 
     getNumOfSelected(){
@@ -245,7 +277,8 @@ export class PermissionMngComponent implements OnInit {
     getListModuleActions(id: string, page: number = 0, size: number = CONSTS.page_size){
         const curr = this.mapOfModuleActions.get(id);
         this.permissionService.getModuleActionsPermission(id, page, size).subscribe(data => {
-            this.mapOfModuleActions.set(id, {loading: false, page: 0, size: CONSTS.page_size, total: data.total, list: data.results});
+            this.mapOfModuleActions.set(id, {loading: false, page: 0, size: CONSTS.page_size, total: data.total, list: data.results, displayList: data.results.filter((_, ind) => ind >= 0 && ind < CONSTS.page_size)});
+            this.setMapOfActions(id, data.results);
         }, () => {
             this.mapOfModuleActions.set(id, {...curr, loading: false}); // only set loading, keep current data
         })        
@@ -254,5 +287,11 @@ export class PermissionMngComponent implements OnInit {
     collapsePermission(permission: Partial<Permission>){
         this.mapOfExpandedPermission.delete(permission._id);
         this.mapOfModuleActions.delete(permission._id);
+        const permissionKeys = Array.from(this.mapOfActions.keys()).filter(key => key.includes(permission._id));
+        this.mapOfActions.forEach((val, key) => {
+            if(permissionKeys.includes(key)){
+                this.mapOfActions.delete(key);
+            }
+        })
     }
 }
