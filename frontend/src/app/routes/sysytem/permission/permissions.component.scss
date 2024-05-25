@@ -1,0 +1,18 @@
+.permission-property-container {
+    display: flex;
+    padding: 5px 0;
+    column-gap: 20px;
+    .property-name {
+        max-width: 300px;
+    }
+    .property-value {
+        flex-grow: 1;
+    }
+}
+
+.module-actions-container {
+    margin-top: 5px;
+    .list-module-actions-accordion {
+        margin-top: 10px;
+    }
+}

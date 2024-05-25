@@ -1,0 +1,110 @@
+<mat-card>
+    <mat-card-title>Quyền hệ thống</mat-card-title>
+    <mat-card-subtitle>
+        Danh sách quyền hệ thống
+    </mat-card-subtitle>
+    <mat-card-content>
+        <div class="p-y-4">
+            <mat-form-field class="w-full">
+                <input matInput type="text" [(ngModel)]="searchKey" (keyup.enter)="searchPermissions()"
+                    placeholder="Tìm kiếm" />
+                <button mat-icon-button matSuffix (click)="searchPermissions()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+            <mat-card-actions>
+                <button mat-button color="primary" (click)="open()">
+                    <mat-icon>add</mat-icon>
+                    Thêm mới
+                </button>
+                <button mat-button *ngIf="isShowLockButton()" color="accent" (click)="changeStatusSelected(1)">
+                    <mat-icon>block</mat-icon>
+                    Khóa
+                </button>
+                <button mat-button *ngIf="isShowUnlockButton()" color="success" class="mat-success-outlined" (click)="changeStatusSelected(0)">
+                    <mat-icon>lock_open</mat-icon>
+                    Mở khóa
+                </button>
+                <button mat-button *ngIf="isShowDeleteButton()" color="warn" (click)="delete()">
+                    <mat-icon>delete</mat-icon>
+                    Xóa
+                </button>
+            </mat-card-actions>
+        </div>
+        <ng-container *ngIf="loading; else loaded">
+            <app-loading></app-loading>
+        </ng-container>
+        <ng-template #loaded>
+            <ng-container *ngIf="listPermissions.length; else noDataTpl">                
+                <mat-accordion class="list-permission-accordion" multi>
+                    <mat-expansion-panel *ngFor="let permission of listPermissions" (afterCollapse)="collapsePermission(permission)" (afterExpand)="expandPermission(permission)">
+                        <mat-expansion-panel-header>
+                          <mat-panel-title>
+                            {{ permission.title }}
+                          </mat-panel-title>
+                          <mat-panel-description>
+                            {{ permission.code }}
+                          </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <div class="list-properties">
+                            <div class="permission-property-container">
+                                <div class="property-name">
+                                    Ảnh hưởng: 
+                                </div>
+                                <div class="property-value">
+                                    {{ permission.allow ? 'Cho phép': 'Không cho phép' }}
+                                </div>
+                            </div>                             
+                            <div class="permission-property-container">
+                                <div class="property-name">
+                                    Vai trò: 
+                                </div>
+                                <div class="property-value">
+                                    {{ permission.role._id ? permission.role.title: 'N/A' }}
+                                </div>
+                            </div>                             
+                            <div class="permission-property-container">
+                                <div class="property-name">
+                                    Mô tả: 
+                                </div>
+                                <div class="property-value">
+                                    {{ permission.description ? permission.description: 'N/A' }}
+                                </div>
+                            </div>                             
+                        </div>
+                        <div class="module-actions-container">
+                            Danh sách module có ảnh hưởng:
+                            <ng-container *ngIf="mapOfModuleActions.get(permission._id)">
+                                <ng-container *ngIf="!mapOfModuleActions.get(permission._id).loading; else loadingTpl">
+                                    <mat-accordion class="list-module-actions-accordion" *ngIf="mapOfModuleActions.get(permission._id).list && mapOfModuleActions.get(permission._id).list.length; else noDataTpl">            
+                                        <mat-expansion-panel *ngFor="let moduleAction of mapOfModuleActions.get(permission._id).list">
+                                            <mat-expansion-panel-header>
+                                                <mat-panel-title>
+                                                  {{ moduleAction.module.title }}
+                                                </mat-panel-title>
+                                                <mat-panel-description>
+                                                  {{ moduleAction.module.code }}
+                                                </mat-panel-description>
+                                            </mat-expansion-panel-header>
+                                        </mat-expansion-panel>          
+                                    </mat-accordion>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                      </mat-expansion-panel>
+                </mat-accordion>
+                <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" [pageIndex]="page" (page)="onChangePage($event)"
+                    aria-label="Select page">
+                </mat-paginator>
+            </ng-container>
+        </ng-template>
+    </mat-card-content>
+</mat-card>
+
+<ng-template #noDataTpl>
+    <empty></empty>
+</ng-template>
+
+<ng-template #loadingTpl>
+    <app-loading></app-loading>
+</ng-template>

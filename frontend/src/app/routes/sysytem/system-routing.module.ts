@@ -6,6 +6,7 @@ import { SecurityQuestionMngComponent } from './security-question-mng/security-q
 import { RoleMngComponent } from './roles/roles.component';
 import { ActionMngComponent } from './actions/actions.component';
 import { ModuleMngComponent } from './modules/modules.component';
+import { PermissionMngComponent } from './permission/permissions.component';
 
 export const routes: Routes = [
     {
@@ -37,6 +38,12 @@ export const routes: Routes = [
         canActivate: [AdminAuthGuardService],
         component: ModuleMngComponent,
         data: {title: "Module hệ thống", titleI18n: "module"}
+    },
+    {
+        path: "permission",
+        canActivate: [AdminAuthGuardService],
+        component: PermissionMngComponent,
+        data: {title: "Quyền hệ thống", titleI18n: "permission"}
     }
 ]
 

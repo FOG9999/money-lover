@@ -57,6 +57,12 @@
               "type": "link",
               "name": "module",
               "level": ["ADMIN", "SYSTEM"]
+            },
+            {
+              "route": "permission",
+              "type": "link",
+              "name": "permission",
+              "level": ["ADMIN", "SYSTEM"]
             }
           ]
         },

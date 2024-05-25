@@ -63,17 +63,17 @@ const listPermissions = (req, returnData, callback) => {
                     .skip(page*size)
                     .limit(size)
                     .populate('role')
-                    .populate({
-                        path: 'moduleAction',
-                        populate: [
-                            {
-                                path: "module"
-                            },
-                            {
-                                path: "actions"
-                            }
-                        ]
-                    })
+                    // .populate({
+                    //     path: 'moduleAction',
+                    //     populate: [
+                    //         {
+                    //             path: "module"
+                    //         },
+                    //         {
+                    //             path: "actions"
+                    //         }
+                    //     ]
+                    // })
                     .exec((errPermission, resultPermission) => {
                         if(errPermission) return callback(errPermission);
                         Permission.aggregate([{
@@ -104,22 +104,70 @@ const getPermission = (req, returnData, callback) => {
     Permission
         .findOne({ _id: id })
         .populate('role')
-        .populate({
-            path: 'moduleAction',
-            populate: [
-                {
-                    path: "module"
-                },
-                {
-                    path: "actions"
-                }
-            ]
-        })
+        // don't need to get all the actions for each module now, because we don't need to show them all immediately
+        // when click to expand each module, we will get actions of it
+        
+        // .populate({
+        //     path: 'moduleAction',
+        //     populate: [
+        //         {
+        //             path: "module"
+        //         },
+        //         // {
+        //         //     path: "actions"
+        //         // }
+        //     ]
+        // })
         .exec((err, data) => {
             if (err) return callback(err);
             if (!data) return callback(consts.ERRORS.ERROR_PERMISSION_NOT_FOUND);
             returnData.set(data);
             callback();
+        })
+}
+
+const getActionsForModuleAction = (req, returnData, callback) => {
+    let { _id, page, size } = req.params;
+    if(!validator.isMongoId(_id)){
+        return callback(consts.ERRORS.ERROR_ID_MISSING);
+    }
+    if(isNaN(page)){
+        page = 0;
+    }
+    if(isNaN(size)){
+        size = consts.page_size;
+    }
+    ModuleAction.findOne({ _id }, { actions: { $slice: [page*size, (page+1)*size] } }).populate('actions').exec((err, data) => {
+        if(err) return callback(err);
+        ModuleAction.findOne({ _id }).exec((errFind, ma) => {
+            if(errFind) return callback(errFind);
+            returnData.set({results: data.actions, total: ma.actions.length});
+            callback();
+        })
+    })
+}
+
+const getModuleActionsForPermission = (req, returnData, callback) => {
+    const { _id, page, size } = req.params;
+    if(!validator.isMongoId(_id)){
+        return callback(consts.ERRORS.ERROR_ID_MISSING);
+    }
+    if(isNaN(page) || isNaN(size)){
+        return callback(consts.ERRORS.ERROR_NOT_A_NUMBER);
+    }
+    Permission.findOne({ _id }, { moduleAction: { $slice: [page*size, (page+1)*size] } })
+        .populate({ 
+            path: 'moduleAction',
+            populate: {
+                path: "module"
+            }
+         }).exec((err, data) => {
+            if(err) return callback(err);
+            Permission.findOne({ _id }).exec((errFind, pms) => {
+                if(errFind) return callback(errFind);
+                returnData.set({results: data.moduleAction, total: pms.moduleAction.length});
+                callback();
+            })
         })
 }
 
@@ -322,3 +370,5 @@ exports.addPermission = addPermission;
 exports.getPermission = getPermission;
 exports.updatePermission = updatePermission;
 exports.changeStatusPermission = changeStatusPermission;
+exports.getActionsForModuleAction = getActionsForModuleAction;
+exports.getModuleActionsForPermission = getModuleActionsForPermission;

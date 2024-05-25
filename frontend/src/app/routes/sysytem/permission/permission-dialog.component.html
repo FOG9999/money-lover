@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{title}}</h2>
+<div mat-dialog-content>
+    <ng-container *ngIf="role; else loading">
+        <form class="form-field-full" [formGroup]="roleForm">
+            <!-- Tên vai trò -->
+            <mat-form-field appearance="outline">
+                <mat-label>Tên vai trò</mat-label>
+                <input matInput formControlName="title" (blur)="trim(roleForm.get('title'))">
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('title')" *ngIf="roleForm.get('title')?.value">close</mat-icon>
+                <mat-error *ngIf="roleForm.get('title').invalid">Tên vai trò không hợp lệ</mat-error>
+            </mat-form-field>
+
+            <!-- Mã vai trò -->
+            <mat-form-field appearance="outline">
+                <mat-label>Mã vai trò</mat-label>
+                <input matInput formControlName="code" (blur)="trim(roleForm.get('code'))">
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('code')" *ngIf="roleForm.get('code')?.value">close</mat-icon>
+                <mat-error *ngIf="roleForm.get('code').invalid">Mã vai trò không hợp lệ</mat-error>
+            </mat-form-field>
+
+            <!-- Note -->
+            <mat-form-field appearance="outline">
+                <mat-label>Mô tả</mat-label>
+                <textarea matInput placeholder="Mô tả" type="text" formControlName="description" cols="3" (blur)="trim(roleForm.get('description'))"></textarea>
+                <mat-icon class="hover-item" matSuffix (click)="clearFormControl('description')" *ngIf="roleForm.get('description')?.value">close</mat-icon>
+            </mat-form-field>
+        </form>
+    </ng-container>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
+    <button mat-button [disabled]="!roleForm.valid" color="primary" (click)="save()">Lưu</button>
+</div>
+
+<!-- loading -->
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>
