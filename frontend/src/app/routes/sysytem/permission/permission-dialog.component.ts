@@ -13,6 +13,7 @@ import { RoleService } from '../roles/role.service';
 import { Role } from 'app/model/role.model';
 import { PageEvent } from '@angular/material/paginator';
 import { SelectModuleComponent } from '../modules/select-module/select-module.component';
+import { SelectActionComponent } from '../actions/select-action/select-action.component';
 
 @Component({
     selector: 'permission-dialog',
@@ -84,6 +85,9 @@ export class PermissionDialogComponent implements OnInit {
     listOfKeys: string[] = [];
     displayedColumns: string[] = ['checkbox', 'Tên hành động', 'Mã hành động', 'Trạng thái', 'Thao tác'];
     columnProps: string[] = ['checkbox', 'title','code', 'status', 'actions'];
+    /**
+     * list checked items for actions by each module
+     */
     listChecked: Map<string, string[]> = new Map<string, string[]>();
     isAllChecked: boolean = false;
     pageModuleActions: number = 0;
@@ -96,7 +100,13 @@ export class PermissionDialogComponent implements OnInit {
     getCurrentData(): Permission {
         return {
             ...this.permission,
-            ...this.permissionForm.value
+            ...this.permissionForm.value,
+            moduleAction: Array.from(this.mapOfActions.keys()).map(key => {
+                return {
+                    module: key,
+                    actions: this.mapOfActions.get(key).list.map(act => act._id)
+                }
+            })
         }
     }
 
@@ -136,12 +146,28 @@ export class PermissionDialogComponent implements OnInit {
         this.permissionForm.get(name).setValue(null);
     }
 
-    deleteSelected(){
-
+    deleteSelected(key: string){
+        const currAllList = this.mapOfActions.get(key).list, currDisplayList = this.mapOfActions.get(key).displayList;
+        let newAllList = currAllList.filter(item => !this.listChecked.get(key).includes(item._id));
+        let newDisplayList = currDisplayList.filter(item => !this.listChecked.get(key).includes(item._id));
+        this.mapOfActions.set(key, {
+            ...this.mapOfActions.get(key),
+            list: newAllList,
+            displayList: newDisplayList,
+            total: newAllList.length
+        })
     }
 
     deleteAction(action: Action, key: string){
-
+        const currAllList = this.mapOfActions.get(key).list, currDisplayList = this.mapOfActions.get(key).displayList;
+        let newAllList = currAllList.filter(item => item._id != action._id);
+        let newDisplayList = currDisplayList.filter(item => item._id != action._id);
+        this.mapOfActions.set(key, {
+            ...this.mapOfActions.get(key),
+            list: newAllList,
+            displayList: newDisplayList,
+            total: newAllList.length
+        })
     }
 
     resetListChecked(key: string){
@@ -210,7 +236,10 @@ export class PermissionDialogComponent implements OnInit {
                 const listSelectedIds = res.map(m => m._id);
                 // delete the unselected
                 Array.from(this.mapOfActions.keys()).forEach(key => {
-                    if(!listSelectedIds.includes(key)) this.mapOfActions.delete(key);
+                    if(!listSelectedIds.includes(key)) {
+                        this.mapOfActions.delete(key);
+                        this.listChecked.delete(key);
+                    }
                 })
                 // add new selected
                 listSelectedIds.forEach((newKey, ind) => {
@@ -223,11 +252,34 @@ export class PermissionDialogComponent implements OnInit {
                             size: CONSTS.page_size,
                             total: 0
                         })
+                        this.resetListChecked(newKey);
                     }
                 })
                 // reset to page 0
                 this.pageModuleActions = 0;
                 this.setListOfKeysToShow();
+            }
+        })
+    }
+
+    openSelectActions(moduleKey: string){
+        this.dialogService.open(SelectActionComponent, {
+            data: {
+                selectedActions: this.mapOfActions.get(moduleKey).list.map(act => act._id)
+            }
+        })
+        .afterClosed().subscribe((res: Action[]) => {
+            if(res){
+                // reset new list for current module key
+                this.mapOfActions.set(moduleKey, {
+                    list: res,
+                    displayList: res.filter((_, ind) => ind >= 0 && ind < CONSTS.page_size ),
+                    module: this.mapOfActions.get(moduleKey).module,
+                    page: 0,
+                    size: CONSTS.page_size,
+                    total: res.length
+                })
+                this.resetListChecked(moduleKey);
             }
         })
     }

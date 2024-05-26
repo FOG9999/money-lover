@@ -70,11 +70,11 @@
                                 <div class="list-actions-header header-flex">
                                     <div class="title">Hành động trong module:</div>
                                     <div class="actions-btn">
-                                        <button mat-button color="primary">
+                                        <button mat-button color="primary" (click)="openSelectActions(key)">
                                             <mat-icon>edit</mat-icon>
                                             Chỉnh sửa
                                         </button>
-                                        <button mat-button color="warn" (click)="deleteSelected()">
+                                        <button mat-button color="warn" (click)="deleteSelected(key)" *ngIf="listChecked.get(key).length > 0">
                                             <mat-icon>delete</mat-icon>
                                             Xóa chọn
                                         </button>
