@@ -39,5 +39,10 @@ export class ModuleService {
         const api_name: string = "api.v1.module.get";
         return this.http.post<Module>(environment.SERVER_URL, { api_name, id }, { observe: "body" });
     }
+
+    getModulesByIds(ids: string[]){
+        const api_name: string = "api.v1.module.getbyids";
+        return this.http.post<{results: Module[]}>(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
+    }
     
 }

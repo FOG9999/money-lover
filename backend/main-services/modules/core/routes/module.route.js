@@ -11,5 +11,6 @@ module.exports = function() {
     consts.registerApi('api.v1.module.add', controller.addModule, { systemApi: true });
     consts.registerApi('api.v1.module.get', controller.getModule, { systemApi: true });
     consts.registerApi('api.v1.module.update', controller.updateModule, { systemApi: true });
+    consts.registerApi('api.v1.module.getbyids', controller.getModulesByIds, { systemApi: true });
     consts.registerApi('api.v1.module.changestatus', controller.changeStatusModule, { systemApi: true });
 };

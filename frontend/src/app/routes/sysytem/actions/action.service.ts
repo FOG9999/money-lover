@@ -39,5 +39,10 @@ export class ActionService {
         const api_name: string = "api.v1.action.get";
         return this.http.post<Action>(environment.SERVER_URL, { api_name, id }, { observe: "body" });
     }
+
+    getActionsByIds(ids: string[]){
+        const api_name: string = "api.v1.action.getbyids";
+        return this.http.post<{results: Action[]}>(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
+    }
     
 }

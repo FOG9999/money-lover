@@ -205,9 +205,24 @@ const changeStatusModule = (req, returnData, callback) => {
     })
 }
 
+const getModulesByIds = (req, returnData, callback) => {
+    const { ids } = req.params;
+    if(ids.find(id => !validator.isMongoId(id)) || !Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY);
+    }
+    Module.find({
+        _id: { $in: ids }
+    }).exec((err, data) => {
+        if(err) return callback(err);
+        returnData.set({results: data});
+        callback();
+    })
+}
+
 exports.deleteModule = deleteModule;
 exports.listModules = listModules;
 exports.addModule = addModule;
 exports.getModule = getModule;
 exports.updateModule = updateModule;
 exports.changeStatusModule = changeStatusModule;
+exports.getModulesByIds = getModulesByIds;

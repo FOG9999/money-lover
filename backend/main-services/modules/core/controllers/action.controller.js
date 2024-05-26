@@ -205,9 +205,24 @@ const changeStatusAction = (req, returnData, callback) => {
     })
 }
 
+const getActionsByIds = (req, returnData, callback) => {
+    const { ids } = req.params;
+    if(ids.find(id => !validator.isMongoId(id)) || !Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY);
+    }
+    Action.find({
+        _id: { $in: ids }
+    }).exec((err, data) => {
+        if(err) return callback(err);
+        returnData.set({results: data});
+        callback();
+    })
+}
+
 exports.deleteAction = deleteAction;
 exports.listActions = listActions;
 exports.addAction = addAction;
 exports.getAction = getAction;
 exports.updateAction = updateAction;
 exports.changeStatusAction = changeStatusAction;
+exports.getActionsByIds = getActionsByIds;

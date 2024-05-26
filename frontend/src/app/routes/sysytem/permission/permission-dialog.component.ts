@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Permission } from 'app/model/permission.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PermissionService } from './permission.service';
@@ -12,6 +12,7 @@ import { Module } from 'app/model/module.model';
 import { RoleService } from '../roles/role.service';
 import { Role } from 'app/model/role.model';
 import { PageEvent } from '@angular/material/paginator';
+import { SelectModuleComponent } from '../modules/select-module/select-module.component';
 
 @Component({
     selector: 'permission-dialog',
@@ -25,6 +26,7 @@ export class PermissionDialogComponent implements OnInit {
         private permissionService: PermissionService,
         private roleService: RoleService,
         private toast: ToastrService,
+        private dialogService: MatDialog,
         private dialogRef: MatDialogRef<PermissionDialogComponent>
     ) { }
 
@@ -195,5 +197,38 @@ export class PermissionDialogComponent implements OnInit {
     
     setListOfKeysToShow(){
         this.listOfKeys = Array.from(this.mapOfActions.keys()).filter((_, ind) => ind >= this.pageModuleActions*this.sizeModuleActions && ind < (this.pageModuleActions+1)*this.sizeModuleActions);
+    }
+
+    openSelectModules(){
+        this.dialogService.open(SelectModuleComponent, {
+            data: {
+                selectedModules: Array.from(this.mapOfActions.keys())
+            }
+        })
+        .afterClosed().subscribe((res: Module[]) => {
+            if(res){
+                const listSelectedIds = res.map(m => m._id);
+                // delete the unselected
+                Array.from(this.mapOfActions.keys()).forEach(key => {
+                    if(!listSelectedIds.includes(key)) this.mapOfActions.delete(key);
+                })
+                // add new selected
+                listSelectedIds.forEach((newKey, ind) => {
+                    if(!this.mapOfActions.has(newKey)){
+                        this.mapOfActions.set(newKey, {
+                            displayList: [],
+                            list: [],
+                            module: res[ind],
+                            page: 0,
+                            size: CONSTS.page_size,
+                            total: 0
+                        })
+                    }
+                })
+                // reset to page 0
+                this.pageModuleActions = 0;
+                this.setListOfKeysToShow();
+            }
+        })
     }
 }
