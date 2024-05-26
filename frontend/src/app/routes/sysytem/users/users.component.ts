@@ -32,12 +32,23 @@ export class UsersListComponent implements OnInit {
     pageSize: number = CONSTS.page_size;
     page: number = 0;
     pageSizeOptions: number[] = CONSTS.page_size_options;
-    listChecked: Set<string> = new Set<string>();
+    listChecked: Map<string, Partial<User>> = new Map<string, Partial<User>>();
     isAllChecked: boolean = false;
     loading: boolean = false;
 
     addUser(){
 
+    }
+
+    updateListCheckedAfterUpdate(ids: string[], key: string, value: any){
+        ids.forEach(id => {
+            if(this.listChecked.has(id)){
+                this.listChecked.set(id, {
+                    ...this.listChecked.get(id),
+                    [key]: value
+                })
+            }
+        })
     }
 
     deactivate(){
@@ -50,12 +61,12 @@ export class UsersListComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
                 this.loading = true;
-                this.usersService.deactivateUsers(Array.from(this.listChecked))
+                this.usersService.deactivateUsers(Array.from(this.listChecked.keys()))
                 .subscribe(res => {
                     this.loading = false;
                     this.toast.success("Vô hiệu hóa tài khoản thành công");
                     this.searchUsers();
-                    this.listChecked.clear();
+                    this.updateListCheckedAfterUpdate(Array.from(this.listChecked.keys()), 'status', 0);
                 }, err => {
                     this.loading = false;
                     this.toast.error("Vô hiệu hóa tài khoản thất bại")
@@ -74,12 +85,12 @@ export class UsersListComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
                 this.loading = true;
-                this.usersService.deleteUsers(Array.from(this.listChecked))
+                this.usersService.deleteUsers(Array.from(this.listChecked.keys()))
                 .subscribe(res => {
                     this.toast.success("Xóa vĩnh viễn tài khoản thành công");
                     this.loading = false;
                     this.searchUsers();
-                    this.listChecked.clear();
+                    this.resetListChecked();
                 }, err => {
                     this.loading = false;
                     this.toast.error("Xóa vĩnh viễn tài khoản thất bại")
@@ -96,44 +107,34 @@ export class UsersListComponent implements OnInit {
             this.userList = res.results;
             this.total = res.total;
             this.loading = false;
+            this.updateCheckAll();
         }, err => {
             this.loading = false;
         })
     }
 
     updateCheckAll(){
-        let isCheckedAll = true;
-        for (let index = 0; index < this.userList.length; index++) {
-            const element = this.userList[index];            
-            if(!this.listChecked.has(element._id)){
-                isCheckedAll = false;
-                break;
-            }
-        }
-        this.isAllChecked = isCheckedAll;
+        this.isAllChecked = this.listChecked.size == this.total;
     }
 
     toggleCheckItem(val: boolean, id: string){
-        if(val){
-            this.listChecked.add(id);
-        }
-        else {
-            this.listChecked.delete(id);
-        }
+        if(val) this.listChecked.set(id, this.userList.find(r => r._id == id));
+        else this.listChecked.delete(id);
         this.updateCheckAll();
+    }
+
+    resetListChecked(){
+        this.listChecked.clear();
     }
 
     toggleCheckAllItems(val: boolean){
         if(val){
-            this.userList.forEach(u => {
-                if(!this.listChecked.has(u._id)){
-                    this.listChecked.add(u._id);
-                }
+            this.usersService.getListData({search: '', page: 0, size: CONSTS.page_size_get_all}).subscribe(res => {
+                res.results.forEach(user => {
+                    if(!this.listChecked.has(user._id)) this.listChecked.set(user._id, user);
+                })
             })
-        }
-        else {
-            this.listChecked.clear();
-        }
+        } else this.resetListChecked();
     }
 
     openLock(){
@@ -146,12 +147,12 @@ export class UsersListComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
                 this.loading = true;
-                this.usersService.unlockUsers(Array.from(this.listChecked))
+                this.usersService.unlockUsers(Array.from(this.listChecked.keys()))
                 .subscribe(res => {
                     this.loading = false;
                     this.toast.success("Mở khóa tài khoản thành công");
                     this.searchUsers();
-                    this.listChecked.clear();
+                    this.updateListCheckedAfterUpdate(Array.from(this.listChecked.keys()), 'status', 1);
                 }, err => {
                     this.loading = false;
                     this.toast.error("Mở khóa tài khoản thất bại")
@@ -162,7 +163,7 @@ export class UsersListComponent implements OnInit {
 
     isShowLockButton(){
         if(this.listChecked.size){
-            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && checkedItems.map(u => u.status).find(s => s == 0) == null;
         }
         else return false;
@@ -178,7 +179,7 @@ export class UsersListComponent implements OnInit {
 
     isShowUnlockButton(){
         if(this.listChecked.size){
-            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && checkedItems.map(u => u.status).find(s => s == 1) == null;
         }
         else return false;
@@ -186,7 +187,7 @@ export class UsersListComponent implements OnInit {
 
     isShowDeleteTempButton(){
         if(this.listChecked.size){
-            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && checkedItems.map(u => u.is_delete).find(s => s) == null;
         }
         else return false;
@@ -194,7 +195,7 @@ export class UsersListComponent implements OnInit {
 
     isShowRestoreButton(){
         if(this.listChecked.size){
-            const checkedItems = this.userList.filter(u => this.listChecked.has(u._id));
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && !checkedItems.find(u => u.status || !u.is_delete);
         }
         else return false;
@@ -220,7 +221,7 @@ export class UsersListComponent implements OnInit {
                     this.toast.success(`Xóa tài khoản thành công`);
                     this.loading = false;
                     this.searchUsers();
-                    this.listChecked.clear();
+                    if(this.listChecked.has(user._id)) this.listChecked.delete(user._id);
                 }, () => this.loading = false)
             }
         })
@@ -236,12 +237,12 @@ export class UsersListComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed?: boolean) => {
             if(isConfirmed){
                 this.loading = true;
-                this.usersService.restoreUsers(user ? [user._id]: Array.from(this.listChecked)).subscribe(() => {
+                this.usersService.restoreUsers(user ? [user._id]: Array.from(this.listChecked.keys())).subscribe(() => {
                     this.toast.success(`Khôi phục ${user ? '1': this.listChecked.size} tài khoản thành công`);
                     this.loading = false;
                     this.searchUsers();
                     if(user && this.listChecked.has(user._id)) this.listChecked.delete(user._id);
-                    else if(!user) this.listChecked.clear();
+                    else if(!user) this.resetListChecked();
                 }, () => this.loading = false)
             }
         })
@@ -257,7 +258,7 @@ export class UsersListComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed?: boolean) => {
             if(isConfirmed){
                 this.loading = true;
-                this.usersService.deletePermanently(user? [user._id]: Array.from(this.listChecked)).subscribe(() => {
+                this.usersService.deletePermanently(user? [user._id]: Array.from(this.listChecked.keys())).subscribe(() => {
                     this.toast.success(`Xóa vĩnh viễn ${user ? '1': this.listChecked.size} tài khoản thành công`);
                     this.loading = false;
                     this.searchUsers();
@@ -282,7 +283,6 @@ export class UsersListComponent implements OnInit {
                     this.toast.success(`Cài lại mật khẩu cho tài khoản thành công`);
                     this.loading = false;
                     this.searchUsers();
-                    if(this.listChecked.has(user._id)) this.listChecked.delete(user._id);
                 }, () => this.loading = false)
             }
         })
