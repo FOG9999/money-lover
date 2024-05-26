@@ -228,7 +228,7 @@ export class ModuleMngComponent implements OnInit {
                     this.loading = false;
                     this.toast.success(`${currStatus ? 'Khóa': 'Mở khóa'} module thành công`);
                     this.searchModules(); 
-                    this.updateListCheckedAfterStatusChanged(Array.from(this.listChecked.keys()), newStatus);   
+                    this.resetListChecked();    
                 }, err => {
                     this.loading = false;
                 })                

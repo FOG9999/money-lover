@@ -172,8 +172,23 @@ const deleteWalletType = (req, returnData, callback) => {
         })
 }
 
+const getWalletTypesByIds = (req, returnData, callback) => {
+    const { ids } = req.params;
+    if(ids.find(id => !validator.isMongoId(id)) || !Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY);
+    }
+    WalletType.find({
+        _id: { $in: ids }
+    }).exec((err, data) => {
+        if(err) return callback(err);
+        returnData.set({results: data});
+        callback();
+    })
+}
+
 exports.deleteWalletType = deleteWalletType;
 exports.listWalletTypes = listWalletTypes;
 exports.addWalletType = addWalletType;
 exports.getWalletType = getWalletType;
 exports.updateWalletType = updateWalletType;
+exports.getWalletTypesByIds = getWalletTypesByIds;

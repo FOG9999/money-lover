@@ -35,19 +35,63 @@
             <app-loading></app-loading>
         </ng-container>
         <ng-template #loaded>
-            <ng-container *ngIf="listPermissions.length; else noDataTpl">                
+            <ng-container *ngIf="listPermissions.length; else noDataTpl">     
+                <div class="check-all-container">
+                    <mat-checkbox [(ngModel)]="isAllChecked"
+                        (ngModelChange)="toggleCheckAllItems($event)">Tất cả</mat-checkbox>
+                </div>           
                 <mat-accordion class="list-permission-accordion" multi>
                     <mat-expansion-panel *ngFor="let permission of listPermissions" (afterCollapse)="collapsePermission(permission)" (afterExpand)="expandPermission(permission)">
                         <mat-expansion-panel-header>
                           <mat-panel-title>
-                            {{ permission.title }}
+                              <mat-checkbox [checked]="isChecked(permission._id)" (click)="stopPropagation($event)"
+                              (change)="toggleCheckItem($event.checked, permission._id)">
+                              {{ permission.title }}
+                            </mat-checkbox>
                           </mat-panel-title>
                           <mat-panel-description>
-                            {{ permission.code }}
-                            <mat-icon (click)="open(permission, $event)">edit</mat-icon>
+                            <span class="permission-code-status" *ngIf="window.innerWidth >= 800">
+                                <span class="code">{{ permission.code }}</span>
+                                <ng-container *ngIf="permission.status; else notActive">
+                                    <mat-icon class="active" matTooltip="Đang hoạt động">lock_open</mat-icon>
+                                </ng-container>
+                                <ng-template #notActive>
+                                    <mat-icon class="inactive" matTooltip="Bị khóa">block</mat-icon>
+                                </ng-template>
+                            </span>
+                            <!-- <mat-icon (click)="open(permission, $event)">edit</mat-icon> -->
+                            <button mat-icon-button [matMenuTriggerFor]="menuActions" (click)="stopPropagation($event)" matTooltip="Hành động"><mat-icon>more_vert</mat-icon></button>
+                            <mat-menu #menuActions="matMenu">
+                                <button mat-menu-item (click)="open(permission, $event)"><mat-icon>edit</mat-icon>Cập nhật</button>
+                                <button mat-menu-item (click)="changeStatus(permission)"><mat-icon>{{ permission.status ? 'block': 'lock_open' }}</mat-icon>{{ permission.status ? 'Khóa': 'Mở khóa' }}</button>
+                                <button mat-menu-item class="dropdown-item dropdown-item-accent" (click)="deleteSingle(permission)"><mat-icon color="accent">delete</mat-icon>Xóa</button>
+                            </mat-menu>
                           </mat-panel-description>
                         </mat-expansion-panel-header>
                         <div class="list-properties">
+                            <ng-container *ngIf="window.innerWidth < 800">
+                                <div class="permission-property-container">
+                                    <div class="property-name">
+                                        Mã quyền: 
+                                    </div>
+                                    <div class="property-value">
+                                        {{ permission.code }}
+                                    </div>
+                                </div>  
+                                <div class="permission-property-container">
+                                    <div class="property-name">
+                                        Trạng thái: 
+                                    </div>
+                                    <div class="property-value">
+                                        <ng-container *ngIf="permission.status; else notActive">
+                                            <mat-icon class="active" matTooltip="Đang hoạt động">lock_open</mat-icon>
+                                        </ng-container>
+                                        <ng-template #notActive>
+                                            <mat-icon class="inactive" matTooltip="Bị khóa">block</mat-icon>
+                                        </ng-template>
+                                    </div>
+                                </div>  
+                            </ng-container>
                             <div class="permission-property-container">
                                 <div class="property-name">
                                     Ảnh hưởng: 

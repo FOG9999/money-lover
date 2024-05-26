@@ -228,7 +228,7 @@ export class RoleMngComponent implements OnInit {
                     this.loading = false;
                     this.toast.success(`${currStatus ? 'Khóa': 'Mở khóa'} vai trò thành công`);
                     this.searchRoles();       
-                    this.updateListCheckedAfterStatusChanged(Array.from(this.listChecked.keys()), newStatus);             
+                    this.resetListChecked();             
                 }, err => {
                     this.loading = false;
                 })                

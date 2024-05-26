@@ -66,7 +66,7 @@ export class UsersListComponent implements OnInit {
                     this.loading = false;
                     this.toast.success("Vô hiệu hóa tài khoản thành công");
                     this.searchUsers();
-                    this.updateListCheckedAfterUpdate(Array.from(this.listChecked.keys()), 'status', 0);
+                    this.resetListChecked(); 
                 }, err => {
                     this.loading = false;
                     this.toast.error("Vô hiệu hóa tài khoản thất bại")
@@ -152,7 +152,7 @@ export class UsersListComponent implements OnInit {
                     this.loading = false;
                     this.toast.success("Mở khóa tài khoản thành công");
                     this.searchUsers();
-                    this.updateListCheckedAfterUpdate(Array.from(this.listChecked.keys()), 'status', 1);
+                    this.resetListChecked(); 
                 }, err => {
                     this.loading = false;
                     this.toast.error("Mở khóa tài khoản thất bại")

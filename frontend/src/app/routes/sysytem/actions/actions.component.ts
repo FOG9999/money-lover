@@ -228,7 +228,7 @@ export class ActionMngComponent implements OnInit {
                     this.loading = false;
                     this.toast.success(`${currStatus ? 'Khóa': 'Mở khóa'} hành động thành công`);
                     this.searchActions();   
-                    this.updateListCheckedAfterStatusChanged(Array.from(this.listChecked.keys()), newStatus); 
+                    this.resetListChecked();             
                 }, err => {
                     this.loading = false;
                 })                
