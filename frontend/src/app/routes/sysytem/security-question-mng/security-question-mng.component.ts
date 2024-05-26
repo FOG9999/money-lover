@@ -27,7 +27,7 @@ export class SecurityQuestionMngComponent implements OnInit {
     listQuestions: Partial<SecurityQuestion>[] = [];
     searchKey: string = "";
     loading: boolean = false;
-    listChecked: boolean[] = [];
+    listChecked: Map<string, Partial<SecurityQuestion>> = new Map<string, Partial<SecurityQuestion>>();
     total: number = 0;
     pageSize: number = CONSTS.page_size;
     page: number = 0;
@@ -38,18 +38,13 @@ export class SecurityQuestionMngComponent implements OnInit {
             this.loading = false;
             this.listQuestions = res.data;
             this.total = res.total;
-            this.resetListChecked();
         }, err => {
             this.loading = false;
         })
     }
 
     resetListChecked(){
-        const listChecked: boolean[] = [];
-        this.listQuestions.forEach(item => {
-            listChecked.push(false);
-        })
-        this.listChecked = listChecked;
+        this.listChecked.clear();
     }
 
     searchQuestion(){
@@ -75,7 +70,7 @@ export class SecurityQuestionMngComponent implements OnInit {
     }
 
     getNumOfSelected(){
-        return this.listChecked.filter(item => item).length;
+        return this.listChecked.size;
     }
 
     delete(){   
