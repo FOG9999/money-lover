@@ -205,9 +205,24 @@ const changeStatusRole = (req, returnData, callback) => {
     })
 }
 
+const getRolesByIds = (req, returnData, callback) => {
+    const { ids } = req.params;
+    if(ids.find(id => !validator.isMongoId(id)) || !Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY);
+    }
+    Role.find({
+        _id: { $in: ids }
+    }).exec((err, data) => {
+        if(err) return callback(err);
+        returnData.set({results: data});
+        callback();
+    })
+}
+
 exports.deleteRole = deleteRole;
 exports.listRoles = listRoles;
 exports.addRole = addRole;
 exports.getRole = getRole;
 exports.updateRole = updateRole;
 exports.changeStatusRole = changeStatusRole;
+exports.getRolesByIds = getRolesByIds;

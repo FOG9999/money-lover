@@ -39,5 +39,10 @@ export class RoleService {
         const api_name: string = "api.v1.role.get";
         return this.http.post<Role>(environment.SERVER_URL, { api_name, id }, { observe: "body" });
     }
+
+    getRolesByIds(ids: string[]){
+        const api_name: string = "api.v1.role.getbyids";
+        return this.http.post<{results: Role[]}>(environment.SERVER_URL, { api_name, ids }, { observe: "body" });
+    }
     
 }
