@@ -30,7 +30,7 @@ export class ModuleMngComponent implements OnInit {
     displayedColumns: string[] = ['checkbox', 'Tên module', 'Mã module', 'Mô tả', 'Ngày tạo', 'Trạng thái', 'Thao tác'];
     columnProps: string[] = ['checkbox', 'title','code', 'description', 'dateCreated', 'status', 'actions'];
     loading: boolean = false;
-    listChecked: boolean[] = [];
+    listChecked: Map<string, Partial<Module>> = new Map<string, Partial<Module>>();
     total: number = 0;
     pageSize: number = CONSTS.page_size;
     page: number = 0;
@@ -42,7 +42,7 @@ export class ModuleMngComponent implements OnInit {
             this.loading = false;
             this.listModules = res.results;
             this.total = res.total;
-            this.resetListChecked();
+            this.updateCheckAll();
             if(!this.listModules.length) this.isAllChecked = false;
         }, err => {
             this.loading = false;
@@ -50,11 +50,7 @@ export class ModuleMngComponent implements OnInit {
     }
 
     resetListChecked(){
-        const listChecked: boolean[] = [];
-        this.listModules.forEach(item => {
-            listChecked.push(false);
-        })
-        this.listChecked = listChecked;
+        this.listChecked.clear();
     }
 
     searchModules(){
@@ -80,7 +76,7 @@ export class ModuleMngComponent implements OnInit {
     }
 
     getNumOfSelected(){
-        return this.listChecked.filter(item => item).length;
+        return this.listChecked.size;
     }
 
     delete(){   
@@ -93,9 +89,10 @@ export class ModuleMngComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
                 this.loading = true;
-                this.moduleService.deleteModule(this.listModules.filter((_, ind) => this.listChecked[ind]).map(item => item._id))
+                this.moduleService.deleteModule(Array.from(this.listChecked.keys()))
                 .subscribe(res => {
                     this.loading = false;
+                    this.resetListChecked();
                     this.toast.success("Xóa vĩnh viễn module thành công");
                     this.searchModules();
                 }, err => {
@@ -113,55 +110,51 @@ export class ModuleMngComponent implements OnInit {
     }
 
     isShowLockButton(){
-        if(this.listChecked.length){
-            const checkedItems = this.listModules.filter((_, ind) => this.listChecked[ind]);
+        if(this.listChecked.size){
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && checkedItems.map(u => u.status).find(s => s == 0) == null;
         }
         else return false;
     }
 
     isShowDeleteButton(){
-        if(this.listChecked.length){
-            const checkedItems = this.listModules.filter((_, ind) => this.listChecked[ind]);
+        if(this.listChecked.size){
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && checkedItems.map(u => u.is_delete).find(s => s) == null;
         }
         else return false;
     }
 
     isShowUnlockButton(){
-        if(this.listChecked.length){
-            const checkedItems = this.listModules.filter((_, ind) => this.listChecked[ind]);
+        if(this.listChecked.size){
+            const checkedItems = Array.from(this.listChecked.values());
             return checkedItems.length && checkedItems.map(u => u.status).find(s => s == 1) == null;
         }
         else return false;
     }
 
     updateCheckAll(){
-        let isCheckedAll = true;
-        for (let index = 0; index < this.listModules.length; index++) {
-            if(!this.listChecked[index]){
-                isCheckedAll = false;
-                break;
-            }
-        }
-        this.isAllChecked = isCheckedAll;
+        this.isAllChecked = this.listChecked.size == this.total;
     }
 
     toggleCheckItem(val: boolean, id: string){
-        const indexItem = this.listModules.findIndex(r => r._id == id);
-        this.listChecked[indexItem] = val;
+        if(val) this.listChecked.set(id, this.listModules.find(r => r._id == id));
+        else this.listChecked.delete(id);
         this.updateCheckAll();
     }
 
     toggleCheckAllItems(val: boolean){
-        let clone = [];
-        this.listChecked.forEach(() => {clone.push(val)});
-        this.listChecked = [...clone];
+        if(val){
+            this.moduleService.getListModules('', 0, CONSTS.page_size_get_all).subscribe(res => {
+                res.results.forEach(role => {
+                    if(!this.listChecked.has(role._id)) this.listChecked.set(role._id, role);
+                })
+            })
+        } else this.resetListChecked();
     }
 
     isChecked(id: string){
-        const itemIndex = this.listModules.findIndex(r => r._id == id);
-        return this.listChecked[itemIndex];
+        return this.listChecked.has(id);
     }
 
     deleteSingle(module: Partial<Module>){
@@ -178,8 +171,19 @@ export class ModuleMngComponent implements OnInit {
                     this.toast.success(`Xóa module thành công`);
                     this.loading = false;
                     this.searchModules();
-                    this.resetListChecked();
+                    if(this.listChecked.has(module._id)) this.listChecked.delete(module._id);
                 }, () => this.loading = false)
+            }
+        })
+    }
+
+    updateListCheckedAfterStatusChanged(ids: string[], status: 0 | 1){
+        ids.forEach(id => {
+            if(this.listChecked.has(id)){
+                this.listChecked.set(id, {
+                    ...this.listChecked.get(id),
+                    status
+                })
             }
         })
     }
@@ -194,12 +198,13 @@ export class ModuleMngComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
                 this.loading = true;
-                this.moduleService.changeStatusModule([module._id], module.status ? 0: 1)
+                const newStatus = module.status ? 0: 1;
+                this.moduleService.changeStatusModule([module._id], newStatus)
                 .subscribe(res => {
                     this.loading = false;
                     this.toast.success(`${module.status ? 'Khóa': 'Mở khóa'} module thành công`);
                     this.searchModules();
-                    this.resetListChecked();
+                    this.updateListCheckedAfterStatusChanged([module._id], newStatus)
                 }, err => {
                     this.loading = false;
                 })                
@@ -217,12 +222,13 @@ export class ModuleMngComponent implements OnInit {
         .afterClosed().subscribe((isConfirmed: boolean | undefined) => {
             if (isConfirmed) {
                 this.loading = true;
-                this.moduleService.changeStatusModule(this.listModules.filter((_, i) => this.listChecked[i]).map(r => r._id), currStatus ? 0 : 1)
+                const newStatus = currStatus ? 0: 1;
+                this.moduleService.changeStatusModule(Array.from(this.listChecked.keys()), newStatus)
                 .subscribe(res => {
                     this.loading = false;
                     this.toast.success(`${currStatus ? 'Khóa': 'Mở khóa'} module thành công`);
-                    this.searchModules();
-                    this.resetListChecked();
+                    this.searchModules(); 
+                    this.updateListCheckedAfterStatusChanged(Array.from(this.listChecked.keys()), newStatus);   
                 }, err => {
                     this.loading = false;
                 })                
