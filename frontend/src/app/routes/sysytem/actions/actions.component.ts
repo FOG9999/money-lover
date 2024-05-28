@@ -145,10 +145,8 @@ export class ActionMngComponent implements OnInit {
 
     toggleCheckAllItems(val: boolean){
         if(val){
-            this.actionService.getListActions('', 0, CONSTS.page_size_get_all).subscribe(res => {
-                res.results.forEach(action => {
-                    if(!this.listChecked.has(action._id)) this.listChecked.set(action._id, action);
-                })
+            this.listActions.forEach(action => {
+                if(!this.listChecked.has(action._id)) this.listChecked.set(action._id, action);
             })
         } else this.resetListChecked();
     }

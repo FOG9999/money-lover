@@ -178,10 +178,8 @@ export class PermissionMngComponent implements OnInit {
 
     toggleCheckAllItems(val: boolean){
         if(val){
-            this.permissionService.getListPermissions('', 0, CONSTS.page_size_get_all).subscribe(res => {
-                res.results.forEach(permission => {
-                    if(!this.listChecked.has(permission._id)) this.listChecked.set(permission._id, permission);
-                })
+            this.listPermissions.forEach(permission => {
+                if(!this.listChecked.has(permission._id)) this.listChecked.set(permission._id, permission);
             })
         } else this.resetListChecked();
     }

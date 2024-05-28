@@ -145,10 +145,8 @@ export class RoleMngComponent implements OnInit {
 
     toggleCheckAllItems(val: boolean){
         if(val){
-            this.roleService.getListRoles('', 0, CONSTS.page_size_get_all).subscribe(res => {
-                res.results.forEach(role => {
-                    if(!this.listChecked.has(role._id)) this.listChecked.set(role._id, role);
-                })
+            this.listRoles.forEach(role => {
+                if(!this.listChecked.has(role._id)) this.listChecked.set(role._id, role);
             })
         } else this.resetListChecked();
     }

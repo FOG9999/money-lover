@@ -129,10 +129,8 @@ export class UsersListComponent implements OnInit {
 
     toggleCheckAllItems(val: boolean){
         if(val){
-            this.usersService.getListData({search: '', page: 0, size: CONSTS.page_size_get_all}).subscribe(res => {
-                res.results.forEach(user => {
-                    if(!this.listChecked.has(user._id)) this.listChecked.set(user._id, user);
-                })
+            this.userList.forEach(user => {
+                if(!this.listChecked.has(user._id)) this.listChecked.set(user._id, user);
             })
         } else this.resetListChecked();
     }
