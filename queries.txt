@@ -1,0 +1,4 @@
+db.users.aggregate([ {$lookup: {localField: "role", foreignField: "_id", from: "roles", as: "userRole"}}, { $match: {_id: ObjectId("6455c550431c48381cdf0a2b")} }])
+
+
+db.moduleactions.aggregate([{ $lookup: {localField: "module", foreignField: "_id", from: "modules", as: "moduleData" } }, { $project: { "moduleData": 1, "_id": 1  } } ])

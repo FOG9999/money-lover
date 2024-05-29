@@ -7,7 +7,12 @@ import { ModuleService } from '../module.service';
 
 @Component({
     selector: 'select-module',
-    templateUrl: 'select-module.component.html'
+    templateUrl: 'select-module.component.html',
+    styles: [`        
+        .item-prop {
+            word-break: break-word;
+        }
+    `]
 })
 
 export class SelectModuleComponent implements OnInit {
@@ -60,14 +65,8 @@ export class SelectModuleComponent implements OnInit {
     }
 
     getAllForCheckAll(){
-        this.loading = true;
-        this.moduleService.getListModules(this.searchKey, 0, CONSTS.page_size_get_all).subscribe(res => {
-            res.results.forEach(item => {
-                if(!this.listChecked.has(item._id)) this.listChecked.add(item._id)
-            })
-            this.loading = false;
-        }, () => {
-            this.loading = false;
+        this.listModules.forEach(item => {
+            if(!this.listChecked.has(item._id)) this.listChecked.add(item._id)
         })
     }
 

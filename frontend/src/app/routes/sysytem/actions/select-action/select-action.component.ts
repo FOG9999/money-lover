@@ -7,7 +7,12 @@ import { ActionService } from '../action.service';
 
 @Component({
     selector: 'select-action',
-    templateUrl: 'select-action.component.html'
+    templateUrl: 'select-action.component.html',
+    styles: [`        
+        .item-prop {
+            word-break: break-word;
+        }
+    `]
 })
 
 export class SelectActionComponent implements OnInit {
@@ -59,10 +64,8 @@ export class SelectActionComponent implements OnInit {
     }
 
     getAllForCheckAll(){
-        this.actionService.getListActions(this.searchKey, 0, CONSTS.page_size_get_all).subscribe(res => {
-            res.results.forEach(item => {
-                if(!this.listChecked.has(item._id)) this.listChecked.add(item._id)
-            })
+        this.listActions.forEach(item => {
+            if(!this.listChecked.has(item._id)) this.listChecked.add(item._id)
         })
     }
 

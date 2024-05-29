@@ -26,7 +26,7 @@
                             <mat-checkbox [checked]="isChecked(element._id)"
                             (change)="toggleCheckItem($event.checked, element._id)"></mat-checkbox>
                         </div>
-                        <div *ngSwitchDefault>
+                        <div *ngSwitchDefault class="item-prop">
                             {{element[column]}}
                         </div>
                     </div>

@@ -229,7 +229,8 @@ export class PermissionDialogComponent implements OnInit {
         this.dialogService.open(SelectModuleComponent, {
             data: {
                 selectedModules: Array.from(this.mapOfActions.keys())
-            }
+            },
+            width: "800px"
         })
         .afterClosed().subscribe((res: Module[]) => {
             if(res){
@@ -266,7 +267,8 @@ export class PermissionDialogComponent implements OnInit {
         this.dialogService.open(SelectActionComponent, {
             data: {
                 selectedActions: this.mapOfActions.get(moduleKey).list.map(act => act._id)
-            }
+            },
+            width: "800px"
         })
         .afterClosed().subscribe((res: Action[]) => {
             if(res){
