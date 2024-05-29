@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeletionComponent } from '@shared/components/confirm-deletion/confirm-deletion.component';
 import { ToastrService } from 'ngx-toastr';
 import { PageEvent } from '@angular/material/paginator';
+import { ChooseUserRoleComponent } from '../roles/choose-user-role/choose-user-role.component';
+import { Role } from 'app/model/role.model';
 
 @Component({
     selector: 'users-list',
@@ -282,6 +284,20 @@ export class UsersListComponent implements OnInit {
                     this.loading = false;
                     this.searchUsers();
                 }, () => this.loading = false)
+            }
+        })
+    }
+
+    chooseUserRole(user: Partial<User>){
+        this.dialogService.open(ChooseUserRoleComponent, {
+            data: {
+                selectedRole: user.role
+            }
+        }).afterClosed().subscribe((newRole: Partial<Role>) => {
+            if(newRole){
+                this.usersService.updateUser({...user, role: newRole._id}).subscribe(() => {
+                    this.searchUsers();
+                })
             }
         })
     }

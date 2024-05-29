@@ -14,6 +14,8 @@ import { PermissionMngComponent } from './permission/permissions.component';
 import { PermissionDialogComponent } from './permission/permission-dialog.component';
 import { SelectModuleComponent } from './modules/select-module/select-module.component';
 import { SelectActionComponent } from './actions/select-action/select-action.component';
+import { SelectRoleComponent } from './roles/select-role/select-role.component';
+import { ChooseUserRoleComponent } from './roles/choose-user-role/choose-user-role.component';
 
 @NgModule({
     imports: [SharedModule, SystemRoutingModule],
@@ -31,7 +33,9 @@ import { SelectActionComponent } from './actions/select-action/select-action.com
         PermissionMngComponent,
         PermissionDialogComponent,
         SelectModuleComponent,
-        SelectActionComponent
+        SelectActionComponent,
+        SelectRoleComponent,
+        ChooseUserRoleComponent
     ]
 })
 export class SystemModule { }

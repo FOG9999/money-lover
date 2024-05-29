@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<div class="choose-user-role-container" mat-dialog-content>
+    <mat-radio-group class="user-role-list" *ngIf="!loading; else loadingTpl" [(ngModel)]="selectedRole">
+        <mat-radio-button [value]="role._id" *ngFor="let role of listRoles">{{ role.title }}</mat-radio-button>
+    </mat-radio-group>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="close()">Đóng</button>
+    <button mat-button [disabled]="loading" color="primary" (click)="close(selectedRole)">Lưu</button>
+</div>
+
+<ng-template #loadingTpl>
+    <app-loading></app-loading>
+</ng-template>

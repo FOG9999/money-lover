@@ -1,14 +1,14 @@
 <h2 mat-dialog-title>{{ title }}</h2>
-<div class="select-action-container" mat-dialog-content>
+<div class="select-role-container" mat-dialog-content>
     <div class="table-container">
-        <table mat-table [dataSource]="listActions" class="table-action" *ngIf="!loading; else loadingTpl">
+        <table mat-table [dataSource]="listRoles" class="table-role">
             <ng-container [matColumnDef]="column" *ngFor="let column of columnProps; index as i">
                 <th mat-header-cell *matHeaderCellDef>
-                    <ng-container *ngIf="column == 'checkbox'; else notAction">
+                    <ng-container *ngIf="column == 'checkbox'; else notRole">
                         <mat-checkbox [(ngModel)]="isAllChecked"
                             (ngModelChange)="toggleCheckAllItems($event)"></mat-checkbox>
                     </ng-container>
-                    <ng-template #notAction>
+                    <ng-template #notRole>
                         {{displayedColumns[i]}}
                     </ng-template>
                 </th>
@@ -45,7 +45,3 @@
     <button mat-button mat-dialog-close (click)="close()">Đóng</button>
     <button mat-button [disabled]="loading" color="primary" (click)="close(listChecked)">Lưu</button>
 </div>
-
-<ng-template #loadingTpl>
-    <app-loading></app-loading>
-</ng-template>

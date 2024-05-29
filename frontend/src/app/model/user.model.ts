@@ -21,7 +21,8 @@ export interface User extends Base {
     /**
      * id of oauth when login with other system
      */
-    authId: string | number
+    authId: string | number;
+    role: string;
 }
 
 export interface GoogleUser {

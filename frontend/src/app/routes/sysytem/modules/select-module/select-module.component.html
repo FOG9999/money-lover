@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{ title }}</h2>
 <div class="select-module-container" mat-dialog-content>
     <div class="table-container">
-        <table mat-table [dataSource]="listModules" class="table-module">
+        <table mat-table [dataSource]="listModules" class="table-module" *ngIf="!loading; else loadingTpl">
             <ng-container [matColumnDef]="column" *ngFor="let column of columnProps; index as i">
                 <th mat-header-cell *matHeaderCellDef>
                     <ng-container *ngIf="column == 'checkbox'; else notAction">
@@ -45,3 +45,7 @@
     <button mat-button mat-dialog-close (click)="close()">Đóng</button>
     <button mat-button [disabled]="loading" color="primary" (click)="close(listChecked)">Lưu</button>
 </div>
+
+<ng-template #loadingTpl>
+    <app-loading></app-loading>
+</ng-template>

@@ -10,9 +10,9 @@ export class RoleService {
         private http: HttpClient
     ) { }
 
-    getListRoles(search: string = "", page: number = 0, size: number = CONSTS.page_size){
+    getListRoles(search: string = "", page: number = 0, size: number = CONSTS.page_size, params?: {[key: string]: any}){
         const api_name: string = "api.v1.role.list";
-        return this.http.post<{results: Role[], total: number}>(environment.SERVER_URL, { api_name, search, page, size }, { observe: "body" });
+        return this.http.post<{results: Role[], total: number}>(environment.SERVER_URL, { api_name, search, page, size, ...params }, { observe: "body" });
     }
 
     addRole(role: Partial<Role>){
