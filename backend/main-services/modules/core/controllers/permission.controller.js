@@ -1,5 +1,6 @@
 const Permission = require('../models/permission');
 const ModuleAction = require('../models/module-action');
+const User = require('../models/user');
 const validator = require('validator');
 const async = require('async');
 const consts = require('../../../../config/consts');
@@ -364,6 +365,64 @@ const changeStatusPermission = (req, returnData, callback) => {
     })
 }
 
+const getActionsOnModule = (req, returnData, callback) => {
+    const { path } = req.params;
+    const { _id: userId } = req.user;
+    User.findOne({_id: userId}).exec((errUser, userData) => {
+        if(errUser) return callback(consts.ERRORS.ERROR_FIND_USER);
+        // DENY >>>>>> ALLOW
+        if(userData.role && validator.isMongoId(userData.role)){
+            // get list permission assigned to current role
+            Permission.find({ role: userData.role })
+                .populate({ 
+                    path: 'moduleAction',
+                    populate: [{
+                        path: "module",
+                        match: {
+                            code: path
+                        }
+                    },
+                    {
+                        path: "actions"
+                    }]
+                })
+                .exec((errPermission, foundPermission) => {
+                    if(errPermission) return callback(errPermission);
+                    // check if user is granted to enter this module
+                    // filter only the module action that assigned to the asking module
+                    const allowPermissions = foundPermission.filter(per => per.allow); 
+                    const deniedPermissions = foundPermission.filter(per => !per.allow);
+                    let allowActions = [], deniedActions = [];
+                    allowPermissions.forEach(permission => {
+                        permission.moduleAction.forEach(ma => {
+                            if(ma.module && ma.module.code == path){
+                                allowActions.push(...ma.actions);
+                            }
+                        })
+                    })
+                    deniedPermissions.forEach(permission => {
+                        permission.moduleAction.forEach(ma => {
+                            if(ma.module && ma.module.code == path){
+                                deniedActions.push(...ma.actions);
+                            }
+                        })
+                    })
+                    // if the action was added to allowed, but appeared in denied, delete it
+                    allowActions = allowActions.filter(action => !deniedActions.find(act => act._id == action._id));
+            
+                    returnData.set({ actions: allowActions })
+                    callback();
+                })
+        } else {
+            returnData.set({
+                actions: []
+            });
+            return callback();
+        }
+    })
+
+}
+
 exports.deletePermission = deletePermission;
 exports.listPermissions = listPermissions;
 exports.addPermission = addPermission;
@@ -372,3 +431,4 @@ exports.updatePermission = updatePermission;
 exports.changeStatusPermission = changeStatusPermission;
 exports.getActionsForModuleAction = getActionsForModuleAction;
 exports.getModuleActionsForPermission = getModuleActionsForPermission;
+exports.getActionsOnModule = getActionsOnModule;

@@ -12,6 +12,7 @@ module.exports = function() {
     consts.registerApi('api.v1.permission.get', controller.getPermission, { systemApi: true });
     consts.registerApi('api.v1.permission.update', controller.updatePermission, { systemApi: true });
     consts.registerApi('api.v1.permission.actionsbymoduleaction', controller.getActionsForModuleAction, { systemApi: true });
+    consts.registerApi('api.v1.permission.actionsbymodule', controller.getActionsOnModule, { anyAuth: true });
     consts.registerApi('api.v1.permission.moduleactionbypermission', controller.getModuleActionsForPermission, { systemApi: true });
     consts.registerApi('api.v1.permission.changestatus', controller.changeStatusPermission, { systemApi: true });
 };
