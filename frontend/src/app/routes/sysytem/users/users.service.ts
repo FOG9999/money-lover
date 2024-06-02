@@ -33,6 +33,11 @@ export class UsersService {
         let api: string = `api.v1.systemuser.update`;
         return this.http.post(environment.SERVER_URL, {api_name: api, ...user}, {observe: 'body'});
     }
+    
+    updateUserRole(userId: string, role: string){
+        let api: string = `api.v1.systemuser.updateuserrole`;
+        return this.http.post(environment.SERVER_URL, {api_name: api, userId, role}, {observe: 'body'});
+    }
 
     getUser(){
         let api: string = `api.v1.systemuser.get`;

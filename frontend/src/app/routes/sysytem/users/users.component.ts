@@ -295,7 +295,8 @@ export class UsersListComponent implements OnInit {
             }
         }).afterClosed().subscribe((newRole: Partial<Role>) => {
             if(newRole){
-                this.usersService.updateUser({...user, role: newRole._id}).subscribe(() => {
+                this.usersService.updateUserRole(user._id, newRole._id).subscribe(() => {
+                    this.toast.success('Cập nhật vai trò người dùng thành công');
                     this.searchUsers();
                 })
             }

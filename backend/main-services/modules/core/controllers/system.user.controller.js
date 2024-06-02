@@ -1,6 +1,7 @@
 let mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId,
     User = require('../models/user'),
+    Role = require('../models/role'),
     validator = require('validator');
 const { sendMailPromise } = require(__libs_path + '/aws-ses');
 const redis = require(__libs_path + '/redis');
@@ -14,6 +15,7 @@ const mailTransporter = require(__libs_path + '/mailer');
 const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require("@aws-sdk/client-apigatewaymanagementapi");
 const consts = require('../../../../config/consts');
 const utils = require('../../../../libs/utils');
+const async = require('async');
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -773,6 +775,49 @@ const createUserOAuth = (req, returnData, callback) => {
         })
 }
 
+const updateUserRole = (req, returnData, callback) => {
+    const { role, userId } = req.params;
+    if(!validator.isMongoId(role)){
+        return callback(consts.ERRORS.ERROR_NOT_AN_ID('role'));
+    }
+    async.series([cb => {
+        Role.findOne({_id: role}).exec((err, role) => {
+            if(err) return cb(err);
+            else if(!role){
+                return cb(consts.ERRORS.ERROR_ROLE_NOT_FOUND);
+            }
+            else {
+                return cb(null, role);
+            }
+        })
+    }, cb => {
+        User.findOne({ _id: userId })
+            .exec((err, data) => {
+                if (err) {
+                    return cb(consts.ERRORS.ERROR_CANNOT_FIND_USER);
+                }
+                if (!data) {
+                    return cb(consts.ERRORS.ERROR_USER_NOT_EXIST);
+                }
+                User.findOneAndUpdate({ _id: userId }, {
+                    $set: {
+                        role
+                    }
+                })
+                    .exec((errSave, dataSave) => {
+                        if (errSave) {
+                            return cb(consts.ERRORS.ERROR_CANNOT_UPDATE_USER);
+                        }
+                        cb(null, {...dataSave._doc});
+                    })
+            })
+    }], (err, results) => {
+        if(err) return callback(err);
+        returnData.set(results[1]);
+        callback();
+    })
+}
+
 const updateUser = (req, returnData, callback) => {
     const {username, email, firstname, lastname, mobile, tfaMethod} = req.params;
     const userId = req.user._id;
@@ -1068,3 +1113,4 @@ exports.resetPassword = resetPassword;
 exports.deleteSingleUser = deleteSingleUser;
 exports.restoreUsers = restoreUsers;
 exports.deletePermanently = deletePermanently;
+exports.updateUserRole = updateUserRole;
