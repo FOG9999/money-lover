@@ -97,7 +97,6 @@ export class ActionMngComponent implements OnInit {
                     this.searchActions();
                 }, err => {
                     this.loading = false;
-                    this.toast.error("Xóa vĩnh viễn hành động thất bại")
                 })                
             }
         })

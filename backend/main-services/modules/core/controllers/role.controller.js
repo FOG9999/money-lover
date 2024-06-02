@@ -206,7 +206,7 @@ const checkDelete = (ids) => {
             },
             cb => {
                 // check if roles attached with permissions
-                Permission.find({role: {$in: ids}}).populate('role').exec((errFindPermission, permissions) => {
+                Permission.find({role: {$in: ids}, is_delete: false}).populate('role').exec((errFindPermission, permissions) => {
                     if(errFindPermission) cb(errFindPermission);
                     else if(permissions.length){
                         const permissionsWithDelRoles = permissions.filter(p => p.role && p.role._id);

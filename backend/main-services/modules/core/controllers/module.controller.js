@@ -180,6 +180,12 @@ const deleteModule = (req, returnData, callback) => {
 }
 
 const checkDelete = (ids) => {
+    if (validator.isNull(ids)) {
+        return callback(consts.ERRORS.ERROR_IDS_MISSING);
+    }
+    if(!Array.isArray(ids)){
+        return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
+    }
     return new Promise((resolve, reject) => {
         async.waterfall([
             cb => {
@@ -191,9 +197,12 @@ const checkDelete = (ids) => {
             (moduleActions, cb) => {
                 if(moduleActions && moduleActions.length){
                     let moduleActionIds = moduleActions.map(ma => ma._id);
-                    Permission.find({moduleAction: {
-                        $elemMatch: { $in: moduleActionIds }
-                    }}).exec((errFindPermission, permissions) => {
+                    Permission.find({
+                        moduleAction: {
+                            $elemMatch: { $in: moduleActionIds }
+                        }, 
+                        is_delete: false
+                    }).exec((errFindPermission, permissions) => {
                         if(errFindPermission) cb(errFindPermission);
                         else {
                             const attachedModuleIds = ids.filter(id => moduleActions.find(ma => ma.module == id));
