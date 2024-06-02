@@ -3,6 +3,8 @@ const validator = require('validator');
 const async = require('async');
 const consts = require('../../../../config/consts');
 const { merge } = require('../../../../libs/utils');
+const ModuleAction = require('../models/module-action');
+const Permission = require('../models/permission');
 
 const listModules = (req, returnData, callback) => {
     const { search, status, page, size, is_delete } = req.params;
@@ -157,22 +159,66 @@ const deleteModule = (req, returnData, callback) => {
     if(!Array.isArray(ids)){
         return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
+    checkDelete(ids).then(() => {
+        Module
+        .updateMany({
+            _id: {
+                $in: ids
+            }
+        }, {
+            $set: {
+                is_delete: true,
+                dateDeleted: new Date(),
+                status: 0
+            }
+        }, (err, data) => {
+            if (err) return callback(err);
+            returnData.set(data)
+            callback();
+        })
+    }).catch(err => callback(err));
+}
 
-    Module
-    .updateMany({
-        _id: {
-            $in: ids
-        }
-    }, {
-        $set: {
-            is_delete: true,
-            dateDeleted: new Date(),
-            status: 0
-        }
-    }, (err, data) => {
-        if (err) return callback(err);
-        returnData.set(data)
-        callback();
+const checkDelete = (ids) => {
+    return new Promise((resolve, reject) => {
+        async.waterfall([
+            cb => {
+                ModuleAction.find({module: {$in : ids}}).exec((errFindModule, moduleActions) => {
+                    if(errFindModule) cb(errFindModule);
+                    else cb(null, moduleActions);
+                })
+            },
+            (moduleActions, cb) => {
+                if(moduleActions && moduleActions.length){
+                    let moduleActionIds = moduleActions.map(ma => ma._id);
+                    Permission.find({moduleAction: {
+                        $elemMatch: { $in: moduleActionIds }
+                    }}).exec((errFindPermission, permissions) => {
+                        if(errFindPermission) cb(errFindPermission);
+                        else {
+                            const attachedModuleIds = ids.filter(id => moduleActions.find(ma => ma.module == id));
+                            Module.find({_id: {$in: attachedModuleIds}}).exec((errFindModule, modules) => {
+                                if(errFindModule) cb(errFindModule);
+                                else {
+                                    cb({moduleNames: modules.map(m => m.title), permissionNames: permissions.map(p => p.title)});
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    cb();
+                }
+            }
+        ], (err, _) => {
+            if(err) {
+                if(err.moduleNames && err.permissionNames){
+                    const {moduleNames, permissionNames} = err;
+                    reject(`Các module '${moduleNames.join(',')}' không thể xóa do đang được sử dụng bởi các quyền sau: ${permissionNames.join(',')}`);
+                } else reject(err);
+            } else {
+                resolve();
+            }
+        })
     })
 }
 

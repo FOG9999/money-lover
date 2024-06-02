@@ -97,7 +97,6 @@ export class ModuleMngComponent implements OnInit {
                     this.searchModules();
                 }, err => {
                     this.loading = false;
-                    this.toast.error("Xóa vĩnh viễn module thất bại")
                 })                
             }
         })
