@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { CONSTS } from 'app/consts';
+import { Action } from 'app/model/action.model';
 import { ModuleAction } from 'app/model/module-action';
 import { Permission } from 'app/model/permission.model';
 
@@ -10,6 +11,8 @@ export class PermissionService {
     constructor(
         private http: HttpClient
     ) { }
+
+    actions: Action[] = [];
 
     getListPermissions(search: string = "", page: number = 0, size: number = CONSTS.page_size){
         const api_name: string = "api.v1.permission.list";
@@ -44,6 +47,11 @@ export class PermissionService {
     getModuleActionsPermission(_id: string, page: number = 0, size: number = CONSTS.page_size){
         const api_name: string = "api.v1.permission.moduleactionbypermission";
         return this.http.post<{results: ModuleAction[], total: number}>(environment.SERVER_URL, { api_name, _id, page, size }, { observe: "body" });
+    }
+
+    getActionsOnModule(module: string){
+        const api_name: string = "api.v1.permission.actionsbymodule";
+        return this.http.post<{actions: Action[]}>(environment.SERVER_URL, { api_name, path: module }, { observe: "body" });
     }
     
 }

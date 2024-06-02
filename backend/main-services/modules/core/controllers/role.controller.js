@@ -3,6 +3,8 @@ const validator = require('validator');
 const async = require('async');
 const consts = require('../../../../config/consts');
 const { merge } = require('../../../../libs/utils');
+const User = require('../models/user');
+const Permission = require('../models/permission');
 
 const listRoles = (req, returnData, callback) => {
     const { search, status, page, size, is_delete } = req.params;
@@ -157,22 +159,70 @@ const deleteRole = (req, returnData, callback) => {
     if(!Array.isArray(ids)){
         return callback(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
     }
+    checkDelete(ids).then(() => {
+        Role
+        .updateMany({
+            _id: {
+                $in: ids
+            }
+        }, {
+            $set: {
+                is_delete: true,
+                dateDeleted: new Date(),
+                status: 0
+            }
+        }, (err, data) => {
+            if (err) return callback(err);
+            returnData.set(data)
+            callback();
+        })
+    }).catch(err => {
+        callback(err);
+    })
+}
 
-    Role
-    .updateMany({
-        _id: {
-            $in: ids
+const checkDelete = (ids) => {
+    return new Promise((resolve, reject) => {
+        if (validator.isNull(ids)) {
+            return reject(consts.ERRORS.ERROR_IDS_MISSING);
         }
-    }, {
-        $set: {
-            is_delete: true,
-            dateDeleted: new Date(),
-            status: 0
+        if(!Array.isArray(ids)){
+            return reject(consts.ERRORS.ERROR_IDS_NOT_ARRAY)
         }
-    }, (err, data) => {
-        if (err) return callback(err);
-        returnData.set(data)
-        callback();
+        async.series([
+            cb => {
+                // check if any of these roles are attached to any users
+                User.find({role: {$in: ids}}).populate('role').exec((errFindUser, users) => {
+                    if(errFindUser) cb(errFindUser);
+                    else if(users.length){
+                        const usersWithDelRoles = users.filter(u => u.role && u.role._id);
+                        const listRolesAttached = usersWithDelRoles.map(u => u.role);
+                        const message = `Các vai trò '${listRolesAttached.map(r => r.title).join(',')}' không thể bị xóa do đang được gán những người dùng sau: '${usersWithDelRoles.map(u => u.username).join(',')}'.`
+                        cb(message);
+                    } else {
+                        cb();
+                    }
+                })
+            },
+            cb => {
+                // check if roles attached with permissions
+                Permission.find({role: {$in: ids}}).populate('role').exec((errFindPermission, permissions) => {
+                    if(errFindPermission) cb(errFindPermission);
+                    else if(permissions.length){
+                        const permissionsWithDelRoles = permissions.filter(p => p.role && p.role._id);
+                        const listRolesAttached = permissionsWithDelRoles.map(p => p.role);
+                        const message = `Các vai trò '${listRolesAttached.map(r => r.title).join(',')}' không thể bị xóa do đang được gán những quyền sau: '${permissionsWithDelRoles.map(p => p.username).join(',')}'.`
+                        cb(message);
+                    } else {
+                        cb();
+                    }
+                })
+            }
+        ], (err, _) => {
+            if(err){
+                reject(err);
+            } else resolve();
+        })
     })
 }
 

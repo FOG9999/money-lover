@@ -338,8 +338,66 @@ export function getResponseErrorMessage(message: string){
       return "Bạn không thể tự xóa tài khoản của chính mình.";
     case "ERROR_NOT_ALL_DEL_TEMP": 
       return "Không thể xóa vĩnh viễn các tài khoản đang hoạt động.";
+    case 'ERROR_ROLE_CODE_MISSING':
+      return 'Thiếu dữ liệu truyền lên về mã vai trò.'
+    case 'ERROR_ROLE_NOT_FOUND':
+      return 'Không tìm thấy vai trò.'
+    case 'ERROR_TITLE_MISSING':
+      return 'Thiếu dữ liệu truyền lên về tên.'
+    case 'ERROR_ROLE_EXIST':
+      return 'Vai trò với mã này đã tồn tại. Vui lòng thử lại.'
+    case 'ERROR_FIRSTNAME_MISSING':
+      return 'Thiếu dữ liệu truyền lên về tên họ.'
+    case 'ERROR_ID_MISSING':
+      return 'Thiếu dữ liệu truyền lên về id.'
+    case 'ERROR_CODE_MISSING':
+      return 'Thiếu dữ liệu truyền lên về mã.'
+    case 'ERROR_DESCRIPTION_MISSING':
+      return 'Thiếu dữ liệu truyền lên về mô tả.'
+    case 'ERROR_STATUS_INVALID':
+      return 'Truyền tham số về trạng thái không hợp lệ.'
+    case 'ERROR_ACTION_TITLE_MISSING':
+      return 'Thiếu dữ liệu truyền lên về tên hành động.'
+    case 'ERROR_ACTION_NOT_FOUND':
+      return 'Không tìm thấy hành động trên hệ thống.'
+    case 'ERROR_ACTION_CODE_MISSING':
+      return 'Thiếu dữ liệu truyền lên về mã hành động.'
+    case 'ERROR_ACTION_EXIST':
+      return 'Hành động đã tồn tại trên hệ thống.'
+    case 'ERROR_ACTION_DESCRIPTION_MISSING':
+      return 'Thiếu dữ liệu truyền lên về mô tả hành động.'
+    case 'ERROR_MODULE_TITLE_MISSING':
+      return 'Thiếu dữ liệu truyền lên về tên module'
+    case 'ERROR_MODULE_NOT_FOUND':
+      return 'Không thể tìm thấy module trên hệ thống.'
+    case "ERROR_MODULE_CODE_MISSING": 
+      return "Thiếu dữ liệu truyền lên về mã module.";
+    case "ERROR_MODULE_EXIST": 
+      return "Module với mã tương tự đã tồn tại trên hệ thống."
+    case "ERROR_MODULE_DESCRIPTION_MISSING": 
+      return "Thiếu dữ liệu truyền lên về mô tả module."
+    case "ERROR_PERMISSION_TITLE_MISSING": 
+      return "Thiếu dữ liệu truyền lên về tên quyền.";
+    case "ERROR_PERMISSION_NOT_FOUND": 
+      return "Không tìm thấy quyền trên hệ thống.";
+    case "ERROR_PERMISSION_CODE_MISSING": 
+      return "Thiếu dữ liệu truyền lên về mã quyền.";
+    case "ERROR_PERMISSION_EXIST": 
+      return "Quyền với mã này đã tồn tại trên hệ thống.";
+    case "ERROR_PERMISSION_DESCRIPTION_MISSING": 
+      return "Thiếu dữ liệu truyền lên về mô tả quyền.";
+    case "ERROR_PERMISSION_ROLE_MISSING": 
+      return "Thiếu dữ liệu truyền lên về vai trò người dùng bị ảnh hưởng.";
+    case "ERROR_PERMISSION_ALLOW_MISSING": 
+      return "Thiếu dữ liệu truyền lên về loại ảnh hưởng (Cho phép hay từ chối truy cập).";
+    case "ERROR_PERMISSION_MODULE_ACTION_MISSING": 
+      return "Thiếu dữ liệu truyền lên về các hành động được thực hiện trên 1 module.";
+    case "ERROR_NOT_A_NUMBER": 
+      return "Tham số truyền lên không phải là số. Vui lòng thử lại.";
+    case "ERRROR_EMAIL_EXIST": 
+      return "Email đã được sử dụng. Vui lòng sử dụng một email khác.";
     default:
-      return 'Không tồn tại mesage';
+      return message;
   }
 }
 

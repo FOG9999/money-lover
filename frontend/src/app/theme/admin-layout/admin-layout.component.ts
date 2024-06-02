@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Directionality } from '@angular/cdk/bidi';
@@ -20,6 +20,7 @@ import { StartupService } from '@core';
 import { SettingsService, AppSettings } from '@core';
 import { AppDirectionality, LocalStorageService } from '@shared';
 import { WSLambdaService } from '@shared/services/ws-lambda.service';
+import { PermissionService } from 'app/routes/sysytem/permission/permission.service';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
@@ -70,7 +71,8 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     @Optional() @Inject(DOCUMENT) private _document: Document,
     @Inject(Directionality) public dir: AppDirectionality, 
     private startUpService: StartupService,
-    private localStorage: LocalStorageService
+    private localStorage: LocalStorageService,
+    private permissionService: PermissionService
   ) {
     this.dir.value = this.options.dir;
     this._document.body.dir = this.dir.value;
@@ -87,12 +89,15 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
       });
 
     // TODO: Scroll top to container
-    this.router.events.subscribe(evt => {
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(evt => {
       if (evt instanceof NavigationEnd) {
+        this.getUserPermission();
         this.content.scrollTo({ top: 0 });
       }
     });
   }
+
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
     if(this.localStorage.get("user") && this.localStorage.get("user").token){
@@ -104,6 +109,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.layoutChanges.unsubscribe();
+    this.destroy$.next();
   }
 
   toggleCollapsed() {
@@ -150,5 +156,12 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   toggleDirection(options: AppSettings) {
     this.dir.value = options.dir;
     this._document.body.dir = this.dir.value;
+  }
+
+  getUserPermission(){
+    this.permissionService.getActionsOnModule(location.pathname).subscribe(res => {
+      console.log(res.actions)
+      this.permissionService.actions = res.actions;
+    })
   }
 }
