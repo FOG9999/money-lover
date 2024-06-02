@@ -130,25 +130,34 @@ const updateRole = (req, returnData, callback) => {
         return callback(consts.ERRORS.ERROR_ID_MISSING);
     }
 
-    Role
-        .findOne()
-        .where({ _id })
-        .exec((err, result) => {
-            if (err) {
-                return callback(err);
+    Role.findOne({code}).exec((errFind, existCode) => {
+        if(errFind) callback(errFind);
+        else {
+            if(existCode) callback(consts.ERRORS.ERROR_ROLE_EXIST);
+            else {                
+                Role
+                    .findOne()
+                    .where({ _id })
+                    .exec((err, result) => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        if (!result) {
+                            return callback(consts.ERRORS.ERROR_ROLE_NOT_FOUND);
+                        }
+                        else {
+                            merge(result, { title, description, code, status: status ? 1: 0 });
+                            result.save(function (error, data) {
+                                if (error) return callback(error);
+                                returnData.set(data);
+                                callback();
+                            });
+                        }
+                    })
             }
-            if (!result) {
-                return callback(consts.ERRORS.ERROR_ROLE_NOT_FOUND);
-            }
-            else {
-                merge(result, { title, description, code, status: status ? 1: 0 });
-                result.save(function (error, data) {
-                    if (error) return callback(error);
-                    returnData.set(data);
-                    callback();
-                });
-            }
-        })
+        }
+    })
+
 }
 
 const deleteRole = (req, returnData, callback) => {

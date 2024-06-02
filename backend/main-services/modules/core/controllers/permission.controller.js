@@ -271,42 +271,51 @@ const updatePermission = (req, returnData, callback) => {
         return callback(consts.ERRORS.ERROR_PERMISSION_MODULE_ACTION_MISSING);
     }
 
-    Permission
-        .findOne()
-        .where({ _id })
-        .exec((err, permission) => {
-            if (err) {
-                return callback(err);
-            }
-            if (!permission) {
-                return callback(consts.ERRORS.ERROR_PERMISSION_NOT_FOUND);
-            }
-            else {
-                useMongooseTransaction(async (session) => {
-                    // delete old module-actions
-                    await ModuleAction.deleteMany({ _id: { $in: permission.moduleAction } }, { session });
-                    // throw new Error('test')
-                    // create new module-actions
-                    let newModuleActions = moduleAction.map(ma => {
-                        let newModuleAction = new ModuleAction({
-                            module: ma.module,
-                            actions: ma.actions,
-                            dateCreated: new Date(),
-                            userCreated: creator._id
-                        })
-                        return newModuleAction;
+    Permission.findOne({code}).exec((errFind, existCode) => {
+        if(errFind) callback(errFind);
+        else {
+            if(existCode) callback(consts.ERRORS.ERROR_PERMISSION_EXIST);
+            else {                
+                Permission
+                    .findOne()
+                    .where({ _id })
+                    .exec((err, permission) => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        if (!permission) {
+                            return callback(consts.ERRORS.ERROR_PERMISSION_NOT_FOUND);
+                        }
+                        else {
+                            useMongooseTransaction(async (session) => {
+                                // delete old module-actions
+                                await ModuleAction.deleteMany({ _id: { $in: permission.moduleAction } }, { session });
+                                // throw new Error('test')
+                                // create new module-actions
+                                let newModuleActions = moduleAction.map(ma => {
+                                    let newModuleAction = new ModuleAction({
+                                        module: ma.module,
+                                        actions: ma.actions,
+                                        dateCreated: new Date(),
+                                        userCreated: creator._id
+                                    })
+                                    return newModuleAction;
+                                })
+                                const savedNewModuleActions = await ModuleAction.insertMany(newModuleActions, { session });
+                                // update original permission
+                                merge(permission, { title, description, code, role, status: status ? 1: 0, moduleAction: savedNewModuleActions.map(ma => ma._id) });
+                                const data = await permission.save({ session });
+                                returnData.set(data);
+                                callback();
+                            }, err => {
+                                return callback(err);
+                            })
+                        }
                     })
-                    const savedNewModuleActions = await ModuleAction.insertMany(newModuleActions, { session });
-                    // update original permission
-                    merge(permission, { title, description, code, role, status: status ? 1: 0, moduleAction: savedNewModuleActions.map(ma => ma._id) });
-                    const data = await permission.save({ session });
-                    returnData.set(data);
-                    callback();
-                }, err => {
-                    return callback(err);
-                })
             }
-        })
+        }
+    })
+
 }
 
 const deletePermission = (req, returnData, callback) => {

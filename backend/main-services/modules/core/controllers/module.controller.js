@@ -130,25 +130,34 @@ const updateModule = (req, returnData, callback) => {
         return callback(consts.ERRORS.ERROR_ID_MISSING);
     }
 
-    Module
-        .findOne()
-        .where({ _id })
-        .exec((err, result) => {
-            if (err) {
-                return callback(err);
+    Module.findOne({code}).exec((errFind, existCode) => {
+        if(errFind) callback(errFind);
+        else {
+            if(existCode) callback(consts.ERRORS.ERROR_MODULE_EXIST);
+            else {            
+                Module
+                    .findOne()
+                    .where({ _id })
+                    .exec((err, result) => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        if (!result) {
+                            return callback(consts.ERRORS.ERROR_MODULE_NOT_FOUND);
+                        }
+                        else {
+                            merge(result, { title, description, code, status: status ? 1: 0 });
+                            result.save(function (error, data) {
+                                if (error) return callback(error);
+                                returnData.set(data);
+                                callback();
+                            });
+                        }
+                    })
             }
-            if (!result) {
-                return callback(consts.ERRORS.ERROR_MODULE_NOT_FOUND);
-            }
-            else {
-                merge(result, { title, description, code, status: status ? 1: 0 });
-                result.save(function (error, data) {
-                    if (error) return callback(error);
-                    returnData.set(data);
-                    callback();
-                });
-            }
-        })
+        }
+    })
+
 }
 
 const deleteModule = (req, returnData, callback) => {

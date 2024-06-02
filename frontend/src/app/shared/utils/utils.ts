@@ -264,7 +264,7 @@ export function getResponseErrorMessage(message: string){
     case 'ERROR_QUESTION_CONTENT_MISSING':
       return 'Nội dung câu hỏi là bắt buộc.' 
     case 'ERROR_QUESTION_EXIST':
-      return 'Câu hỏi này đã tồn tại.' 
+      return 'Câu hỏi với mã này đã tồn tại.' 
     case 'ERROR_ID_MISSING':
       return 'Thiếu trường _id.' 
     case 'ERROR_QUESTION_CANNOT_BE_MODIFIED':
@@ -363,7 +363,7 @@ export function getResponseErrorMessage(message: string){
     case 'ERROR_ACTION_CODE_MISSING':
       return 'Thiếu dữ liệu truyền lên về mã hành động.'
     case 'ERROR_ACTION_EXIST':
-      return 'Hành động đã tồn tại trên hệ thống.'
+      return 'Hành động với mã này đã tồn tại trên hệ thống.'
     case 'ERROR_ACTION_DESCRIPTION_MISSING':
       return 'Thiếu dữ liệu truyền lên về mô tả hành động.'
     case 'ERROR_MODULE_TITLE_MISSING':
@@ -373,7 +373,7 @@ export function getResponseErrorMessage(message: string){
     case "ERROR_MODULE_CODE_MISSING": 
       return "Thiếu dữ liệu truyền lên về mã module.";
     case "ERROR_MODULE_EXIST": 
-      return "Module với mã tương tự đã tồn tại trên hệ thống."
+      return "Module với mã này đã tồn tại trên hệ thống."
     case "ERROR_MODULE_DESCRIPTION_MISSING": 
       return "Thiếu dữ liệu truyền lên về mô tả module."
     case "ERROR_PERMISSION_TITLE_MISSING": 
