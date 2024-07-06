@@ -7,8 +7,8 @@ module.exports = {
             db_port: 27017,
             db_prefix: 'mongodb',
             db_database: 'my-money-lover',
-            db_user: "fog99999",
-            db_pass: "fog99999"
+            db_user: "rwUser",
+            db_pass: "Khongcanhoi123!_rwUser"
         }
     },
     host: 'localhost'

@@ -1,0 +1,47 @@
+install mongodb 6.0 on amazon linux 2:
+1. install mongodb: 
+- create file /etc/yum.repos.d/mongodb-org-6.0.repo with content:
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-6.0.asc
+
+- run cmd: sudo yum install -y mongodb-org
+2. install mongosh:
+- curl https://downloads.mongodb.com/compass/mongosh-2.2.6-linux-x64.tgz --output ./mongosh-2.2.6-linux-x64.tgz
+******************NOTES*******************
+* mongo@^6: node.js >= 16.20
+* mongo@^5: node.js >= 14.20
+* if override the old version with newer version of mongodb, you need to correct the Nodejs version, delete all files in the data folder and restart
+* Roles:
+** root: required to configure replica sets
+** userAdmin: manage users/roles
+** dbAdmin: administrative tasks
+** cluster[...]: manage clusters
+** readWrite
+***************Replica sets**************
+* turn off authorization to create user and replica set
+* create keyfile with the owner is mongod: chown mongod:mongod keyfile, copy keyfile to other instances, give read write access to db path folder for mongod
+* rs.initate()
+* create root user in `admin` db
+db.createUser({user: "rootUser", pwd: "Khongcanhoi123!_rootUser", roles: [{ role: "root", db: "admin"}]})
+* create admin with userAdminAnyDatabase
+db.createUser({user: "adminUser", pwd: "Khongcanhoi123!_adminUser", roles: [{ role: "userAdminAnyDatabase", db: "admin"}]})
+* create readWrite user for the application
+db.createUser({user: "rwUser", pwd: "Khongcanhoi123!_rwUser", roles: [{ role: "readWrite", db: "my-money-lover"}]})
+--> CONNECT: mongosh -u rwUser -p 'Khongcanhoi123!_rwUser'
+* uri: mongodb://rwUser:Khongcanhoi123%21_rwUser@localhost:27017,localhost:27108,localhost:27019/?replicaSet=my_ml_rs
+* turn on authorization
+* create other mongod.conf with auth=yes and keyFile
+* join other instances to the primary instance
+* access:
+primary: mongosh --host localhost --port 27017 -u rootUser -p 'Khongcanhoi123!_rootUser'
+secondary: mongosh --host localhost --port 27018 -u rootUser -p 'Khongcanhoi123!_rootUser'
+mongosh --host localhost --port 27019 -u rootUser -p 'Khongcanhoi123!_rootUser'
+* restore: mongorestore -h localhost --port 27017 -u rwUser -p 'Khongcanhoi123!_rwUser' --db my-money-lover --dir database-backup/22_06_24/my-money-lover/ --authenticationDatabase admin
+!!!!!!IMPORTANT: --authenticationDatabase: the DB where the user is created, not where it has roles
+--------------------------------------------------------------------------------------------
+DB test:
+test/Khongcanhoi123%21_test: dbAdmin, readWrite

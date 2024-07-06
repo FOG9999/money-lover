@@ -1,1 +1,0 @@
-mongosh mongodb://fog9999:fog9999@localhost:27018/admin?replicaSet=rs0

@@ -1,0 +1,1 @@
+mongodump -h rs0/localhost:27018,localhost:27019 -o database-backup-6.0 -d my-money-lover -u fog9999 -p fog9999
