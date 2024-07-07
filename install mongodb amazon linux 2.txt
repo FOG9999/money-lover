@@ -42,6 +42,9 @@ secondary: mongosh --host localhost --port 27018 -u rootUser -p 'Khongcanhoi123!
 mongosh --host localhost --port 27019 -u rootUser -p 'Khongcanhoi123!_rootUser'
 * restore: mongorestore -h localhost --port 27017 -u rwUser -p 'Khongcanhoi123!_rwUser' --db my-money-lover --dir database-backup/22_06_24/my-money-lover/ --authenticationDatabase admin
 !!!!!!IMPORTANT: --authenticationDatabase: the DB where the user is created, not where it has roles
+
+Start new instance in the background:
+sudo nohup mongod --config /etc/mongod.conf &
 --------------------------------------------------------------------------------------------
 DB test:
 test/Khongcanhoi123%21_test: dbAdmin, readWrite

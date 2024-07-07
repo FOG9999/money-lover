@@ -25,7 +25,8 @@ let connectStr;
 if (config.db.system && config.db.system.replica) {
     const connStr = getReplicaSetConnectionString();
     if(!connStr) throw new Error(`Cannot read DB configuration`);
-    connectStr = config.db.system.db_prefix + '://' + connStr + '/' + config.db.system.db_database + '?replicaSet=' + config.db.system.db_replica_name;
+    connectStr = config.db.system.db_prefix + '://' + connStr + '/' + config.db.system.db_database + '?replicaSet=' + config.db.system.db_replica_name + `&authSource=${config.db.system.db_auth_src}`;
+    winstonLogger.info(`Connection string: '${connectStr}'`);
 } else {
     connectStr = config.db.system.db_prefix + '://' + config.db.system.db_host + ':' + config.db.system.db_port + '/' + config.db.system.db_database;
 }
