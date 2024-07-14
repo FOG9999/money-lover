@@ -32,32 +32,31 @@ if (config.db.system && config.db.system.replica) {
 }
 
 var db = mongoose.createConnection(connectStr, {
-    useNewUrlParser: true, useUnifiedTopology: true
+    useNewUrlParser: true, 
+    useUnifiedTopology: true
 });
 
 function reconnect() {
     setTimeout(function () {
-        console.log('System DB: reconnecting');
-        db.open(connectStr);
-    }, 5000);
+        winstonLogger.info('System DB: reconnecting');
+        // db.open(connectStr); // auto reconnect is already handled by default
+    }, 1000);
 }
 
 // log event for database
 db.on('opening', function () {
-    console.log('System DB: reconnecting... %d', mongoose.connection.readyState);
+    winstonLogger.info('System DB: reconnecting... %d', mongoose.connection.readyState);
 });
 db.once('open', function () {
-    console.log('System DB: connection opened.');
+    winstonLogger.info('System DB: connection opened.');
 });
 db.on('error', function (err) {
-    console.log('System DB: connection error %s', err);
     winstonLogger.error('System DB: connection error: ' + JSON.stringify(err));
     if (err && err.message && err.message.match(/ECONNRESET|ECONNREFUSED|ECONNABORTED/)) {
         reconnect();
     }
 });
 db.on('disconnected', function () {
-    console.log('System DB: disconnected');
     winstonLogger.error('System DB: disconnected');
     reconnect();
 });
