@@ -105,11 +105,15 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
       this.wsLambda.initClient();
     }    
     setTimeout(() => (this.contentWidthFix = this.collapsedWidthFix = false));
+    this.settings.settingChange$.pipe(takeUntil(this.destroy$)).subscribe(options => {
+      this.receiveOptions(options, false);
+    })
   }
 
   ngOnDestroy() {
     this.layoutChanges.unsubscribe();
     this.destroy$.next();
+    this.destroy$.complete();
   }
 
   toggleCollapsed() {
@@ -137,8 +141,13 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   }
 
   // Demo purposes only
-  receiveOptions(options: AppSettings): void {
+  /**
+   * @param updateOptions true when it comes from user interaction, not when getting data from server
+   */
+  receiveOptions(options: AppSettings, updateOptions: boolean = true): void {
+    this.settings.setLayout(options);
     this.options = options;
+    if(updateOptions) this.settings.setNewSetting(options);
     this.toggleDarkTheme(options);
     this.toggleDirection(options);
   }

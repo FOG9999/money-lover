@@ -16,6 +16,7 @@ const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require("@aws
 const consts = require('../../../../config/consts');
 const utils = require('../../../../libs/utils');
 const async = require('async');
+const { createDefaultUserSettingIfNeeded } = require('./user-setting.controller');
 
 const list = (req, returnData, callback) => {
     let { search, status, isDelete, page, size } = req.params;
@@ -154,6 +155,7 @@ const login = (req, returnData, callback) => {
                                     notifyLogin(user, platform, jsonData.cKey);
                                     callback();
                                 })
+                                createDefaultUserSettingIfNeeded(user._id, () => {});
                             })                    
                             break;
                     }
@@ -304,6 +306,7 @@ const checkUserTFA = (req, returnData, callback) => {
                                         returnData.data = jsonData;
                                         callback();
                                     })
+                                    createDefaultUserSettingIfNeeded(userId, () => {});
                                 })         
                             })
                         }

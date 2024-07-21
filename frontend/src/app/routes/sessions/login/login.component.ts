@@ -9,6 +9,7 @@ import { User } from 'app/model/user.model';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntil, Subject } from 'rxjs';
 import { WSLambdaService } from '@shared/services/ws-lambda.service';
+import { SettingsService } from '@core';
 
 /**
  * information about browser and os
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router, 
     private authService: AuthService, 
     private localStorage: LocalStorageService, 
+    private settingService: SettingsService,
     private route: ActivatedRoute,
     private wsLambda: WSLambdaService,
     private toastService: ToastrService) {
@@ -72,6 +74,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authService.login(username, password, platform).subscribe(res => {
       if (res && Object.keys(res).includes('_id')) {
         this.localStorage.set('user', res);
+        this.settingService.getUserSetting();
         if ((<User>res).level === CONSTS.auth.ADMIN || (<User>res).level === CONSTS.auth.SYSTEM) {
           this.router.navigateByUrl('/money-lover/admin');
         }

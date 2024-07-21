@@ -1,10 +1,11 @@
 'use strict';
 
-var consts = require(__config_path + '/consts');
+const consts = require(__config_path + '/consts');
 
 module.exports = function() {
     // Root routing
-    var controller = require('../controllers/system.user.controller.js');
+    const controller = require('../controllers/system.user.controller.js');
+    const userSettingCtl = require('../controllers/user-setting.controller.js');
 
     consts.registerApi('api.v1.systemuser.deactivate', controller.deactivateUsers, { systemApi: true });
     consts.registerApi('api.v1.systemuser.unlock', controller.unlockUsers, { systemApi: true });
@@ -29,6 +30,8 @@ module.exports = function() {
     consts.registerApi('api.v1.systemuser.sendemailchangepassword', controller.sendEmailToChangePass, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.changepassword', controller.handleChangePassToken, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.checkchangepasswordurl', controller.checkChangepasswordUrl, { anyAuth: true });
+    consts.registerApi('api.v1.systemuser.usersetting.get', userSettingCtl.getUsetSetting, { anyAuth: true });
+    consts.registerApi('api.v1.systemuser.usersetting.set', userSettingCtl.updateSetting, { anyAuth: true });
     consts.registerApi('api.v1.systemuser.sendforgotpasswordrequest', controller.sentForgotPasswordRequest, { notAuth: true });
     consts.registerApi('api.v1.systemuser.handleforgotpasswordrequest', controller.handleForgotPasswordRequest, { notAuth: true });
 };

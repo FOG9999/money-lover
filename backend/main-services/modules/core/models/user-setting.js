@@ -1,3 +1,5 @@
+const winstonLogger = require('../../../../libs/winston');
+
 let Schema = require('mongoose').Schema,
 ObjectId = Schema.ObjectId,
 systemDb = require(__db_path + '/system-db'),
@@ -56,6 +58,15 @@ let UserSettingSchema = new Schema({
 
 UserSettingSchema.pre('save', function(next) {
     this.dateUpdated = Date.now();
+    next();
+})
+
+UserSettingSchema.pre('findOneAndUpdate', function(next) {
+    try {        
+        this._update.$set.dateUpdated = Date.now();
+    } catch (error) {
+        winstonLogger.error('Pre hook findOneAndUpdate failed. ', error);
+    }
     next();
 })
 

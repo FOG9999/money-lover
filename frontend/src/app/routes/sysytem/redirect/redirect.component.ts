@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SettingsService } from '@core';
 import { AuthService } from '@core/authentication/authentication.service';
 import { LocalStorageService, PassportLoginService, randomString } from '@shared';
 import { Annonymous, CONSTS } from 'app/consts';
@@ -18,6 +19,7 @@ export class RedirectComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private authService: AuthService,
         private localStorage: LocalStorageService,
+        private settingService: SettingsService,
         private router: Router,
         private toastService: ToastrService
     ) {
@@ -115,6 +117,7 @@ export class RedirectComponent implements OnInit, OnDestroy {
         .subscribe(res => {
             if (res && res._id) {
                 this.localStorage.set('user', res);
+                this.settingService.getUserSetting();
                 if (res.level === CONSTS.auth.ADMIN || res.level === CONSTS.auth.SYSTEM) {
                     this.router.navigateByUrl('/money-lover/admin');
                 }

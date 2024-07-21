@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { SettingsService } from '@core';
 import { CdkDragStart } from '@angular/cdk/drag-drop';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-customizer',
@@ -8,15 +9,25 @@ import { CdkDragStart } from '@angular/cdk/drag-drop';
   styleUrls: ['./customizer.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class CustomizerComponent implements OnInit {
+export class CustomizerComponent implements OnInit, OnDestroy {
   options = this.settings.getOptions();
   opened = false;
   dragging = false;
   @Output() optionsEvent = new EventEmitter<object>();
+  private destroy$ = new Subject<void>();
 
   constructor(private settings: SettingsService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.settings.settingChange$.pipe(takeUntil(this.destroy$)).subscribe(options => {
+      this.options = options;
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   handleDragStart(event: CdkDragStart): void {
     this.dragging = true;

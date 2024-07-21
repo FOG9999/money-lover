@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SettingsService } from '@core';
 import { AuthService } from '@core/authentication/authentication.service';
 import { LocalStorageService } from '@shared';
 import { validators } from '@shared/utils/validators';
@@ -24,6 +25,7 @@ export class TwoFactorAuthenComponent implements OnInit {
         private router: Router, 
         private authService: AuthService, 
         private localStorage: LocalStorageService, 
+        private settingService: SettingsService,
         private toastService: ToastrService
     ) { }
 
@@ -86,6 +88,7 @@ export class TwoFactorAuthenComponent implements OnInit {
                         this.onVerifySuccess.next(true);
                     }
                     this.localStorage.set('user', res);
+                    this.settingService.getUserSetting();
                     if (res.level === CONSTS.auth.ADMIN || res.level === CONSTS.auth.SYSTEM) {
                       this.router.navigateByUrl('/money-lover/admin');
                     }
