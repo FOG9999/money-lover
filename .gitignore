@@ -4,5 +4,6 @@ build/*
 database/*
 database-local/*
 database-backup/*
-mongodb-6.0.15-secondary
+mongodb-6.0.15/*
+mongodb-6.0.15-secondary/*
 admin_permission_start_secondary_db_6.0.bat
