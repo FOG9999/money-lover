@@ -38,9 +38,20 @@ db.createUser({user: "rwUser", pwd: "Khongcanhoi123!_rwUser", roles: [{ role: "r
 * join other instances to the primary instance
 * access:
 primary: mongosh --host localhost --port 27017 -u rootUser -p 'Khongcanhoi123!_rootUser'
+
 secondary: mongosh --host localhost --port 27018 -u rootUser -p 'Khongcanhoi123!_rootUser'
+
 mongosh --host localhost --port 27019 -u rootUser -p 'Khongcanhoi123!_rootUser'
-* restore: mongorestore -h localhost --port 27017 -u rwUser -p 'Khongcanhoi123!_rwUser' --db my-money-lover --dir database-backup/22_06_24/my-money-lover/ --authenticationDatabase admin
+
+* restore: 
+- mongorestore -h localhost --port 27017 -u rwUser -p 'Khongcanhoi123!_rwUser' --db my-money-lover --dir database-backup/22_06_24/my-money-lover/ --authenticationDatabase admin
+
+- mongorestore -h localhost --port 27019 -u rootUser -p 'Khongcanhoi123!_rootUser' --dir money-lover/database-backup-6.0/my-money-lover/permissions.bson --authenticationDatabase admin --db test
+
+- mongorestore --uri 'mongodb://rwUser:Khongcanhoi123%21_rwUser@172.31.19.224:27018,172.31.19.224:27019,172.31.19.224:27017/?replicaSet=my_ml_rs&authSource=admin'  --nsInclude='test.modules' --dir database-backup-6.0/: ONYL RESOTRE ONE SPECIFIC COLLECTION. IF YOU WANT MANY, WRITE NSINCLUDE MANY TIMES; MAKE SURE THE 'DATABASE-NAME' FOLDER EXIST IN THE VALUE OF --DIR
+
+- mongorestore --uri 'mongodb://rwUser:Khongcanhoi123%21_rwUser@172.31.19.224:27018,172.31.19.224:27019,172.31.19.224:27017/?replicaSet=my_ml_rs&authSource=admin'  --nsInclude='my-money-lover.modules' --nsInclude='my-money-lover.actions' --nsInclude='my-money-lover.moduleactions' --nsInclude='my-money-lover.roles' --nsInclude='my-money-lover.permissions'  --dir database-backup-6.0/
+
 !!!!!!IMPORTANT: --authenticationDatabase: the DB where the user is created, not where it has roles
 
 Start new instance in the background:

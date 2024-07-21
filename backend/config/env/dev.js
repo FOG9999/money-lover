@@ -21,7 +21,8 @@ module.exports = {
             },
             db_prefix: 'mongodb',
             db_database: 'my-money-lover',
-            db_replica_name: "rs0"
+            db_replica_name: "rs0",
+            db_auth_src: "my-money-lover"
         },
         data: {
             db_host: 'localhost',
